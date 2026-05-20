@@ -46,6 +46,40 @@ struct SettingsView: View {
     private var notificationSection: some View {
         Section {
             Toggle("請求日リマインド", isOn: $notificationsEnabled)
+                .onChange(of: notificationsEnabled) { _, newValue in
+                    Task {
+                        if newValue {
+                            // ON: 全サブスクの通知を一括スケジュール
+                            for subscription in subscriptions where subscription.isActive {
+                                let id = NotificationService.makeIdentifier(
+                                    name: subscription.name, startDate: subscription.startDate
+                                )
+                                await NotificationService.scheduleReminder(
+                                    subscriptionName: subscription.name,
+                                    nextPaymentDate: subscription.nextPaymentDate,
+                                    identifier: id
+                                )
+                                if let trialEnd = subscription.trialEndDate {
+                                    await NotificationService.scheduleTrialReminder(
+                                        subscriptionName: subscription.name,
+                                        trialEndDate: trialEnd,
+                                        identifier: id + "_trial"
+                                    )
+                                }
+                                if let endDate = subscription.endDate {
+                                    await NotificationService.scheduleEndDateReminder(
+                                        subscriptionName: subscription.name,
+                                        endDate: endDate,
+                                        identifier: id + "_end"
+                                    )
+                                }
+                            }
+                        } else {
+                            // OFF: 全通知をキャンセル
+                            NotificationService.cancelAllReminders()
+                        }
+                    }
+                }
         } header: {
             Label("通知", systemImage: "bell")
         } footer: {

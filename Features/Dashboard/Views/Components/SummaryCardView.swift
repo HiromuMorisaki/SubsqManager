@@ -40,7 +40,7 @@ struct SummaryCardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         // より洗練された背景とシャドウの適用
-        .background(Color(NSColor.controlBackgroundColor)) // macOS対応の白/黒背景
+        .background(Color(.systemBackground)) // macOS対応の白/黒背景
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
     }

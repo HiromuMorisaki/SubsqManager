@@ -11,13 +11,8 @@ import SwiftData
 @main
 struct SubsqManagerApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Subscription.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try SharedModelContainer.createForApp()
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
