@@ -36,6 +36,8 @@ struct EditSubscriptionView: View {
                     startDate: $viewModel.startDate,
                     hasTrial: $viewModel.hasTrial,
                     trialEndDate: $viewModel.trialEndDate,
+                    hasEndDate: $viewModel.hasEndDate,
+                    endDate: $viewModel.endDate,
                     iconName: $viewModel.iconName,
                     notes: $viewModel.notes
                 )

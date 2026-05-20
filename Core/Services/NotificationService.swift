@@ -138,6 +138,45 @@ enum NotificationService {
         }
     }
 
+    /// サブスク終了前のリマインド通知をスケジュールする。
+    /// 終了日の前日の午前9時に通知を送る。
+    static func scheduleEndDateReminder(
+        subscriptionName: String,
+        endDate: Date,
+        identifier: String
+    ) async {
+        guard UserDefaults.standard.bool(forKey: "notificationsEnabled") else { return }
+
+        let calendar = Calendar.current
+        let center = UNUserNotificationCenter.current()
+
+        // 1日前のスケジュール設定
+        guard let reminderDate = calendar.date(byAdding: .day, value: -1, to: endDate) else { return }
+        guard reminderDate > Date() else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = "明日、サブスクの終了日です"
+        content.body = "\(subscriptionName) の設定した終了日が明日になります。解約手続きはお済みですか？"
+        content.sound = .default
+
+        var triggerComponents = calendar.dateComponents([.year, .month, .day], from: reminderDate)
+        triggerComponents.hour = 9
+        triggerComponents.minute = 0
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+        let request = UNNotificationRequest(
+            identifier: "\(identifier)_enddate",
+            content: content,
+            trigger: trigger
+        )
+
+        do {
+            try await center.add(request)
+        } catch {
+            print("終了日通知スケジュールエラー: \(error)")
+        }
+    }
+
     // MARK: - 通知のキャンセル
 
     /// 指定した識別子の通知をキャンセルする。

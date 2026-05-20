@@ -23,6 +23,8 @@ final class EditSubscriptionViewModel {
     var startDate: Date
     var hasTrial: Bool
     var trialEndDate: Date
+    var hasEndDate: Bool
+    var endDate: Date
     var iconName: String
     var notes: String
 
@@ -47,6 +49,8 @@ final class EditSubscriptionViewModel {
         self.startDate = subscription.startDate
         self.hasTrial = subscription.trialEndDate != nil
         self.trialEndDate = subscription.trialEndDate ?? Date().addingTimeInterval(86400 * 14)
+        self.hasEndDate = subscription.endDate != nil
+        self.endDate = subscription.endDate ?? Date().addingTimeInterval(86400 * 30)
         self.iconName = subscription.iconName
         self.notes = subscription.notes
         self.originalName = subscription.name
@@ -82,6 +86,7 @@ final class EditSubscriptionViewModel {
         subscription.iconName = iconName
         subscription.notes = notes.trimmingCharacters(in: .whitespaces)
         subscription.trialEndDate = hasTrial ? trialEndDate : nil
+        subscription.endDate = hasEndDate ? endDate : nil
         subscription.updateNextPaymentDate()
 
         // 旧通知をキャンセルし、新しい通知をスケジュール
@@ -99,9 +104,11 @@ final class EditSubscriptionViewModel {
             identifier: newNotificationID
         )
 
-        // 旧トライアル通知をキャンセル
+        // 旧トライアル・終了日通知をキャンセル
         let oldTrialNotificationID = oldNotificationID + "_trial"
         NotificationService.cancelReminder(identifier: oldTrialNotificationID)
+        let oldEndDateNotificationID = oldNotificationID + "_end"
+        NotificationService.cancelReminder(identifier: oldEndDateNotificationID)
 
         // 新しいトライアル通知をスケジュール
         if hasTrial {
@@ -110,6 +117,16 @@ final class EditSubscriptionViewModel {
                 subscriptionName: trimmedName,
                 trialEndDate: trialEndDate,
                 identifier: trialNotificationID
+            )
+        }
+        
+        // 新しい終了日通知をスケジュール
+        if hasEndDate {
+            let endDateNotificationID = newNotificationID + "_end"
+            await NotificationService.scheduleEndDateReminder(
+                subscriptionName: trimmedName,
+                endDate: endDate,
+                identifier: endDateNotificationID
             )
         }
 

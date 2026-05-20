@@ -60,6 +60,9 @@ final class Subscription {
     /// 無料トライアル終了日。nilの場合はトライアルなし。
     var trialEndDate: Date?
 
+    /// サブスクリプション終了予定日。nilの場合は未定（継続）。
+    var endDate: Date?
+
     /// レコード作成日時
     var createdAt: Date
 
@@ -80,6 +83,7 @@ final class Subscription {
         notes: String = "",
         isActive: Bool = true,
         trialEndDate: Date? = nil,
+        endDate: Date? = nil,
         reviewStatusRawValue: String? = nil
     ) {
         self.name = name
@@ -92,6 +96,7 @@ final class Subscription {
         self.notes = notes
         self.isActive = isActive
         self.trialEndDate = trialEndDate
+        self.endDate = endDate
         self.reviewStatusRawValue = reviewStatusRawValue
         self.createdAt = Date()
         self.updatedAt = Date()
@@ -113,9 +118,23 @@ final class Subscription {
     /// 現在無料トライアル中かどうか。
     /// trialEndDate が設定されており、かつ現在日時が trialEndDate の日の終わり（23:59:59）以前であれば true。
     var isTrial: Bool {
-        guard let trialEndDate else { return false }
-        let endOfDay = Calendar.current.startOfDay(for: trialEndDate).addingTimeInterval(86400 - 1)
+        guard let trialEndDate = trialEndDate else { return false }
+        
+        let calendar = Calendar.current
+        let endOfDay = calendar.startOfDay(for: trialEndDate).addingTimeInterval(86400 - 1)
+        
         return Date() <= endOfDay
+    }
+    
+    /// サブスクリプションが既に終了日を過ぎているかどうか。
+    /// endDate が設定されており、現在日時が endDate の日の終わりを過ぎていれば true。
+    var isExpired: Bool {
+        guard let endDate = endDate else { return false }
+        
+        let calendar = Calendar.current
+        let endOfDay = calendar.startOfDay(for: endDate).addingTimeInterval(86400 - 1)
+        
+        return Date() > endOfDay
     }
 
     /// 月額換算金額

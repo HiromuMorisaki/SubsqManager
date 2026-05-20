@@ -36,6 +36,10 @@
 		AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC84C2FBD70280034B9D1 /* ReviewWizardViewModel.swift */; };
 		AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */; };
 		AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */; };
+		AD2CC85E2FBD84A00034B9D1 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */; };
+		AD2CC85F2FBD84A00034B9D1 /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */; };
+		AD2CC8622FBD84B50034B9D1 /* CSVExportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */; };
+		AD2CC8652FBD84D00034B9D1 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,10 @@
 		AD2CC84F2FBD70280034B9D1 /* ReviewWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewWizardView.swift; sourceTree = "<group>"; };
 		AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPreset.swift; sourceTree = "<group>"; };
 		AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastSubscriptionsView.swift; sourceTree = "<group>"; };
+		AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisViewModel.swift; sourceTree = "<group>"; };
+		AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExportDocument.swift; sourceTree = "<group>"; };
+		AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +184,7 @@
 		AD2CC7E62FBCC7C90034B9D1 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8612FBD84B50034B9D1 /* Utilities */,
 				AD2CC7E32FBCC7C90034B9D1 /* Extensions */,
 				AD2CC7E42FBCC7C90034B9D1 /* Models */,
 				AD2CC7E52FBCC7C90034B9D1 /* Services */,
@@ -248,6 +257,7 @@
 		AD2CC7EE2FBCC7C90034B9D1 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8642FBD84D00034B9D1 /* ViewModels */,
 				AD2CC7ED2FBCC7C90034B9D1 /* Views */,
 			);
 			path = Settings;
@@ -282,6 +292,7 @@
 		AD2CC7F22FBCC7C90034B9D1 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC85D2FBD84A00034B9D1 /* Analysis */,
 				AD2CC8512FBD70280034B9D1 /* Review */,
 				AD2CC8482FBD59D20034B9D1 /* Calendar */,
 				AD2CC7E92FBCC7C90034B9D1 /* AddSubscription */,
@@ -357,6 +368,47 @@
 				AD2CC8502FBD70280034B9D1 /* Views */,
 			);
 			path = Review;
+			sourceTree = "<group>";
+		};
+		AD2CC85A2FBD84A00034B9D1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AD2CC85C2FBD84A00034B9D1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AD2CC85D2FBD84A00034B9D1 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC85A2FBD84A00034B9D1 /* ViewModels */,
+				AD2CC85C2FBD84A00034B9D1 /* Views */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		AD2CC8612FBD84B50034B9D1 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		AD2CC8642FBD84D00034B9D1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -515,7 +567,9 @@
 				AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */,
 				AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */,
 				AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */,
+				AD2CC8652FBD84D00034B9D1 /* SettingsViewModel.swift in Sources */,
 				AD2CC8522FBD70280034B9D1 /* ReviewSummaryView.swift in Sources */,
+				AD2CC8622FBD84B50034B9D1 /* CSVExportDocument.swift in Sources */,
 				AD2CC8532FBD70280034B9D1 /* ReviewWizardView.swift in Sources */,
 				AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */,
 				AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */,
@@ -523,6 +577,8 @@
 				AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,
 				AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */,
+				AD2CC85E2FBD84A00034B9D1 /* AnalysisView.swift in Sources */,
+				AD2CC85F2FBD84A00034B9D1 /* AnalysisViewModel.swift in Sources */,
 				AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

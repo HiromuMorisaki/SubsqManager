@@ -22,16 +22,21 @@ struct SubscriptionFormSections: View {
     @Binding var startDate: Date
     @Binding var hasTrial: Bool
     @Binding var trialEndDate: Date
+    @Binding var hasEndDate: Bool
+    @Binding var endDate: Date
     @Binding var iconName: String
     @Binding var notes: String
 
     var body: some View {
-        basicInfoSection
-        billingSection
-        trialSection
-        categorySection
-        iconSection
-        notesSection
+        Group {
+            basicInfoSection
+            billingSection
+            trialSection
+            endDateSection
+            categorySection
+            iconSection
+            notesSection
+        }
     }
 
     // MARK: - セクション
@@ -66,6 +71,17 @@ struct SubscriptionFormSections: View {
             
             if hasTrial {
                 DatePicker("トライアル終了日", selection: $trialEndDate, displayedComponents: .date)
+            }
+        }
+    }
+
+    /// 終了予定日の設定セクション
+    private var endDateSection: some View {
+        Section("終了予定") {
+            Toggle("終了日を設定する", isOn: $hasEndDate)
+            
+            if hasEndDate {
+                DatePicker("サブスク終了日", selection: $endDate, displayedComponents: .date)
             }
         }
     }

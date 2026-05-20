@@ -34,6 +34,11 @@ struct ContentView: View {
                     Label("サブスク", systemImage: "list.bullet")
                 }
 
+            AnalysisView()
+                .tabItem {
+                    Label("分析", systemImage: "chart.pie")
+                }
+
             SettingsView()
                 .tabItem {
                     Label("設定", systemImage: "gearshape")

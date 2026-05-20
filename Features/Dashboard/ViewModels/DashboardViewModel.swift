@@ -23,7 +23,7 @@ final class DashboardViewModel {
     /// - Returns: 月額合計金額（Decimal）
     func totalMonthlyAmount(_ subscriptions: [Subscription]) -> Decimal {
         subscriptions
-            .filter { !$0.isTrial }
+            .filter { !$0.isTrial && !$0.isExpired }
             .reduce(Decimal.zero) { total, subscription in
                 total + subscription.monthlyAmount
             }
@@ -34,7 +34,7 @@ final class DashboardViewModel {
     /// - Returns: 年額合計金額（Decimal）
     func totalYearlyAmount(_ subscriptions: [Subscription]) -> Decimal {
         subscriptions
-            .filter { !$0.isTrial }
+            .filter { !$0.isTrial && !$0.isExpired }
             .reduce(Decimal.zero) { total, subscription in
                 total + subscription.yearlyAmount
             }
@@ -47,7 +47,7 @@ final class DashboardViewModel {
     func nextUpcomingSubscription(_ subscriptions: [Subscription]) -> Subscription? {
         let now = Date()
         return subscriptions
-            .filter { $0.nextPaymentDate >= now }
+            .filter { $0.nextPaymentDate >= now && !$0.isExpired }
             .min { $0.nextPaymentDate < $1.nextPaymentDate }
     }
 
@@ -57,7 +57,7 @@ final class DashboardViewModel {
     func upcomingSubscriptions(_ subscriptions: [Subscription]) -> [Subscription] {
         let now = Date()
         return subscriptions
-            .filter { $0.nextPaymentDate >= now }
+            .filter { $0.nextPaymentDate >= now && !$0.isExpired }
             .sorted { $0.nextPaymentDate < $1.nextPaymentDate }
             .prefix(5)
             .map { $0 }
@@ -70,7 +70,7 @@ final class DashboardViewModel {
     func monthlyAmountByCategory(_ subscriptions: [Subscription]) -> [(Category, Decimal)] {
         var totals: [Category: Decimal] = [:]
         
-        for subscription in subscriptions where !subscription.isTrial {
+        for subscription in subscriptions where !subscription.isTrial && !subscription.isExpired {
             totals[subscription.category, default: 0] += subscription.monthlyAmount
         }
         

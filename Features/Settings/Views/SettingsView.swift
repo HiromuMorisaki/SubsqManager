@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 /// 設定画面。通知ON/OFF、通貨選択、アプリ情報を表示する。
 ///
@@ -14,6 +15,8 @@ import SwiftUI
 /// 値を変更すると自動的にUserDefaultsに保存され、アプリ再起動後も保持される。
 /// @State と同様にViewの再描画もトリガーする。
 struct SettingsView: View {
+    @Query private var subscriptions: [Subscription]
+    @State private var viewModel = SettingsViewModel()
 
     /// 通知のON/OFFフラグ（UserDefaultsに永続化）
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
@@ -28,6 +31,7 @@ struct SettingsView: View {
             Form {
                 notificationSection
                 currencySection
+                dataSection
                 appInfoSection
             }
             .navigationTitle("設定")
@@ -58,6 +62,26 @@ struct SettingsView: View {
             }
         } header: {
             Label("表示設定", systemImage: "yensign.circle")
+        }
+    }
+
+    /// データ管理セクション
+    private var dataSection: some View {
+        Section {
+            let csvDocument = CSVExportDocument(csvString: viewModel.generateCSV(from: subscriptions))
+            ShareLink(
+                item: csvDocument,
+                preview: SharePreview("サブスクリプション一覧.csv", image: Image(systemName: "tablecells"))
+            ) {
+                HStack {
+                    Label("CSVデータを書き出す", systemImage: "square.and.arrow.up")
+                    Spacer()
+                }
+            }
+        } header: {
+            Label("データ管理", systemImage: "externaldrive")
+        } footer: {
+            Text("登録されているすべてのデータをCSV形式でエクスポートします")
         }
     }
 
