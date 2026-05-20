@@ -16,14 +16,15 @@ struct AddSubscriptionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = AddSubscriptionViewModel()
+    @State private var showingPresetWizard = false
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // プリセット選択カルーセル
-                presetCarousel
+                // プリセット起動ボタン
+                presetWizardButton
 
                 Form {
                 SubscriptionFormSections(
@@ -61,39 +62,34 @@ struct AddSubscriptionView: View {
                 }
             }
         }
+        .sheet(isPresented: $showingPresetWizard) {
+            PresetSelectionWizard { preset, plan in
+                viewModel.applyPreset(preset, plan: plan)
+            }
+        }
     }
+    
     // MARK: - プリセットUI
 
-    private var presetCarousel: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(SubscriptionPreset.defaultPresets) { preset in
-                    Button {
-                        withAnimation {
-                            viewModel.applyPreset(preset)
-                        }
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: preset.iconName)
-                                .font(.title2)
-                                .foregroundStyle(Color.accentColor)
-                                .frame(width: 50, height: 50)
-                                .background(.regularMaterial)
-                                .clipShape(Circle())
-                            
-                            Text(preset.name)
-                                .font(.caption)
-                                .foregroundStyle(.primary)
-                                .lineLimit(1)
-                        }
-                        .frame(width: 80)
-                    }
-                }
+    private var presetWizardButton: some View {
+        Button {
+            showingPresetWizard = true
+        } label: {
+            HStack {
+                Image(systemName: "sparkles")
+                Text("人気のサービスから自動入力する")
+                    .fontWeight(.bold)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 12)
+            .padding()
+            .background(Color.accentColor.opacity(0.1))
+            .foregroundStyle(Color.accentColor)
         }
-        .background(Color.gray.opacity(0.1))
+        .padding(.horizontal)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
     }
 }
 

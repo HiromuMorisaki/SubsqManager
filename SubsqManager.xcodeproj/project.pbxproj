@@ -43,6 +43,7 @@
 		AD2CC8692FBD88C20034B9D1 /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */; };
 		AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */; };
 		AD2CC86E2FBD939D0034B9D1 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC86B2FBD939D0034B9D1 /* OnboardingView.swift */; };
+		AD2CC8702FBD9E450034B9D1 /* PresetSelectionWizard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC86F2FBD9E450034B9D1 /* PresetSelectionWizard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,7 @@
 		AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCardView.swift; sourceTree = "<group>"; };
 		AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingRowView.swift; sourceTree = "<group>"; };
 		AD2CC86B2FBD939D0034B9D1 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		AD2CC86F2FBD9E450034B9D1 /* PresetSelectionWizard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetSelectionWizard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +212,7 @@
 		AD2CC7E82FBCC7C90034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC86F2FBD9E450034B9D1 /* PresetSelectionWizard.swift */,
 				AD2CC8302FBD52F60034B9D1 /* AddSubscriptionView.swift */,
 				AD2CC8312FBD52F60034B9D1 /* EditSubscriptionView.swift */,
 				AD2CC8322FBD52F60034B9D1 /* SubscriptionFormSections.swift */,
@@ -594,6 +597,7 @@
 				AD2CC8352FBD52F60034B9D1 /* SubscriptionFormSections.swift in Sources */,
 				AD2CC80E2FBCD50C0034B9D1 /* ContentView.swift in Sources */,
 				AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */,
+				AD2CC8702FBD9E450034B9D1 /* PresetSelectionWizard.swift in Sources */,
 				AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */,
 				AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */,
 				AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */,

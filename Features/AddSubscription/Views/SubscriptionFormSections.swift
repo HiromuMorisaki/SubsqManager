@@ -31,8 +31,8 @@ struct SubscriptionFormSections: View {
         Group {
             basicInfoSection
             billingSection
-            trialSection
             endDateSection
+            trialSection
             categorySection
             iconSection
             notesSection
@@ -119,10 +119,19 @@ struct SubscriptionFormSections: View {
     // MARK: - 定数
 
     /// アイコン選択肢として表示するSF Symbol名のリスト
-    private static let availableIcons: [String] = [
-        "creditcard", "tv", "music.note", "film",
-        "gamecontroller", "book", "newspaper",
-        "cloud", "wifi", "desktopcomputer",
-        "briefcase", "heart", "star"
-    ]
+    /// デフォルトのリストに加えて、プリセットで使われているすべてのアイコンを網羅する
+    private static let availableIcons: [String] = {
+        let defaultIcons = [
+            "creditcard", "tv", "music.note", "film",
+            "gamecontroller", "book", "newspaper",
+            "cloud", "wifi", "desktopcomputer",
+            "briefcase", "heart", "star"
+        ]
+        let presetIcons = SubscriptionPreset.defaultPresets.map { $0.iconName }
+        
+        var allIcons = defaultIcons + presetIcons
+        var seen = Set<String>()
+        // 重複を削除しつつ順序を保持
+        return allIcons.filter { seen.insert($0).inserted }
+    }()
 }

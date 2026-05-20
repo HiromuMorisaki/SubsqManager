@@ -45,10 +45,12 @@ final class AddSubscriptionViewModel {
 
     // MARK: - プリセット適用
 
-    /// 選択されたプリセットの値をフォームに反映する
-    func applyPreset(_ preset: SubscriptionPreset) {
-        self.name = preset.name
-        self.amountText = NSDecimalNumber(decimal: preset.defaultAmount).stringValue
+    /// 選択されたプリセットとプランの値をフォームに反映する
+    func applyPreset(_ preset: SubscriptionPreset, plan: SubscriptionPlan) {
+        // 例: "Netflix (プレミアム)" のようにプラン名を付与
+        self.name = "\(preset.name) (\(plan.name))"
+        self.amountText = NSDecimalNumber(decimal: plan.amount).stringValue
+        self.billingCycle = plan.billingCycle
         self.category = preset.category
         self.iconName = preset.iconName
     }
