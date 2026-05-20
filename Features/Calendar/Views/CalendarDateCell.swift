@@ -18,12 +18,10 @@ struct CalendarDateCell: View {
             // 日付の数字
             Text(dayString)
                 .font(.system(size: 16, weight: isSelected ? .bold : .regular))
-                // 当月外の日付はグレー表示
-                .foregroundStyle(date.isCurrentMonth ? .primary : .secondary)
+                .foregroundStyle(textColor)
                 .frame(width: 32, height: 32)
-                // 選択時の背景と文字色
+                // 選択時の背景
                 .background(isSelected ? Color.accentColor : Color.clear)
-                .foregroundStyle(isSelected ? .white : (date.isCurrentMonth ? .primary : .secondary))
                 .clipShape(Circle())
 
             // 支払いがある日のインジケーター（ドット）
@@ -40,6 +38,22 @@ struct CalendarDateCell: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
         return formatter.string(from: date.date)
+    }
+
+    private var textColor: Color {
+        if isSelected { return .white }
+        
+        let weekday = Calendar.current.component(.weekday, from: date.date)
+        let baseColor: Color
+        if weekday == 1 {
+            baseColor = .red
+        } else if weekday == 7 {
+            baseColor = .blue
+        } else {
+            baseColor = .primary
+        }
+        
+        return date.isCurrentMonth ? baseColor : baseColor.opacity(0.3)
     }
 }
 

@@ -107,72 +107,9 @@ struct DashboardView: View {
             }
         }
         .padding()
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-// MARK: - サマリーカード子View
-
-/// 月額合計・年額合計を表示するカードUI。
-/// Color.primary / .secondary 等のセマンティックカラーでダークモード対応。
-struct SummaryCardView: View {
-    let title: String
-    let amount: Decimal
-    let iconName: String
-    let color: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: iconName)
-                    .foregroundStyle(color)
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Text(CurrencyHelper.formatted(amount: amount))
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundStyle(.primary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-// MARK: - 請求予定行View
-
-/// 直近の請求予定リストの各行を表示する子View。
-struct UpcomingRowView: View {
-    let subscription: Subscription
-
-    var body: some View {
-        HStack {
-            Image(systemName: subscription.iconName)
-                .font(.title3)
-                .foregroundStyle(Color.accentColor)
-                .frame(width: 32, height: 32)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(subscription.name)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                Text(subscription.nextPaymentDate, format: .dateTime.month().day())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            Text(CurrencyHelper.formatted(amount: subscription.amount))
-                .font(.subheadline)
-                .fontWeight(.semibold)
-        }
-        .padding(.vertical, 4)
+        .background(Color(NSColor.controlBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
     }
 }
 

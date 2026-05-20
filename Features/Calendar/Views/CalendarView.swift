@@ -58,9 +58,13 @@ struct CalendarView: View {
 
             Spacer()
 
-            Text(monthYearString(from: viewModel.currentMonth))
-                .font(.title2)
-                .fontWeight(.bold)
+            HStack(spacing: 8) {
+                Text(monthEmoji(from: viewModel.currentMonth))
+                    .font(.title2)
+                Text(monthYearString(from: viewModel.currentMonth))
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
 
             Spacer()
 
@@ -75,11 +79,11 @@ struct CalendarView: View {
     /// 曜日のヘッダー（日〜土）
     private var weekdayHeader: some View {
         HStack {
-            ForEach(weekdays, id: \.self) { day in
-                Text(day)
+            ForEach(weekdays.indices, id: \.self) { index in
+                Text(weekdays[index])
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(weekdayColor(for: index))
                     .frame(maxWidth: .infinity)
             }
         }
@@ -173,11 +177,36 @@ struct CalendarView: View {
         formatter.dateFormat = "yyyy年 M月"
         return formatter.string(from: date)
     }
+    
+    private func monthEmoji(from date: Date) -> String {
+        let month = Calendar.current.component(.month, from: date)
+        switch month {
+        case 1: return "🎍"
+        case 2: return "⛄️"
+        case 3: return "🌸"
+        case 4: return "🌷"
+        case 5: return "🎏"
+        case 6: return "☔️"
+        case 7: return "🎋"
+        case 8: return "🌻"
+        case 9: return "🌕"
+        case 10: return "🎃"
+        case 11: return "🍁"
+        case 12: return "🎄"
+        default: return "🗓️"
+        }
+    }
 
     private func dateString(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "M月d日"
         return formatter.string(from: date)
+    }
+
+    private func weekdayColor(for index: Int) -> Color {
+        if index == 0 { return .red } // 日曜
+        if index == 6 { return .blue } // 土曜
+        return .secondary
     }
 }
 

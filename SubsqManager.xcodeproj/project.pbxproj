@@ -40,6 +40,8 @@
 		AD2CC85F2FBD84A00034B9D1 /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */; };
 		AD2CC8622FBD84B50034B9D1 /* CSVExportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */; };
 		AD2CC8652FBD84D00034B9D1 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */; };
+		AD2CC8692FBD88C20034B9D1 /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */; };
+		AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +97,8 @@
 		AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
 		AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExportDocument.swift; sourceTree = "<group>"; };
 		AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCardView.swift; sourceTree = "<group>"; };
+		AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +235,7 @@
 		AD2CC7EB2FBCC7C90034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8682FBD88C20034B9D1 /* Components */,
 				AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */,
 				AD2CC8382FBD53700034B9D1 /* DashboardView.swift */,
 			);
@@ -411,6 +416,15 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		AD2CC8682FBD88C20034B9D1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */,
+				AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -573,6 +587,8 @@
 				AD2CC8532FBD70280034B9D1 /* ReviewWizardView.swift in Sources */,
 				AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */,
 				AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */,
+				AD2CC8692FBD88C20034B9D1 /* SummaryCardView.swift in Sources */,
+				AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */,
 				AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */,
 				AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,

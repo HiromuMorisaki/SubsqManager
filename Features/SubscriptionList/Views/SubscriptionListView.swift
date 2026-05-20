@@ -119,6 +119,11 @@ struct SubscriptionListView: View {
                 }
             }
         }
+        #if os(iOS)
+        .listStyle(.insetGrouped)
+        #else
+        .listStyle(.inset)
+        #endif
     }
 }
 
@@ -130,11 +135,16 @@ struct SubscriptionRowView: View {
     let subscription: Subscription
 
     var body: some View {
-        HStack {
-            Image(systemName: subscription.iconName)
-                .font(.title2)
-                .foregroundStyle(Color.accentColor)
-                .frame(width: 36, height: 36)
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.accentColor.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                
+                Image(systemName: subscription.iconName)
+                    .font(.title3)
+                    .foregroundStyle(Color.accentColor)
+            }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(subscription.name)
