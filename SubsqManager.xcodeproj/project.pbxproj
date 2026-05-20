@@ -31,6 +31,11 @@
 		AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8432FBD59D20034B9D1 /* CalendarViewModel.swift */; };
 		AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */; };
 		AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */; };
+		AD2CC8522FBD70280034B9D1 /* ReviewSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC84E2FBD70280034B9D1 /* ReviewSummaryView.swift */; };
+		AD2CC8532FBD70280034B9D1 /* ReviewWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC84F2FBD70280034B9D1 /* ReviewWizardView.swift */; };
+		AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC84C2FBD70280034B9D1 /* ReviewWizardViewModel.swift */; };
+		AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */; };
+		AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +82,11 @@
 		AD2CC8432FBD59D20034B9D1 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDateCell.swift; sourceTree = "<group>"; };
 		AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		AD2CC84C2FBD70280034B9D1 /* ReviewWizardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewWizardViewModel.swift; sourceTree = "<group>"; };
+		AD2CC84E2FBD70280034B9D1 /* ReviewSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSummaryView.swift; sourceTree = "<group>"; };
+		AD2CC84F2FBD70280034B9D1 /* ReviewWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewWizardView.swift; sourceTree = "<group>"; };
+		AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPreset.swift; sourceTree = "<group>"; };
+		AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastSubscriptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +156,7 @@
 		AD2CC7E42FBCC7C90034B9D1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */,
 				AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */,
 				AD2CC8082FBCD00C0034B9D1 /* Category.swift */,
 				AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */,
@@ -253,6 +264,7 @@
 		AD2CC7F02FBCC7C90034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */,
 				AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */,
 			);
 			path = Views;
@@ -270,6 +282,7 @@
 		AD2CC7F22FBCC7C90034B9D1 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8512FBD70280034B9D1 /* Review */,
 				AD2CC8482FBD59D20034B9D1 /* Calendar */,
 				AD2CC7E92FBCC7C90034B9D1 /* AddSubscription */,
 				AD2CC7EC2FBCC7C90034B9D1 /* Dashboard */,
@@ -318,6 +331,32 @@
 				AD2CC8472FBD59D20034B9D1 /* Views */,
 			);
 			path = Calendar;
+			sourceTree = "<group>";
+		};
+		AD2CC84D2FBD70280034B9D1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC84C2FBD70280034B9D1 /* ReviewWizardViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AD2CC8502FBD70280034B9D1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC84E2FBD70280034B9D1 /* ReviewSummaryView.swift */,
+				AD2CC84F2FBD70280034B9D1 /* ReviewWizardView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AD2CC8512FBD70280034B9D1 /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC84D2FBD70280034B9D1 /* ViewModels */,
+				AD2CC8502FBD70280034B9D1 /* Views */,
+			);
+			path = Review;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -476,10 +515,15 @@
 				AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */,
 				AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */,
 				AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */,
+				AD2CC8522FBD70280034B9D1 /* ReviewSummaryView.swift in Sources */,
+				AD2CC8532FBD70280034B9D1 /* ReviewWizardView.swift in Sources */,
+				AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */,
 				AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */,
 				AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */,
+				AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,
 				AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */,
+				AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

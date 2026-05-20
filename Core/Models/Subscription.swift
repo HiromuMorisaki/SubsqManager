@@ -8,6 +8,13 @@
 import Foundation
 import SwiftData
 
+/// サブスク見直し（オーディット）でのステータス
+enum ReviewStatus: String, Codable {
+    case keep = "keep"
+    case changePlan = "changePlan"
+    case cancelCandidate = "cancelCandidate"
+}
+
 /// サブスクリプション情報を永続化するSwiftDataモデル。
 ///
 /// SwiftDataの `@Model` マクロを付与すると、クラスのプロパティが自動的に
@@ -47,6 +54,9 @@ final class Subscription {
     /// 有効/無効フラグ。解約済みサブスクを非アクティブにして保持可能。
     var isActive: Bool
 
+    /// 見直し（オーディット）のステータス保存用
+    var reviewStatusRawValue: String?
+
     /// 無料トライアル終了日。nilの場合はトライアルなし。
     var trialEndDate: Date?
 
@@ -69,7 +79,8 @@ final class Subscription {
         iconName: String = "creditcard",
         notes: String = "",
         isActive: Bool = true,
-        trialEndDate: Date? = nil
+        trialEndDate: Date? = nil,
+        reviewStatusRawValue: String? = nil
     ) {
         self.name = name
         self.amount = amount
@@ -81,11 +92,23 @@ final class Subscription {
         self.notes = notes
         self.isActive = isActive
         self.trialEndDate = trialEndDate
+        self.reviewStatusRawValue = reviewStatusRawValue
         self.createdAt = Date()
         self.updatedAt = Date()
     }
 
     // MARK: - 計算プロパティ
+
+    /// レビュー状態（enum）へのアクセス用プロパティ
+    var reviewStatus: ReviewStatus? {
+        get {
+            guard let rawValue = reviewStatusRawValue else { return nil }
+            return ReviewStatus(rawValue: rawValue)
+        }
+        set {
+            reviewStatusRawValue = newValue?.rawValue
+        }
+    }
 
     /// 現在無料トライアル中かどうか。
     /// trialEndDate が設定されており、かつ現在日時が trialEndDate の日の終わり（23:59:59）以前であれば true。

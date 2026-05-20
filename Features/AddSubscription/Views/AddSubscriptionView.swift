@@ -21,7 +21,11 @@ struct AddSubscriptionView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            VStack(spacing: 0) {
+                // プリセット選択カルーセル
+                presetCarousel
+
+                Form {
                 SubscriptionFormSections(
                     name: $viewModel.name,
                     amountText: $viewModel.amountText,
@@ -33,6 +37,7 @@ struct AddSubscriptionView: View {
                     iconName: $viewModel.iconName,
                     notes: $viewModel.notes
                 )
+                }
             }
             .navigationTitle("サブスクを追加")
             #if os(iOS)
@@ -54,6 +59,39 @@ struct AddSubscriptionView: View {
                 }
             }
         }
+    }
+    // MARK: - プリセットUI
+
+    private var presetCarousel: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(SubscriptionPreset.defaultPresets) { preset in
+                    Button {
+                        withAnimation {
+                            viewModel.applyPreset(preset)
+                        }
+                    } label: {
+                        VStack(spacing: 8) {
+                            Image(systemName: preset.iconName)
+                                .font(.title2)
+                                .foregroundStyle(Color.accentColor)
+                                .frame(width: 50, height: 50)
+                                .background(.regularMaterial)
+                                .clipShape(Circle())
+                            
+                            Text(preset.name)
+                                .font(.caption)
+                                .foregroundStyle(.primary)
+                                .lineLimit(1)
+                        }
+                        .frame(width: 80)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 12)
+        }
+        .background(Color.gray.opacity(0.1))
     }
 }
 

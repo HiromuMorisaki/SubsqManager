@@ -41,6 +41,16 @@ final class AddSubscriptionViewModel {
         return true
     }
 
+    // MARK: - プリセット適用
+
+    /// 選択されたプリセットの値をフォームに反映する
+    func applyPreset(_ preset: SubscriptionPreset) {
+        self.name = preset.name
+        self.amountText = NSDecimalNumber(decimal: preset.defaultAmount).stringValue
+        self.category = preset.category
+        self.iconName = preset.iconName
+    }
+
     // MARK: - 保存
 
     /// フォームの入力内容からSubscriptionを生成し、SwiftDataに保存する。

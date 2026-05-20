@@ -18,6 +18,7 @@ struct DashboardView: View {
     ) private var subscriptions: [Subscription]
 
     @State private var viewModel = DashboardViewModel()
+    @State private var showingReviewWizard = false
 
     // MARK: - Body
 
@@ -25,6 +26,8 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    reviewButton
+
                     summaryCards
                     
                     CategoryChartView(
@@ -36,6 +39,28 @@ struct DashboardView: View {
                 .padding()
             }
             .navigationTitle("ダッシュボード")
+            .sheet(isPresented: $showingReviewWizard) {
+                ReviewWizardView(activeSubscriptions: subscriptions)
+            }
+        }
+    }
+
+    // MARK: - 見直しボタン
+
+    private var reviewButton: some View {
+        Button {
+            showingReviewWizard = true
+        } label: {
+            HStack {
+                Image(systemName: "sparkles")
+                Text("サブスクを見直す")
+                    .fontWeight(.bold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.accentColor.opacity(0.15))
+            .foregroundStyle(Color.accentColor)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
         }
     }
 

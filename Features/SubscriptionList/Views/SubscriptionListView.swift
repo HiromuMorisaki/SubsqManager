@@ -50,6 +50,20 @@ struct SubscriptionListView: View {
             .navigationTitle("サブスクリプション")
             .searchable(text: $viewModel.searchText, prompt: "サブスクを検索")
             .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink(destination: PastSubscriptionsView()) {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                }
+                #else
+                ToolbarItem(placement: .navigation) {
+                    NavigationLink(destination: PastSubscriptionsView()) {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                }
+                #endif
+                
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingAddSheet = true
