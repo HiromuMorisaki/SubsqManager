@@ -12,7 +12,7 @@ import SwiftData
 struct SubsqManagerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Subscription.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,6 +26,11 @@ struct SubsqManagerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    // アプリ初回起動時に通知許可ダイアログを表示する。
+                    // .task はViewの表示時に一度だけ非同期処理を実行する修飾子。
+                    await NotificationService.requestAuthorization()
+                }
         }
         .modelContainer(sharedModelContainer)
     }

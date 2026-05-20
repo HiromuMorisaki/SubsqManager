@@ -8,73 +8,36 @@
 import SwiftUI
 import SwiftData
 
+/// アプリのルートView。
+/// TabViewで「ダッシュボード」と「サブスク一覧」を切り替える。
+///
+/// ### TabView について
+/// iOSの画面下部にタブバーを表示し、タップで画面を切り替えるコンテナView。
+/// 各タブには Label（テキスト + SF Symbol）を設定し、
+/// .tag() で選択状態を管理する。
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
 
     var body: some View {
-        NavigationViewWrapper {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        TabView {
+            DashboardView()
+                .tabItem {
+                    Label("ダッシュボード", systemImage: "chart.bar")
                 }
-                .onDelete(perform: deleteItems)
-            }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+
+            SubscriptionListView()
+                .tabItem {
+                    Label("サブスク", systemImage: "list.bullet")
                 }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+
+            SettingsView()
+                .tabItem {
+                    Label("設定", systemImage: "gearshape")
                 }
-            }
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
-}
-
-fileprivate struct NavigationViewWrapper<Content: View>: View {
-    let content: () -> Content
-
-    var body: some View {
-#if os(macOS)
-        NavigationSplitView {
-            content()
-        } detail: {
-            Text("Select an item")
-        }
-#else
-        content()
-#endif
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Subscription.self, inMemory: true)
 }
