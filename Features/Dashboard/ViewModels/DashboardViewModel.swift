@@ -58,4 +58,21 @@ final class DashboardViewModel {
             .prefix(5)
             .map { $0 }
     }
+
+    /// カテゴリごとの月額合計金額を計算する。
+    /// グラフ表示用に、金額が0より大きいカテゴリのみを抽出して返す。
+    /// - Parameter subscriptions: @Queryで取得されたアクティブサブスクリプション
+    /// - Returns: (Category, Decimal) の配列
+    func monthlyAmountByCategory(_ subscriptions: [Subscription]) -> [(Category, Decimal)] {
+        var totals: [Category: Decimal] = [:]
+        
+        for subscription in subscriptions {
+            totals[subscription.category, default: 0] += subscription.monthlyAmount
+        }
+        
+        return totals
+            .filter { $0.value > 0 }
+            .sorted { $0.value > $1.value } // 金額の降順
+            .map { ($0.key, $0.value) }
+    }
 }

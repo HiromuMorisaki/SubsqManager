@@ -91,4 +91,16 @@ final class Subscription {
     var yearlyAmount: Decimal {
         amount * billingCycle.yearlyMultiplier
     }
+
+    // MARK: - メソッド
+
+    /// PaymentDateCalculator を使って nextPaymentDate を現在日時以降の
+    /// 最も近い請求日に更新する。startDate と billingCycle から自動計算。
+    func updateNextPaymentDate() {
+        nextPaymentDate = PaymentDateCalculator.nextPaymentDate(
+            startDate: startDate,
+            billingCycle: billingCycle
+        )
+        updatedAt = Date()
+    }
 }

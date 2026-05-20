@@ -33,6 +33,9 @@ struct SubscriptionListView: View {
     /// サブスク追加シートの表示制御フラグ
     @State private var showingAddSheet = false
 
+    /// 編集対象のサブスクリプション（nilなら編集シート非表示）
+    @State private var editingSubscription: Subscription?
+
     // MARK: - Body
 
     var body: some View {
@@ -58,6 +61,9 @@ struct SubscriptionListView: View {
             .sheet(isPresented: $showingAddSheet) {
                 AddSubscriptionView()
             }
+            .sheet(item: $editingSubscription) { subscription in
+                EditSubscriptionView(subscription: subscription)
+            }
         }
     }
 
@@ -82,6 +88,10 @@ struct SubscriptionListView: View {
                 Section {
                     ForEach(group.subscriptions) { subscription in
                         SubscriptionRowView(subscription: subscription)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                editingSubscription = subscription
+                            }
                     }
                     .onDelete { offsets in
                         viewModel.deleteSubscriptions(
@@ -124,7 +134,7 @@ struct SubscriptionRowView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text(subscription.amount.formatted(.currency(code: "JPY")))
+                Text(CurrencyHelper.formatted(amount: subscription.amount))
                     .font(.subheadline)
                     .fontWeight(.semibold)
 

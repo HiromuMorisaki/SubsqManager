@@ -1,5 +1,5 @@
 //
-//  AddSubscriptionView.swift
+//  EditSubscriptionView.swift
 //  SubsqManager
 //
 //  Created by 森崎大夢 on 2026/05/20.
@@ -8,14 +8,20 @@
 import SwiftUI
 import SwiftData
 
-/// サブスクリプション登録フォーム画面。
-/// SubscriptionListView からシートとして表示される。
-/// フォームセクションは SubscriptionFormSections を再利用。
-struct AddSubscriptionView: View {
+/// サブスクリプション編集画面。
+/// SubscriptionListView から行タップでシート表示される。
+/// フォームセクションは AddSubscriptionView と共通の SubscriptionFormSections を使用。
+struct EditSubscriptionView: View {
 
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = AddSubscriptionViewModel()
+    @State private var viewModel: EditSubscriptionViewModel
+
+    /// 編集対象の Subscription を受け取ってViewModelを初期化する。
+    init(subscription: Subscription) {
+        _viewModel = State(
+            initialValue: EditSubscriptionViewModel(subscription: subscription)
+        )
+    }
 
     // MARK: - Body
 
@@ -32,7 +38,7 @@ struct AddSubscriptionView: View {
                     notes: $viewModel.notes
                 )
             }
-            .navigationTitle("サブスクを追加")
+            .navigationTitle("サブスクを編集")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -43,7 +49,7 @@ struct AddSubscriptionView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
                         Task {
-                            if await viewModel.save(using: modelContext) {
+                            if await viewModel.save() {
                                 dismiss()
                             }
                         }
@@ -58,6 +64,14 @@ struct AddSubscriptionView: View {
 // MARK: - Preview
 
 #Preview {
-    AddSubscriptionView()
+    // プレビュー用にダミーデータを作成
+    let subscription = Subscription(
+        name: "Netflix",
+        amount: Decimal(1490),
+        billingCycle: .monthly,
+        category: .entertainment,
+        startDate: Date()
+    )
+    EditSubscriptionView(subscription: subscription)
         .modelContainer(for: Subscription.self, inMemory: true)
 }

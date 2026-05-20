@@ -1,0 +1,99 @@
+//
+//  EditSubscriptionViewModel.swift
+//  SubsqManager
+//
+//  Created by 森崎大夢 on 2026/05/20.
+//
+
+import Foundation
+import SwiftData
+
+/// サブスク編集画面のViewModel。
+/// 既存の Subscription を受け取り、フォームの初期値をセット。
+/// 保存時は新規作成ではなく、既存オブジェクトのプロパティを直接更新する。
+@Observable
+final class EditSubscriptionViewModel {
+
+    // MARK: - フォーム状態
+
+    var name: String
+    var amountText: String
+    var billingCycle: BillingCycle
+    var category: Category
+    var startDate: Date
+    var iconName: String
+    var notes: String
+
+    /// 編集対象のサブスクリプション（参照を保持）
+    private let subscription: Subscription
+
+    /// 通知IDの生成に必要な元の名前と開始日（変更前の値で旧通知をキャンセルするため）
+    private let originalName: String
+    private let originalStartDate: Date
+
+    // MARK: - 初期化
+
+    /// 既存の Subscription からフォームの初期値をセットする。
+    /// Decimal → String 変換には NSDecimalNumber.stringValue を使用し、
+    /// 浮動小数点の丸め誤差を回避する。
+    init(subscription: Subscription) {
+        self.subscription = subscription
+        self.name = subscription.name
+        self.amountText = NSDecimalNumber(decimal: subscription.amount).stringValue
+        self.billingCycle = subscription.billingCycle
+        self.category = subscription.category
+        self.startDate = subscription.startDate
+        self.iconName = subscription.iconName
+        self.notes = subscription.notes
+        self.originalName = subscription.name
+        self.originalStartDate = subscription.startDate
+    }
+
+    // MARK: - バリデーション
+
+    var isValid: Bool {
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
+        guard let amount = Decimal(string: amountText), amount > 0 else { return false }
+        return true
+    }
+
+    // MARK: - 保存
+
+    /// 既存の Subscription のプロパティを更新する。
+    /// 新規作成（insert）ではなく、SwiftData オブジェクトのプロパティを
+    /// 直接書き換えることで更新が永続化される。
+    func save() async -> Bool {
+        guard let amount = Decimal(string: amountText), amount > 0 else {
+            return false
+        }
+
+        let trimmedName = name.trimmingCharacters(in: .whitespaces)
+
+        // 既存オブジェクトのプロパティを直接更新
+        subscription.name = trimmedName
+        subscription.amount = amount
+        subscription.billingCycle = billingCycle
+        subscription.category = category
+        subscription.startDate = startDate
+        subscription.iconName = iconName
+        subscription.notes = notes.trimmingCharacters(in: .whitespaces)
+        subscription.updateNextPaymentDate()
+
+        // 旧通知をキャンセルし、新しい通知をスケジュール
+        let oldNotificationID = NotificationService.makeIdentifier(
+            name: originalName, startDate: originalStartDate
+        )
+        NotificationService.cancelReminder(identifier: oldNotificationID)
+
+        let newNotificationID = NotificationService.makeIdentifier(
+            name: trimmedName, startDate: startDate
+        )
+        await NotificationService.scheduleReminder(
+            subscriptionName: trimmedName,
+            nextPaymentDate: subscription.nextPaymentDate,
+            identifier: newNotificationID
+        )
+
+        return true
+    }
+}

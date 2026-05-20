@@ -26,6 +26,11 @@ struct DashboardView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     summaryCards
+                    
+                    CategoryChartView(
+                        data: viewModel.monthlyAmountByCategory(subscriptions)
+                    )
+                    
                     upcomingSection
                 }
                 .padding()
@@ -102,7 +107,7 @@ struct SummaryCardView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text(amount.formatted(.currency(code: "JPY")))
+            Text(CurrencyHelper.formatted(amount: amount))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundStyle(.primary)
@@ -138,7 +143,7 @@ struct UpcomingRowView: View {
 
             Spacer()
 
-            Text(subscription.amount.formatted(.currency(code: "JPY")))
+            Text(CurrencyHelper.formatted(amount: subscription.amount))
                 .font(.subheadline)
                 .fontWeight(.semibold)
         }

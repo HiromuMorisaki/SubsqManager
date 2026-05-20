@@ -62,6 +62,9 @@ final class AddSubscriptionViewModel {
             notes: notes.trimmingCharacters(in: .whitespaces)
         )
 
+        // startDate と billingCycle から正しい次回請求日を計算
+        subscription.updateNextPaymentDate()
+
         modelContext.insert(subscription)
 
         // 請求日前日のリマインド通知をスケジュール
