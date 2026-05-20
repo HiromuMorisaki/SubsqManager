@@ -16,6 +16,7 @@ import SwiftData
 /// 各タブには Label（テキスト + SF Symbol）を設定し、
 /// .tag() で選択状態を管理する。
 struct ContentView: View {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
         TabView {
@@ -44,6 +45,16 @@ struct ContentView: View {
                     Label("設定", systemImage: "gearshape")
                 }
         }
+        #if os(iOS)
+        .fullScreenCover(isPresented: .init(get: { !hasSeenOnboarding }, set: { _ in })) {
+            OnboardingView()
+        }
+        #else
+        .sheet(isPresented: .init(get: { !hasSeenOnboarding }, set: { _ in })) {
+            OnboardingView()
+                .frame(minWidth: 500, minHeight: 400)
+        }
+        #endif
     }
 }
 

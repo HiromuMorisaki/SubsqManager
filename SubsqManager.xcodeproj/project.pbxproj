@@ -42,6 +42,7 @@
 		AD2CC8652FBD84D00034B9D1 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */; };
 		AD2CC8692FBD88C20034B9D1 /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */; };
 		AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */; };
+		AD2CC86E2FBD939D0034B9D1 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC86B2FBD939D0034B9D1 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +100,7 @@
 		AD2CC8632FBD84D00034B9D1 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		AD2CC8662FBD88C20034B9D1 /* SummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCardView.swift; sourceTree = "<group>"; };
 		AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingRowView.swift; sourceTree = "<group>"; };
+		AD2CC86B2FBD939D0034B9D1 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +299,7 @@
 		AD2CC7F22FBCC7C90034B9D1 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC86D2FBD939D0034B9D1 /* Onboarding */,
 				AD2CC85D2FBD84A00034B9D1 /* Analysis */,
 				AD2CC8512FBD70280034B9D1 /* Review */,
 				AD2CC8482FBD59D20034B9D1 /* Calendar */,
@@ -423,6 +426,22 @@
 				AD2CC8672FBD88C20034B9D1 /* UpcomingRowView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		AD2CC86C2FBD939D0034B9D1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC86B2FBD939D0034B9D1 /* OnboardingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AD2CC86D2FBD939D0034B9D1 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC86C2FBD939D0034B9D1 /* Views */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -578,6 +597,7 @@
 				AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */,
 				AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */,
 				AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */,
+				AD2CC86E2FBD939D0034B9D1 /* OnboardingView.swift in Sources */,
 				AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */,
 				AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */,
 				AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */,

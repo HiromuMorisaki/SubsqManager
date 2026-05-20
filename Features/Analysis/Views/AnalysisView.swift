@@ -16,17 +16,32 @@ struct AnalysisView: View {
     ) private var subscriptions: [Subscription]
     
     @State private var viewModel = AnalysisViewModel()
+    @State private var showingAddSheet = false
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
                     if subscriptions.filter({ !$0.isTrial && !$0.isExpired }).isEmpty {
-                        ContentUnavailableView(
-                            "データがありません",
-                            systemImage: "chart.bar.xaxis",
-                            description: Text("サブスクリプションを追加すると、ここにグラフが表示されます。")
-                        )
+                        VStack(spacing: 16) {
+                            ContentUnavailableView(
+                                "データがありません",
+                                systemImage: "chart.bar.xaxis",
+                                description: Text("サブスクリプションを追加すると、ここにグラフが表示されます。")
+                            )
+                            
+                            Button {
+                                showingAddSheet = true
+                            } label: {
+                                Text("最初のサブスクを登録する")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .frame(maxWidth: 300)
+                                    .background(Color.accentColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            }
+                        }
                         .padding(.top, 40)
                     } else {
                         trendChartSection
@@ -37,6 +52,18 @@ struct AnalysisView: View {
             }
             .navigationTitle("分析")
             .background(Color.gray.opacity(0.05))
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingAddSheet = true
+                    } label: {
+                        Label("追加", systemImage: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingAddSheet) {
+                AddSubscriptionView()
+            }
         }
     }
     

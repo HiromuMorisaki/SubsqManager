@@ -19,30 +19,84 @@ struct DashboardView: View {
 
     @State private var viewModel = DashboardViewModel()
     @State private var showingReviewWizard = false
+    @State private var showingAddSheet = false
 
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    reviewButton
-
-                    summaryCards
-                    
-                    CategoryChartView(
-                        data: viewModel.monthlyAmountByCategory(subscriptions)
-                    )
-                    
-                    upcomingSection
+                if subscriptions.isEmpty {
+                    emptyStateView
+                } else {
+                    VStack(spacing: 20) {
+                        reviewButton
+                        summaryCards
+                        CategoryChartView(data: viewModel.monthlyAmountByCategory(subscriptions))
+                        upcomingSection
+                    }
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("ダッシュボード")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingAddSheet = true
+                    } label: {
+                        Label("追加", systemImage: "plus")
+                    }
+                }
+            }
             .sheet(isPresented: $showingReviewWizard) {
                 ReviewWizardView(activeSubscriptions: subscriptions)
             }
+            .sheet(isPresented: $showingAddSheet) {
+                AddSubscriptionView()
+            }
         }
+    }
+    
+    // MARK: - 空状態（Empty State）
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            Spacer().frame(height: 60)
+            
+            Image(systemName: "tray.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80, height: 80)
+                .foregroundStyle(Color.accentColor.opacity(0.5))
+            
+            VStack(spacing: 8) {
+                Text("サブスクがありません")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("まずは最初のサブスクリプションを登録して、\nダッシュボードを作成しましょう。")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button {
+                showingAddSheet = true
+            } label: {
+                Text("最初のサブスクを登録する")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding()
+                    .frame(maxWidth: 300)
+                    .background(Color.accentColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            .padding(.top, 16)
+            
+            Spacer()
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - 見直しボタン

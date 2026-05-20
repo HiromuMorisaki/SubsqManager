@@ -17,6 +17,7 @@ import SwiftData
 struct SettingsView: View {
     @Query private var subscriptions: [Subscription]
     @State private var viewModel = SettingsViewModel()
+    @State private var showingOnboarding = false
 
     /// 通知のON/OFFフラグ（UserDefaultsに永続化）
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
@@ -32,6 +33,7 @@ struct SettingsView: View {
                 notificationSection
                 currencySection
                 dataSection
+                helpSection
                 appInfoSection
             }
             .navigationTitle("設定")
@@ -82,6 +84,31 @@ struct SettingsView: View {
             Label("データ管理", systemImage: "externaldrive")
         } footer: {
             Text("登録されているすべてのデータをCSV形式でエクスポートします")
+        }
+    }
+
+    /// ヘルプセクション
+    private var helpSection: some View {
+        Section {
+            Button {
+                showingOnboarding = true
+            } label: {
+                HStack {
+                    Label("アプリの使い方を見る", systemImage: "questionmark.circle")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .foregroundStyle(.primary)
+        } header: {
+            Label("ヘルプ", systemImage: "info.circle")
+        }
+        .sheet(isPresented: $showingOnboarding) {
+            OnboardingView {
+                showingOnboarding = false
+            }
         }
     }
 

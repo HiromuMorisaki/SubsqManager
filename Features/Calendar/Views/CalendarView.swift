@@ -16,6 +16,7 @@ struct CalendarView: View {
     private var subscriptions: [Subscription]
 
     @State private var viewModel = CalendarViewModel()
+    @State private var showingAddSheet = false
 
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
@@ -43,6 +44,18 @@ struct CalendarView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingAddSheet = true
+                    } label: {
+                        Label("追加", systemImage: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingAddSheet) {
+                AddSubscriptionView()
+            }
         }
     }
 
