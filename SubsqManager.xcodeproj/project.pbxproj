@@ -28,6 +28,9 @@
 		AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */; };
 		AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */; };
 		AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */; };
+		AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8432FBD59D20034B9D1 /* CalendarViewModel.swift */; };
+		AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */; };
+		AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +74,9 @@
 		AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListViewModel.swift; sourceTree = "<group>"; };
 		AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListView.swift; sourceTree = "<group>"; };
 		AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryChartView.swift; sourceTree = "<group>"; };
+		AD2CC8432FBD59D20034B9D1 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDateCell.swift; sourceTree = "<group>"; };
+		AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +270,7 @@
 		AD2CC7F22FBCC7C90034B9D1 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8482FBD59D20034B9D1 /* Calendar */,
 				AD2CC7E92FBCC7C90034B9D1 /* AddSubscription */,
 				AD2CC7EC2FBCC7C90034B9D1 /* Dashboard */,
 				AD2CC7EE2FBCC7C90034B9D1 /* Settings */,
@@ -285,6 +292,32 @@
 			children = (
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		AD2CC8442FBD59D20034B9D1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8432FBD59D20034B9D1 /* CalendarViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AD2CC8472FBD59D20034B9D1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */,
+				AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AD2CC8482FBD59D20034B9D1 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				AD2CC8442FBD59D20034B9D1 /* ViewModels */,
+				AD2CC8472FBD59D20034B9D1 /* Views */,
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -440,6 +473,9 @@
 				AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */,
 				AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */,
 				AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */,
+				AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */,
+				AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */,
+				AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */,
 				AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */,
 				AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,

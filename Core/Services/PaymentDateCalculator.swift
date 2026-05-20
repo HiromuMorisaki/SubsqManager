@@ -75,6 +75,55 @@ enum PaymentDateCalculator {
         return candidate
     }
 
+    /// 指定された月内に発生するすべての請求日を取得する。
+    /// - Parameters:
+    ///   - subscription: 対象のサブスクリプション
+    ///   - targetMonth: 取得対象の月（この日付が含まれる月の1日〜月末までを探索する）
+    /// - Returns: 月内の請求日の配列（昇順）
+    static func paymentDates(
+        for subscription: Subscription,
+        inMonth targetMonth: Date
+    ) -> [Date] {
+        let calendar = Calendar.current
+        
+        // targetMonth の月の初日と最終日を計算
+        let components = calendar.dateComponents([.year, .month], from: targetMonth)
+        guard let startOfMonth = calendar.date(from: components),
+              let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, second: -1), to: startOfMonth) else {
+            return []
+        }
+        
+        var dates: [Date] = []
+        var currentRef = startOfMonth
+        
+        // startOfMonth から順に nextPaymentDate を計算し、endOfMonth を超えるまでループ
+        while true {
+            let nextDate = nextPaymentDate(
+                startDate: subscription.startDate,
+                billingCycle: subscription.billingCycle,
+                after: currentRef
+            )
+            
+            // 算出した請求日が月の最終日より後なら探索終了
+            if nextDate > endOfMonth {
+                break
+            }
+            
+            // 算出した請求日が今月内なら追加
+            if nextDate >= startOfMonth {
+                dates.append(nextDate)
+            }
+            
+            // 次の基準日を「今回の請求日の翌日」に設定してループ
+            guard let nextRef = calendar.date(byAdding: .day, value: 1, to: nextDate) else {
+                break
+            }
+            currentRef = nextRef
+        }
+        
+        return dates
+    }
+
     // MARK: - Private ヘルパー
 
     /// startDate から referenceDate までに経過した請求間隔の回数を計算する。

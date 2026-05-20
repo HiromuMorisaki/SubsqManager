@@ -20,12 +20,15 @@ struct SubscriptionFormSections: View {
     @Binding var billingCycle: BillingCycle
     @Binding var category: Category
     @Binding var startDate: Date
+    @Binding var hasTrial: Bool
+    @Binding var trialEndDate: Date
     @Binding var iconName: String
     @Binding var notes: String
 
     var body: some View {
         basicInfoSection
         billingSection
+        trialSection
         categorySection
         iconSection
         notesSection
@@ -53,6 +56,17 @@ struct SubscriptionFormSections: View {
                 }
             }
             DatePicker("開始日", selection: $startDate, displayedComponents: .date)
+        }
+    }
+
+    /// 無料トライアルの設定セクション
+    private var trialSection: some View {
+        Section("無料トライアル") {
+            Toggle("無料トライアル中", isOn: $hasTrial)
+            
+            if hasTrial {
+                DatePicker("トライアル終了日", selection: $trialEndDate, displayedComponents: .date)
+            }
         }
     }
 

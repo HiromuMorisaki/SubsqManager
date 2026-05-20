@@ -24,6 +24,11 @@ struct ContentView: View {
                     Label("ダッシュボード", systemImage: "chart.bar")
                 }
 
+            CalendarView()
+                .tabItem {
+                    Label("カレンダー", systemImage: "calendar")
+                }
+
             SubscriptionListView()
                 .tabItem {
                     Label("サブスク", systemImage: "list.bullet")

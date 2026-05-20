@@ -26,6 +26,8 @@ final class AddSubscriptionViewModel {
     var billingCycle: BillingCycle = .monthly
     var category: Category = .other
     var startDate: Date = Date()
+    var hasTrial: Bool = false
+    var trialEndDate: Date = Date().addingTimeInterval(86400 * 14) // デフォルトで2週間後
     var iconName: String = "creditcard"
     var notes: String = ""
 
@@ -59,7 +61,8 @@ final class AddSubscriptionViewModel {
             category: category,
             startDate: startDate,
             iconName: iconName,
-            notes: notes.trimmingCharacters(in: .whitespaces)
+            notes: notes.trimmingCharacters(in: .whitespaces),
+            trialEndDate: hasTrial ? trialEndDate : nil
         )
 
         // startDate と billingCycle から正しい次回請求日を計算
@@ -76,6 +79,16 @@ final class AddSubscriptionViewModel {
             nextPaymentDate: subscription.nextPaymentDate,
             identifier: notificationID
         )
+
+        // トライアル設定がある場合は専用のリマインド通知をスケジュール
+        if hasTrial {
+            let trialNotificationID = notificationID + "_trial"
+            await NotificationService.scheduleTrialReminder(
+                subscriptionName: trimmedName,
+                trialEndDate: trialEndDate,
+                identifier: trialNotificationID
+            )
+        }
 
         return true
     }

@@ -22,18 +22,22 @@ final class DashboardViewModel {
     /// - Parameter subscriptions: @Queryで取得されたアクティブサブスクリプション
     /// - Returns: 月額合計金額（Decimal）
     func totalMonthlyAmount(_ subscriptions: [Subscription]) -> Decimal {
-        subscriptions.reduce(Decimal.zero) { total, subscription in
-            total + subscription.monthlyAmount
-        }
+        subscriptions
+            .filter { !$0.isTrial }
+            .reduce(Decimal.zero) { total, subscription in
+                total + subscription.monthlyAmount
+            }
     }
 
     /// 年額合計を計算する。
     /// - Parameter subscriptions: @Queryで取得されたアクティブサブスクリプション
     /// - Returns: 年額合計金額（Decimal）
     func totalYearlyAmount(_ subscriptions: [Subscription]) -> Decimal {
-        subscriptions.reduce(Decimal.zero) { total, subscription in
-            total + subscription.yearlyAmount
-        }
+        subscriptions
+            .filter { !$0.isTrial }
+            .reduce(Decimal.zero) { total, subscription in
+                total + subscription.yearlyAmount
+            }
     }
 
     /// 次回請求が最も近いサブスクリプションを返す。
@@ -66,7 +70,7 @@ final class DashboardViewModel {
     func monthlyAmountByCategory(_ subscriptions: [Subscription]) -> [(Category, Decimal)] {
         var totals: [Category: Decimal] = [:]
         
-        for subscription in subscriptions {
+        for subscription in subscriptions where !subscription.isTrial {
             totals[subscription.category, default: 0] += subscription.monthlyAmount
         }
         

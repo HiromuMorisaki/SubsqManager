@@ -47,6 +47,9 @@ final class Subscription {
     /// 有効/無効フラグ。解約済みサブスクを非アクティブにして保持可能。
     var isActive: Bool
 
+    /// 無料トライアル終了日。nilの場合はトライアルなし。
+    var trialEndDate: Date?
+
     /// レコード作成日時
     var createdAt: Date
 
@@ -65,7 +68,8 @@ final class Subscription {
         nextPaymentDate: Date? = nil,
         iconName: String = "creditcard",
         notes: String = "",
-        isActive: Bool = true
+        isActive: Bool = true,
+        trialEndDate: Date? = nil
     ) {
         self.name = name
         self.amount = amount
@@ -76,11 +80,20 @@ final class Subscription {
         self.iconName = iconName
         self.notes = notes
         self.isActive = isActive
+        self.trialEndDate = trialEndDate
         self.createdAt = Date()
         self.updatedAt = Date()
     }
 
     // MARK: - 計算プロパティ
+
+    /// 現在無料トライアル中かどうか。
+    /// trialEndDate が設定されており、かつ現在日時が trialEndDate の日の終わり（23:59:59）以前であれば true。
+    var isTrial: Bool {
+        guard let trialEndDate else { return false }
+        let endOfDay = Calendar.current.startOfDay(for: trialEndDate).addingTimeInterval(86400 - 1)
+        return Date() <= endOfDay
+    }
 
     /// 月額換算金額
     var monthlyAmount: Decimal {

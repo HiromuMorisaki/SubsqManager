@@ -21,6 +21,8 @@ final class EditSubscriptionViewModel {
     var billingCycle: BillingCycle
     var category: Category
     var startDate: Date
+    var hasTrial: Bool
+    var trialEndDate: Date
     var iconName: String
     var notes: String
 
@@ -43,6 +45,8 @@ final class EditSubscriptionViewModel {
         self.billingCycle = subscription.billingCycle
         self.category = subscription.category
         self.startDate = subscription.startDate
+        self.hasTrial = subscription.trialEndDate != nil
+        self.trialEndDate = subscription.trialEndDate ?? Date().addingTimeInterval(86400 * 14)
         self.iconName = subscription.iconName
         self.notes = subscription.notes
         self.originalName = subscription.name
@@ -77,6 +81,7 @@ final class EditSubscriptionViewModel {
         subscription.startDate = startDate
         subscription.iconName = iconName
         subscription.notes = notes.trimmingCharacters(in: .whitespaces)
+        subscription.trialEndDate = hasTrial ? trialEndDate : nil
         subscription.updateNextPaymentDate()
 
         // 旧通知をキャンセルし、新しい通知をスケジュール
@@ -93,6 +98,20 @@ final class EditSubscriptionViewModel {
             nextPaymentDate: subscription.nextPaymentDate,
             identifier: newNotificationID
         )
+
+        // 旧トライアル通知をキャンセル
+        let oldTrialNotificationID = oldNotificationID + "_trial"
+        NotificationService.cancelReminder(identifier: oldTrialNotificationID)
+
+        // 新しいトライアル通知をスケジュール
+        if hasTrial {
+            let trialNotificationID = newNotificationID + "_trial"
+            await NotificationService.scheduleTrialReminder(
+                subscriptionName: trimmedName,
+                trialEndDate: trialEndDate,
+                identifier: trialNotificationID
+            )
+        }
 
         return true
     }

@@ -90,6 +90,54 @@ enum NotificationService {
         }
     }
 
+    /// 無料体験終了前のリマインド通知をスケジュールする。
+    /// 終了日の2日前と1日前の午前9時に通知を送る。
+    /// - Parameters:
+    ///   - subscriptionName: サブスク名
+    ///   - trialEndDate: トライアル終了日
+    ///   - identifier: 通知の基本となる一意識別子
+    static func scheduleTrialReminder(
+        subscriptionName: String,
+        trialEndDate: Date,
+        identifier: String
+    ) async {
+        guard UserDefaults.standard.bool(forKey: "notificationsEnabled") else { return }
+
+        let calendar = Calendar.current
+        let center = UNUserNotificationCenter.current()
+
+        // 2日前と1日前のスケジュール設定
+        let offsets = [-2, -1]
+        
+        for offset in offsets {
+            guard let reminderDate = calendar.date(byAdding: .day, value: offset, to: trialEndDate) else { continue }
+            guard reminderDate > Date() else { continue }
+
+            let content = UNMutableNotificationContent()
+            let dayText = offset == -1 ? "明日" : "明後日"
+            content.title = "無料体験が\(dayText)終了します"
+            content.body = "\(subscriptionName) の無料体験期間が終了し、課金が開始される可能性があります。"
+            content.sound = .default
+
+            var triggerComponents = calendar.dateComponents([.year, .month, .day], from: reminderDate)
+            triggerComponents.hour = 9
+            triggerComponents.minute = 0
+
+            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+            let request = UNNotificationRequest(
+                identifier: "\(identifier)_day\(offset)",
+                content: content,
+                trigger: trigger
+            )
+
+            do {
+                try await center.add(request)
+            } catch {
+                print("トライアル通知スケジュールエラー: \(error)")
+            }
+        }
+    }
+
     // MARK: - 通知のキャンセル
 
     /// 指定した識別子の通知をキャンセルする。
