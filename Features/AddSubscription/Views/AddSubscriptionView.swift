@@ -15,8 +15,14 @@ struct AddSubscriptionView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = AddSubscriptionViewModel()
+    @State private var viewModel: AddSubscriptionViewModel
     @State private var showingPresetWizard = false
+
+    init(reductionHistory: ReductionHistory? = nil, onSaveSuccess: (() -> Void)? = nil) {
+        let vm = AddSubscriptionViewModel(reductionHistory: reductionHistory)
+        vm.onSaveSuccess = onSaveSuccess
+        _viewModel = State(initialValue: vm)
+    }
 
     // MARK: - Body
 

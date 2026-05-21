@@ -8,39 +8,41 @@
 import SwiftUI
 import SwiftData
 
-/// 過去契約していた（解約済みの）サブスクリプションを一覧表示する画面。
+/// 過去に削減（解約）したサブスクリプションの削減履歴を一覧表示する画面。
 struct PastSubscriptionsView: View {
     @Environment(\.modelContext) private var modelContext
     
-    // isActive が false のものを取得
+    // 削減履歴を解約日の降順で取得
     @Query(
-        filter: #Predicate<Subscription> { $0.isActive == false },
-        sort: \Subscription.updatedAt,
+        sort: \ReductionHistory.cancelledDate,
         order: .reverse
-    ) private var pastSubscriptions: [Subscription]
+    ) private var reductionHistories: [ReductionHistory]
+    
+    /// 復元対象の履歴（シート起動トリガー）
+    @State private var restoringHistory: ReductionHistory? = nil
     
     var body: some View {
         Group {
-            if pastSubscriptions.isEmpty {
+            if reductionHistories.isEmpty {
                 ContentUnavailableView(
-                    "過去のサブスクはありません",
-                    systemImage: "clock.arrow.circlepath",
-                    description: Text("解約したサブスクリプションはここに表示されます。")
+                    "削減履歴はありません",
+                    systemImage: "sparkles",
+                    description: Text("削減（解約）したサブスクリプションはここに表示されます。")
                 )
             } else {
                 List {
-                    ForEach(pastSubscriptions) { sub in
-                        pastSubscriptionRow(sub)
-                            .swipeActions(edge: .trailing) {
+                    ForEach(reductionHistories) { history in
+                        reductionHistoryRow(history)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
-                                    delete(sub)
+                                    delete(history)
                                 } label: {
                                     Label("完全に削除", systemImage: "trash")
                                 }
                             }
-                            .swipeActions(edge: .leading) {
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 Button {
-                                    restore(sub)
+                                    restoringHistory = history
                                 } label: {
                                     Label("復元", systemImage: "arrow.uturn.backward")
                                 }
@@ -50,61 +52,111 @@ struct PastSubscriptionsView: View {
                 }
             }
         }
-        .navigationTitle("過去のサブスク")
+        .navigationTitle("削減履歴")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if !reductionHistories.isEmpty {
+                    Button {
+                        shareCumulativeSavings()
+                    } label: {
+                        Label("実績をシェア", systemImage: "square.and.arrow.up")
+                    }
+                }
+            }
+        }
+        .sheet(item: $restoringHistory) { history in
+            AddSubscriptionView(reductionHistory: history) {
+                // プレフィルされたフォームから新規保存が成功したタイミングで削減履歴から削除
+                withAnimation {
+                    modelContext.delete(history)
+                    try? modelContext.save()
+                }
+            }
+        }
     }
     
-    private func pastSubscriptionRow(_ sub: Subscription) -> some View {
-        HStack {
-            Image(systemName: sub.iconName)
-                .font(.title2)
-                .foregroundStyle(.gray)
-                .frame(width: 40)
+    // MARK: - 累積集計とSNSシェア
+    
+    private var totalYearlySavings: Decimal {
+        reductionHistories.reduce(0) { $0 + $1.yearlyAmount }
+    }
+    
+    private var totalMonthlySavings: Decimal {
+        reductionHistories.reduce(0) { $0 + $1.monthlyAmount }
+    }
+    
+    @MainActor
+    private func shareCumulativeSavings() {
+        #if os(iOS)
+        let card = ShareSavingsCard(
+            title: "コテサクでこれだけ削減！\n累計の固定費をカットしました",
+            yearlySavings: totalYearlySavings,
+            monthlySavings: totalMonthlySavings,
+            serviceCount: reductionHistories.count
+        )
+        
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = 3.0 // 高解像度での画像出力用
+        
+        if let image = renderer.uiImage {
+            shareImage(image)
+        }
+        #else
+        shareImage("dummy")
+        #endif
+    }
+    
+    private func reductionHistoryRow(_ history: ReductionHistory) -> some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.gray.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                
+                Image(systemName: history.iconName)
+                    .font(.title3)
+                    .foregroundStyle(.gray)
+            }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(sub.name)
+                Text(history.name)
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
-                Text(sub.category.displayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Text(history.category.displayName)
+                    Text("•")
+                    Text("\(history.cancelledDate, format: .dateTime.month().day()) に削減")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
             
             Spacer()
             
-            Text(CurrencyHelper.formatted(amount: sub.amount))
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(CurrencyHelper.formatted(amount: history.amount))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                
+                Text(history.billingCycle.displayName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 4)
     }
     
     // MARK: - Actions
     
-    private func restore(_ sub: Subscription) {
+    private func delete(_ history: ReductionHistory) {
         withAnimation {
-            sub.isActive = true
-            sub.updatedAt = Date()
-            
-            // 復元時に通知を再スケジュールする処理を入れることも可能
-            sub.updateNextPaymentDate()
-            Task {
-                let notificationID = NotificationService.makeIdentifier(name: sub.name, startDate: sub.startDate)
-                await NotificationService.scheduleReminder(
-                    subscriptionName: sub.name,
-                    nextPaymentDate: sub.nextPaymentDate,
-                    identifier: notificationID
-                )
-            }
-        }
-    }
-    
-    private func delete(_ sub: Subscription) {
-        withAnimation {
-            modelContext.delete(sub)
+            modelContext.delete(history)
+            try? modelContext.save()
         }
     }
 }

@@ -27,6 +27,8 @@ struct CalendarView: View {
                 VStack(spacing: 20) {
                     calendarHeader
                     
+                    remainingPaymentsHeader
+                    
                     VStack(spacing: 8) {
                         weekdayHeader
                         calendarGrid
@@ -89,6 +91,41 @@ struct CalendarView: View {
         .padding(.horizontal)
     }
 
+    /// カレンダー上部の月次残り支払いサマリーヘッダー
+    private var remainingPaymentsHeader: some View {
+        let remaining = viewModel.remainingPayments(from: subscriptions)
+        
+        return HStack {
+            Spacer()
+            HStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Image(systemName: "clock")
+                    Text("残り支払件数:")
+                    Text("\(remaining.count)件")
+                        .fontWeight(.bold)
+                }
+                
+                Text("|")
+                    .foregroundStyle(.secondary.opacity(0.5))
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "yensign.circle")
+                    Text("残り支払い合計:")
+                    Text(CurrencyHelper.formatted(amount: remaining.total))
+                        .fontWeight(.bold)
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.accentColor.opacity(0.08))
+            .clipShape(Capsule())
+            Spacer()
+        }
+        .padding(.horizontal)
+    }
+
     /// 曜日のヘッダー（日〜土）
     private var weekdayHeader: some View {
         HStack {
@@ -109,13 +146,14 @@ struct CalendarView: View {
         
         return LazyVGrid(columns: columns, spacing: 12) {
             ForEach(dates) { calDate in
-                let hasPayment = !viewModel.subscriptions(for: calDate.date, from: subscriptions).isEmpty
+                let daySubs = viewModel.subscriptions(for: calDate.date, from: subscriptions)
+                let paymentAmount = viewModel.totalAmount(for: daySubs)
                 let isSelected = Calendar.current.isDate(calDate.date, inSameDayAs: viewModel.selectedDate)
                 
                 CalendarDateCell(
                     date: calDate,
                     isSelected: isSelected,
-                    hasPayment: hasPayment
+                    paymentAmount: paymentAmount
                 )
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -158,20 +196,50 @@ struct CalendarView: View {
                 .frame(height: 150)
             } else {
                 ForEach(selectedSubs) { sub in
-                    // SubscriptionRowViewを再利用し、月額ではなくその日の支払い額を表示するように調整
-                    // ただしSubscriptionRowViewは内部で sub.amount を表示しているためそのまま使える
                     HStack {
                         Image(systemName: sub.iconName)
                             .foregroundStyle(Color.accentColor)
                             .frame(width: 30)
                         
-                        Text(sub.name)
-                            .font(.body)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(sub.name)
+                                .font(.body)
+                                .fontWeight(.medium)
+                            
+                            if let days = daysRemaining(to: viewModel.selectedDate) {
+                                let badgeText: String = {
+                                    if days == 0 { return "今日" }
+                                    if days == 1 { return "明日" }
+                                    return "あと\(days)日"
+                                }()
+                                let badgeColor: Color = {
+                                    if days == 0 { return .red }
+                                    if days == 1 { return .orange }
+                                    return .blue
+                                }()
+                                
+                                Text(badgeText)
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(badgeColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                            } else {
+                                Text("支払済")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.secondary.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                            }
+                        }
                         
                         Spacer()
                         
                         Text(CurrencyHelper.formatted(amount: sub.amount))
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
                     }
                     .padding()
                     .background(.regularMaterial)
@@ -220,6 +288,17 @@ struct CalendarView: View {
         if index == 0 { return .red } // 日曜
         if index == 6 { return .blue } // 土曜
         return .secondary
+    }
+
+    private func daysRemaining(to targetDate: Date) -> Int? {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let target = calendar.startOfDay(for: targetDate)
+        
+        guard target >= today else { return nil }
+        
+        let components = calendar.dateComponents([.day], from: today, to: target)
+        return components.day
     }
 }
 

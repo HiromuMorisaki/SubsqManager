@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 /// ダッシュボード画面のViewModel。
 /// サブスクリプション一覧から月額合計・年額合計・次回請求情報を計算する。
@@ -16,6 +17,54 @@ import Foundation
 /// 例: 週額¥500 → 月額換算 ¥500 × (52/12) ≈ ¥2,167
 @Observable
 final class DashboardViewModel {
+
+    /// 旧データ（isActive == false）から ReductionHistory へのマイグレーション処理を実行する。
+    /// 一度だけ実行されるように UserDefaults で管理する。
+    func migrateLegacyInactiveSubscriptions(using modelContext: ModelContext) {
+        let key = "hasMigratedLegacyInactiveSubscriptions"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+
+        do {
+            let descriptor = FetchDescriptor<Subscription>(
+                predicate: #Predicate<Subscription> { $0.isActive == false }
+            )
+            let legacySubs = try modelContext.fetch(descriptor)
+
+            guard !legacySubs.isEmpty else {
+                UserDefaults.standard.set(true, forKey: key)
+                return
+            }
+
+            for sub in legacySubs {
+                let history = ReductionHistory(
+                    name: sub.name,
+                    amount: sub.amount,
+                    billingCycle: sub.billingCycle,
+                    category: sub.category,
+                    cancelledDate: sub.updatedAt,
+                    iconName: sub.iconName,
+                    originalMemo: sub.notes.isEmpty ? nil : sub.notes
+                )
+                modelContext.insert(history)
+                modelContext.delete(sub)
+            }
+
+            try modelContext.save()
+            UserDefaults.standard.set(true, forKey: key)
+        } catch {
+            print("Failed to migrate legacy inactive subscriptions: \(error)")
+        }
+    }
+
+    /// 累計削減額（月額換算）を計算する。
+    func totalReducedMonthlyAmount(_ histories: [ReductionHistory]) -> Decimal {
+        histories.reduce(Decimal.zero) { $0 + $1.monthlyAmount }
+    }
+
+    /// 累計削減額（年額換算）を計算する。
+    func totalReducedYearlyAmount(_ histories: [ReductionHistory]) -> Decimal {
+        histories.reduce(Decimal.zero) { $0 + $1.yearlyAmount }
+    }
 
     /// 月額合計を計算する。
     /// 全アクティブサブスクの金額を monthlyMultiplier で月額に変換して合算。
@@ -51,7 +100,7 @@ final class DashboardViewModel {
             .min { $0.nextPaymentDate < $1.nextPaymentDate }
     }
 
-    /// 直近の請求予定リスト（最大5件）を返す。
+    /// 直近 of 請求予定リスト（最大5件）を返す。
     /// - Parameter subscriptions: @Queryで取得されたアクティブサブスクリプション
     /// - Returns: 次回請求日が近い順にソートされた配列（最大5件）
     func upcomingSubscriptions(_ subscriptions: [Subscription]) -> [Subscription] {

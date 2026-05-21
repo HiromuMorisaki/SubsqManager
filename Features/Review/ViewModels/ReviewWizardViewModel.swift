@@ -67,15 +67,32 @@ final class ReviewWizardViewModel {
         cancelCandidates.reduce(Decimal.zero) { $0 + $1.yearlyAmount }
     }
     
-    /// 解約候補を一括で非アクティブ（解約済み）にする
-    func confirmCancellations() {
+    /// 解約候補を一括で解約し、削減履歴に記録して元のサブスクを物理削除する
+    func confirmCancellations(using modelContext: ModelContext) {
         for sub in cancelCandidates {
-            sub.isActive = false
-            // 通知のキャンセルも必要だが、ここでは簡単のため割愛、
-            // もしくはNotificationService.cancelReminderを呼ぶ
+            let history = ReductionHistory(
+                name: sub.name,
+                amount: sub.amount,
+                billingCycle: sub.billingCycle,
+                category: sub.category,
+                cancelledDate: Date(),
+                iconName: sub.iconName,
+                originalMemo: sub.notes.isEmpty ? nil : sub.notes
+            )
+            modelContext.insert(history)
+
             let notificationID = NotificationService.makeIdentifier(name: sub.name, startDate: sub.startDate)
             NotificationService.cancelReminder(identifier: notificationID)
             NotificationService.cancelReminder(identifier: notificationID + "_trial")
+            NotificationService.cancelReminder(identifier: notificationID + "_end")
+
+            modelContext.delete(sub)
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save cancellations in ReviewWizard: \(error)")
         }
     }
 }

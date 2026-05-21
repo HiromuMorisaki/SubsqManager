@@ -111,26 +111,60 @@ struct AnalysisView: View {
                 .foregroundStyle(.secondary)
             
             if #available(iOS 17.0, macOS 14.0, *) {
-                Chart {
-                    ForEach(viewModel.categoryBreakdown(from: subscriptions)) { data in
-                        SectorMark(
-                            angle: .value("金額", data.amount),
-                            innerRadius: .ratio(0.6),
-                            angularInset: 1.5
-                        )
-                        .cornerRadius(4)
-                        .foregroundStyle(by: .value("カテゴリ", data.category.displayName))
-                        .annotation(position: .overlay) {
-                            // 金額が大きければアイコンを表示するなど可能
-                            Image(systemName: data.category.iconName)
-                                .font(.caption2)
-                                .foregroundStyle(.white)
-                                .opacity(0.8)
+                let breakdown = viewModel.categoryBreakdown(from: subscriptions)
+                let totalAmount = breakdown.reduce(Decimal.zero) { $0 + $1.amount }
+                
+                VStack(spacing: 16) {
+                    Chart {
+                        ForEach(breakdown) { data in
+                            SectorMark(
+                                angle: .value("金額", data.amount),
+                                innerRadius: .ratio(0.65),
+                                angularInset: 1.5
+                            )
+                            .cornerRadius(4)
+                            .foregroundStyle(by: .value("カテゴリ", data.category.displayName))
+                            .annotation(position: .overlay) {
+                                // 金額が大きければアイコンを表示するなど可能
+                                Image(systemName: data.category.iconName)
+                                    .font(.caption2)
+                                    .foregroundStyle(.white)
+                                    .opacity(0.8)
+                            }
+                        }
+                    }
+                    .chartLegend(.hidden)
+                    .frame(height: 220)
+                    .padding(.vertical, 8)
+                    
+                    Divider()
+                    
+                    VStack(spacing: 10) {
+                        ForEach(breakdown) { data in
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(data.category.color)
+                                    .frame(width: 10, height: 10)
+                                
+                                Text(data.category.displayName)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.primary)
+                                
+                                Spacer()
+                                
+                                Text(CurrencyHelper.formatted(amount: data.amount))
+                                    .font(.subheadline.monospacedDigit())
+                                    .fontWeight(.semibold)
+                                
+                                let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: data.amount).doubleValue / NSDecimalNumber(decimal: totalAmount).doubleValue * 100) : 0
+                                Text(String(format: "%.1f%%", percentage))
+                                    .font(.caption.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 50, alignment: .trailing)
+                            }
                         }
                     }
                 }
-                .chartLegend(position: .bottom, alignment: .center)
-                .frame(height: 300)
                 .padding()
                 .background(Color.secondary.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 16))

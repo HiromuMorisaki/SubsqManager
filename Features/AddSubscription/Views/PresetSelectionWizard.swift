@@ -232,22 +232,10 @@ private struct ServiceSelectionView: View {
             ForEach(filteredPresets) { preset in
                 let subscribed = isSubscribed(preset)
                 
-                if preset.plans.count == 1, let singlePlan = preset.plans.first {
-                    // プランが1つしかない場合は即座に選択
-                    Button {
-                        onSelect(preset, singlePlan)
-                    } label: {
-                        ServiceRowView(preset: preset, isSubscribed: subscribed)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    // 複数のプランがある場合はNavigationLinkで遷移
-                    NavigationLink {
-                        PlanSelectionView(preset: preset, onSelect: onSelect)
-                    } label: {
-                        ServiceRowView(preset: preset, isSubscribed: subscribed)
-                    }
+                NavigationLink {
+                    PlanSelectionView(preset: preset, onSelect: onSelect)
+                } label: {
+                    ServiceRowView(preset: preset, isSubscribed: subscribed)
                 }
             }
         }

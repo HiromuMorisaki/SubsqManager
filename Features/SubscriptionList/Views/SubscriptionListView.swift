@@ -36,6 +36,21 @@ struct SubscriptionListView: View {
     /// 編集対象のサブスクリプション（nilなら編集シート非表示）
     @State private var editingSubscription: Subscription?
 
+    /// 解約/削除アクション確認対象のサブスクリプション
+    @State private var subscriptionToProcess: Subscription?
+    @State private var showingActionSheet = false
+
+    /// お祝い画面用のプレデータ構造体
+    struct CelebrationData: Identifiable {
+        let id = UUID()
+        let name: String
+        let amount: Decimal
+        let billingCycle: BillingCycle
+        let category: Category
+        let iconName: String
+    }
+    @State private var celebrationData: CelebrationData?
+
     // MARK: - Body
 
     var body: some View {
@@ -78,6 +93,42 @@ struct SubscriptionListView: View {
             .sheet(item: $editingSubscription) { subscription in
                 EditSubscriptionView(subscription: subscription)
             }
+            .confirmationDialog(
+                "サブスクリプションの処理",
+                isPresented: $showingActionSheet,
+                titleVisibility: .visible,
+                presenting: subscriptionToProcess
+            ) { sub in
+                Button("解約（固定費削減）として記録 🌟") {
+                    let history = viewModel.reduceSubscription(sub, using: modelContext)
+                    celebrationData = CelebrationData(
+                        name: history.name,
+                        amount: history.amount,
+                        billingCycle: history.billingCycle,
+                        category: history.category,
+                        iconName: history.iconName
+                    )
+                }
+                
+                Button("完全に削除", role: .destructive) {
+                    viewModel.deleteSubscription(sub, using: modelContext)
+                }
+                
+                Button("キャンセル", role: .cancel) {
+                    subscriptionToProcess = nil
+                }
+            } message: { sub in
+                Text("「\(sub.name)」を解約しましたか？\n解約済みの場合は「削減として記録」することで、浮いた固定費の積み上げ実績に反映されます。")
+            }
+            .sheet(item: $celebrationData) { data in
+                ReductionCelebrationView(
+                    serviceName: data.name,
+                    amount: data.amount,
+                    billingCycle: data.billingCycle,
+                    category: data.category,
+                    iconName: data.iconName
+                )
+            }
         }
     }
 
@@ -106,13 +157,14 @@ struct SubscriptionListView: View {
                             .onTapGesture {
                                 editingSubscription = subscription
                             }
-                    }
-                    .onDelete { offsets in
-                        viewModel.deleteSubscriptions(
-                            from: group.subscriptions,
-                            at: offsets,
-                            using: modelContext
-                        )
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    subscriptionToProcess = subscription
+                                    showingActionSheet = true
+                                } label: {
+                                    Label("削除", systemImage: "trash")
+                                }
+                            }
                     }
                 } header: {
                     Label(group.category.displayName, systemImage: group.category.iconName)

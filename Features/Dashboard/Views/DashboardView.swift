@@ -17,6 +17,13 @@ struct DashboardView: View {
         sort: \Subscription.nextPaymentDate
     ) private var subscriptions: [Subscription]
 
+    @Query(
+        sort: \ReductionHistory.cancelledDate,
+        order: .reverse
+    ) private var reductionHistories: [ReductionHistory]
+
+    @Environment(\.modelContext) private var modelContext
+
     @State private var viewModel = DashboardViewModel()
     @State private var showingReviewWizard = false
     @State private var showingAddSheet = false
@@ -26,10 +33,13 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                if subscriptions.isEmpty {
+                if subscriptions.isEmpty && reductionHistories.isEmpty {
                     emptyStateView
                 } else {
                     VStack(spacing: 20) {
+                        if !reductionHistories.isEmpty {
+                            reducedSummaryCard
+                        }
                         reviewButton
                         summaryCards
                         CategoryChartView(data: viewModel.monthlyAmountByCategory(subscriptions))
@@ -39,6 +49,9 @@ struct DashboardView: View {
                 }
             }
             .navigationTitle("ダッシュボード")
+            .task {
+                viewModel.migrateLegacyInactiveSubscriptions(using: modelContext)
+            }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -97,6 +110,76 @@ struct DashboardView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: - 削減累計額カード
+    
+    private var reducedSummaryCard: some View {
+        NavigationLink(destination: PastSubscriptionsView()) {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.subheadline)
+                        Text("固定費削減の積み上げ実績")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                    }
+                    .foregroundStyle(.white.opacity(0.9))
+
+                    let totalYearlyReduced = viewModel.totalReducedYearlyAmount(reductionHistories)
+                    let totalMonthlyReduced = viewModel.totalReducedMonthlyAmount(reductionHistories)
+
+                    Text(CurrencyHelper.formatted(amount: totalYearlyReduced))
+                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
+                        + Text(" /年 節約中")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white.opacity(0.9))
+
+                    Text("月額換算: \(CurrencyHelper.formatted(amount: totalMonthlyReduced)) の削減")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white.opacity(0.95))
+                }
+
+                Spacer()
+
+                VStack(alignment: .center, spacing: 6) {
+                    Text("\(reductionHistories.count)")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                    
+                    Text("サービス削減")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(.white.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            .padding()
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.green.opacity(0.85),
+                        Color.teal.opacity(0.9)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: Color.green.opacity(0.3), radius: 10, x: 0, y: 6)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(.white.opacity(0.25), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 
     // MARK: - 見直しボタン

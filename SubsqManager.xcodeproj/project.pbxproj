@@ -17,6 +17,7 @@
 		AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8262FBD48160034B9D1 /* NotificationService.swift */; };
 		AD2CC8292FBD50340034B9D1 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 		AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */; };
+		AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */; };
 		AD2CC82E2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82D2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift */; };
 		AD2CC82F2FBD52D90034B9D1 /* AddSubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82C2FBD52D90034B9D1 /* AddSubscriptionViewModel.swift */; };
 		AD2CC8332FBD52F60034B9D1 /* AddSubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8302FBD52F60034B9D1 /* AddSubscriptionView.swift */; };
@@ -36,6 +37,7 @@
 		AD2CC8542FBD70280034B9D1 /* ReviewWizardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC84C2FBD70280034B9D1 /* ReviewWizardViewModel.swift */; };
 		AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */; };
 		AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */; };
+		AD2CC8582FBD73DA0034B9D9 /* ShareSavingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8572FBD73DA0034B9D9 /* ShareSavingsCard.swift */; };
 		AD2CC85E2FBD84A00034B9D1 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */; };
 		AD2CC85F2FBD84A00034B9D1 /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */; };
 		AD2CC8622FBD84B50034B9D1 /* CSVExportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */; };
@@ -51,6 +53,9 @@
 		AD2CC8942FBDF6F30034B9D1 /* SubscriptionPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */; };
 		AD2CC8952FBDF6F90034B9D1 /* BillingCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */; };
 		AD2CC8962FBDF6FE0034B9D1 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8082FBCD00C0034B9D1 /* Category.swift */; };
+		AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
+		AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
+		AD730B8B2FBF00AF00D94032 /* ReductionCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */; };
 		ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */; };
 		ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 /* End PBXBuildFile section */
@@ -106,6 +111,7 @@
 		AD2CC8262FBD48160034B9D1 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDateCalculator.swift; sourceTree = "<group>"; };
 		AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyHelper.swift; sourceTree = "<group>"; };
+		AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareHelper.swift; sourceTree = "<group>"; };
 		AD2CC82C2FBD52D90034B9D1 /* AddSubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSubscriptionViewModel.swift; sourceTree = "<group>"; };
 		AD2CC82D2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSubscriptionViewModel.swift; sourceTree = "<group>"; };
 		AD2CC8302FBD52F60034B9D1 /* AddSubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSubscriptionView.swift; sourceTree = "<group>"; };
@@ -125,6 +131,7 @@
 		AD2CC84F2FBD70280034B9D1 /* ReviewWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewWizardView.swift; sourceTree = "<group>"; };
 		AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPreset.swift; sourceTree = "<group>"; };
 		AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastSubscriptionsView.swift; sourceTree = "<group>"; };
+		AD2CC8572FBD73DA0034B9D9 /* ShareSavingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSavingsCard.swift; sourceTree = "<group>"; };
 		AD2CC8592FBD84A00034B9D1 /* AnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisViewModel.swift; sourceTree = "<group>"; };
 		AD2CC85B2FBD84A00034B9D1 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
 		AD2CC8602FBD84B50034B9D1 /* CSVExportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExportDocument.swift; sourceTree = "<group>"; };
@@ -138,6 +145,8 @@
 		AD2CC8792FBDB0550034B9D1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		AD2CC88F2FBDF47D0034B9D1 /* SubsqManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SubsqManager.entitlements; sourceTree = "<group>"; };
 		AD2CC8902FBDF4FC0034B9D1 /* SubsqManagerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SubsqManagerWidgetExtension.entitlements; sourceTree = "<group>"; };
+		AD730B872FBF003000D94032 /* ReductionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionHistory.swift; sourceTree = "<group>"; };
+		AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionCelebrationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -243,6 +252,7 @@
 			isa = PBXGroup;
 			children = (
 				AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */,
+				AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -250,6 +260,7 @@
 		AD2CC7E42FBCC7C90034B9D1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AD730B872FBF003000D94032 /* ReductionHistory.swift */,
 				AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */,
 				AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */,
 				AD2CC8082FBCD00C0034B9D1 /* Category.swift */,
@@ -362,7 +373,9 @@
 		AD2CC7F02FBCC7C90034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */,
 				AD2CC8572FBD73DA0034B9D1 /* PastSubscriptionsView.swift */,
+				AD2CC8572FBD73DA0034B9D9 /* ShareSavingsCard.swift */,
 				AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */,
 			);
 			path = Views;
@@ -711,6 +724,7 @@
 				AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */,
 				AD2CC80A2FBCD00C0034B9D1 /* Subscription.swift in Sources */,
 				AD2CC82E2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift in Sources */,
+				AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */,
 				AD2CC82F2FBD52D90034B9D1 /* AddSubscriptionViewModel.swift in Sources */,
 				AD2CC8372FBD53620034B9D1 /* DashboardViewModel.swift in Sources */,
 				AD2CC8292FBD50340034B9D1 /* PaymentDateCalculator.swift in Sources */,
@@ -719,12 +733,14 @@
 				AD2CC8352FBD52F60034B9D1 /* SubscriptionFormSections.swift in Sources */,
 				AD2CC80E2FBCD50C0034B9D1 /* ContentView.swift in Sources */,
 				AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */,
+				AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */,
 				AD2CC8702FBD9E450034B9D1 /* PresetSelectionWizard.swift in Sources */,
 				AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */,
 				AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */,
 				AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */,
 				AD2CC86E2FBD939D0034B9D1 /* OnboardingView.swift in Sources */,
 				AD2CC8492FBD59D20034B9D1 /* CalendarViewModel.swift in Sources */,
+				AD730B8B2FBF00AF00D94032 /* ReductionCelebrationView.swift in Sources */,
 				AD2CC84A2FBD59D20034B9D1 /* CalendarView.swift in Sources */,
 				AD2CC84B2FBD59D20034B9D1 /* CalendarDateCell.swift in Sources */,
 				AD2CC8652FBD84D00034B9D1 /* SettingsViewModel.swift in Sources */,
@@ -737,6 +753,7 @@
 				AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */,
 				AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */,
 				AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */,
+				AD2CC8582FBD73DA0034B9D9 /* ShareSavingsCard.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,
 				AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */,
 				AD2CC85E2FBD84A00034B9D1 /* AnalysisView.swift in Sources */,
@@ -763,6 +780,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */,
 				ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */,
 				ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */,
 				AD2CC8942FBDF6F30034B9D1 /* SubscriptionPreset.swift in Sources */,
@@ -921,6 +939,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
+				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -937,8 +957,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.h-morisaki.SubsqManager";
-				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
-				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -969,6 +987,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
+				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -985,8 +1005,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.h-morisaki.SubsqManager";
-				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
-				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;

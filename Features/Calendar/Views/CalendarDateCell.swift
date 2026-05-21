@@ -11,7 +11,59 @@ import SwiftUI
 struct CalendarDateCell: View {
     let date: CalendarDate
     let isSelected: Bool
-    let hasPayment: Bool
+    let paymentAmount: Decimal
+
+    @AppStorage("currencyCode") private var currencyCode = "JPY"
+
+    private var isYenLike: Bool {
+        currencyCode == "JPY" || currencyCode == "KRW"
+    }
+
+    private var dotSize: CGFloat {
+        if paymentAmount == 0 { return 0 }
+        let amountDouble = NSDecimalNumber(decimal: paymentAmount).doubleValue
+        
+        if isYenLike {
+            if amountDouble < 2000 {
+                return 4
+            } else if amountDouble < 10000 {
+                return 6
+            } else {
+                return 8
+            }
+        } else {
+            if amountDouble < 20 {
+                return 4
+            } else if amountDouble < 100 {
+                return 6
+            } else {
+                return 8
+            }
+        }
+    }
+
+    private var dotOpacity: Double {
+        if paymentAmount == 0 { return 0 }
+        let amountDouble = NSDecimalNumber(decimal: paymentAmount).doubleValue
+        
+        if isYenLike {
+            if amountDouble < 2000 {
+                return 0.5
+            } else if amountDouble < 10000 {
+                return 0.8
+            } else {
+                return 1.0
+            }
+        } else {
+            if amountDouble < 20 {
+                return 0.5
+            } else if amountDouble < 100 {
+                return 0.8
+            } else {
+                return 1.0
+            }
+        }
+    }
 
     var body: some View {
         VStack(spacing: 4) {
@@ -25,9 +77,16 @@ struct CalendarDateCell: View {
                 .clipShape(Circle())
 
             // 支払いがある日のインジケーター（ドット）
-            Circle()
-                .fill(hasPayment ? Color.accentColor : Color.clear)
-                .frame(width: 6, height: 6)
+            ZStack {
+                if paymentAmount > 0 {
+                    Circle()
+                        .fill(Color.accentColor.opacity(dotOpacity))
+                        .frame(width: dotSize, height: dotSize)
+                } else {
+                    Color.clear
+                }
+            }
+            .frame(width: 8, height: 8)
         }
         .padding(.vertical, 4)
         // タップ領域を広げる
@@ -64,17 +123,17 @@ struct CalendarDateCell: View {
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: true),
             isSelected: false,
-            hasPayment: true
+            paymentAmount: Decimal(1500)
         )
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: true),
             isSelected: true,
-            hasPayment: false
+            paymentAmount: Decimal(0)
         )
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: false),
             isSelected: false,
-            hasPayment: false
+            paymentAmount: Decimal(12000)
         )
     }
     .padding()

@@ -18,6 +18,19 @@ import SwiftData
 @Observable
 final class AddSubscriptionViewModel {
 
+    /// 新規登録用、または削減履歴からの復元プレフィル用のイニシャライザ
+    init(reductionHistory: ReductionHistory? = nil) {
+        if let history = reductionHistory {
+            self.name = history.name
+            self.amountText = NSDecimalNumber(decimal: history.amount).stringValue
+            self.billingCycle = history.billingCycle
+            self.category = history.category
+            self.iconName = history.iconName
+            self.notes = history.originalMemo ?? ""
+            self.startDate = Date() // 復元時に次回支払日ズレを防ぐため、開始日を「今日」に設定
+        }
+    }
+
     // MARK: - フォーム状態
 
     var name: String = ""
@@ -32,6 +45,7 @@ final class AddSubscriptionViewModel {
     var endDate: Date = Date().addingTimeInterval(86400 * 30) // デフォルト30日後
     var iconName: String = "creditcard"
     var notes: String = ""
+    var onSaveSuccess: (() -> Void)? = nil
 
     // MARK: - バリデーション
 
@@ -110,6 +124,8 @@ final class AddSubscriptionViewModel {
                 identifier: notificationID + "_end"
             )
         }
+
+        onSaveSuccess?()
 
         return true
     }

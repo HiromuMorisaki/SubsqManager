@@ -21,7 +21,7 @@ struct OnboardingView: View {
     private let pages: [PageContent] = [
         PageContent(
             title: "毎月、いくら使っていますか？",
-            description: "気がつけば増えているサブスク。使っていないサービスにお金を払い続けていませんか？\nSubsqManagerがあなたの無駄な出費をゼロにします。",
+            description: "気がつけば増えているサブスク。使っていないサービスにお金を払い続けていませんか？\nコテサクがあなたの無駄な出費をゼロにします。",
             systemImage: "questionmark.circle.fill",
             color: .blue
         ),
@@ -46,22 +46,41 @@ struct OnboardingView: View {
     ]
 
     var body: some View {
-        VStack {
-            // メインのページコンテンツ（切り替えアニメーション付き）
-            TabView(selection: $currentPage) {
-                ForEach(0..<pages.count, id: \.self) { index in
-                    pageView(for: pages[index])
-                        .tag(index)
-                }
+        ZStack {
+            // プレミアムなモーフィング背景 (ページのテーマカラーに合わせたソフトグラデーション)
+            ZStack {
+                Color(NSColor.windowBackgroundColor)
+                
+                RadialGradient(
+                    colors: [
+                        pages[currentPage].color.opacity(0.12),
+                        pages[currentPage].color.opacity(0.02),
+                        Color.clear
+                    ],
+                    center: .top,
+                    startRadius: 50,
+                    endRadius: 550
+                )
             }
-            #if os(iOS)
-            .tabViewStyle(.page(indexDisplayMode: .never)) // スワイプ可能にするがドットは自前で描画
-            #endif
+            .ignoresSafeArea()
+            .animation(.easeInOut(duration: 0.8), value: currentPage)
             
-            // 下部のコントロール（戻る・ドット・次へ/はじめる）
-            bottomControls
+            VStack {
+                // メインのページコンテンツ（切り替えアニメーション付き）
+                TabView(selection: $currentPage) {
+                    ForEach(0..<pages.count, id: \.self) { index in
+                        pageView(for: pages[index])
+                            .tag(index)
+                    }
+                }
+                #if os(iOS)
+                .tabViewStyle(.page(indexDisplayMode: .never)) // スワイプ可能にするがドットは自前で描画
+                #endif
+                
+                // 下部のコントロール（戻る・ドット・次へ/はじめる）
+                bottomControls
+            }
         }
-        .background(Color(NSColor.windowBackgroundColor))
     }
     
     // MARK: - ページコンポーネント
@@ -70,23 +89,57 @@ struct OnboardingView: View {
         VStack(spacing: 24) {
             Spacer()
             
-            Image(systemName: page.systemImage)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .foregroundStyle(page.color.gradient)
-                .padding(.bottom, 20)
+            // プレミアムな浮遊・光彩アイコンエリア
+            ZStack {
+                // 背後の光彩シャドウ
+                Circle()
+                    .fill(page.color.opacity(0.15))
+                    .frame(width: 140, height: 140)
+                    .blur(radius: 12)
+                
+                // グラデーションボーダー
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [page.color.opacity(0.6), page.color.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+                    .frame(width: 120, height: 120)
+                
+                // ガラスモフィズム背景
+                Circle()
+                    .fill(Color.white.opacity(0.04))
+                    .frame(width: 110, height: 110)
+                    .shadow(color: page.color.opacity(0.2), radius: 8, x: 0, y: 4)
+                
+                // メインアイコン
+                Image(systemName: page.systemImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 54, height: 54)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [page.color, page.color.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .padding(.bottom, 20)
             
             Text(page.title)
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.system(size: 26, weight: .black, design: .rounded))
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
             
             Text(page.description)
-                .font(.body)
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, 28)
                 .lineSpacing(8)
             
             Spacer()
@@ -100,45 +153,56 @@ struct OnboardingView: View {
         HStack {
             // 戻るボタン
             Button {
-                withAnimation {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                     if currentPage > 0 { currentPage -= 1 }
                 }
             } label: {
                 Text("戻る")
-                    .fontWeight(.medium)
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.secondary)
-                    .frame(width: 80, alignment: .leading)
+                    .frame(width: 80, height: 44, alignment: .leading)
             }
             .opacity(currentPage == 0 ? 0 : 1) // 1ページ目は非表示だがレイアウトは維持
             
             Spacer()
             
-            // ページインジケーター（ドット）
+            // ページインジケーター（カプセル型インジケーター）
             HStack(spacing: 8) {
                 ForEach(0..<pages.count, id: \.self) { index in
-                    Circle()
-                        .fill(index == currentPage ? Color.accentColor : Color.secondary.opacity(0.3))
-                        .frame(width: 8, height: 8)
-                        .animation(.easeInOut, value: currentPage)
+                    Capsule()
+                        .fill(index == currentPage ? pages[currentPage].color : Color.secondary.opacity(0.3))
+                        .frame(width: index == currentPage ? 20 : 8, height: 8)
                 }
             }
+            .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
             
             Spacer()
             
             // 次へ / はじめる ボタン
             Button {
                 if currentPage < pages.count - 1 {
-                    withAnimation { currentPage += 1 }
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        currentPage += 1
+                    }
                 } else {
                     completeOnboarding()
                 }
             } label: {
                 Text(currentPage == pages.count - 1 ? "はじめる" : "次へ")
-                    .fontWeight(.bold)
-                    .foregroundStyle(currentPage == pages.count - 1 ? .white : .accentColor)
-                    .frame(width: 80, height: 44, alignment: .center)
-                    .background(currentPage == pages.count - 1 ? Color.accentColor : Color.clear)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 100, height: 44, alignment: .center)
+                    .background(
+                        LinearGradient(
+                            colors: currentPage == pages.count - 1
+                                ? [pages[currentPage].color, pages[currentPage].color.opacity(0.8)]
+                                : [Color.accentColor, Color.accentColor.opacity(0.8)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(Capsule())
+                    .shadow(color: pages[currentPage].color.opacity(0.3), radius: 6, x: 0, y: 3)
             }
         }
         .padding(.horizontal, 24)

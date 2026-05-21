@@ -9,6 +9,8 @@ import SwiftUI
 
 /// 見直し結果のサマリーを表示し、一括解約アクションを提供するView
 struct ReviewSummaryView: View {
+    @Environment(\.modelContext) private var modelContext
+    
     let viewModel: ReviewWizardViewModel
     let dismissAction: () -> Void
     
@@ -122,14 +124,14 @@ struct ReviewSummaryView: View {
         }
         .alert("一括解約の確認", isPresented: $showingConfirmation) {
             Button("キャンセル", role: .cancel) {}
-            Button("解約済みにする", role: .destructive) {
+            Button("削減実績に記録する", role: .destructive) {
                 withAnimation {
-                    viewModel.confirmCancellations()
+                    viewModel.confirmCancellations(using: modelContext)
                     hasConfirmed = true
                 }
             }
         } message: {
-            Text("アプリ上のステータスを「解約済み」に変更し、今後の合計金額から除外します。\n\n※実際のサービスの解約は、各公式サイトから手動で行う必要があります。")
+            Text("対象サブスクリプションを削減実績に記録し、アクティブ契約から削除します。\n\n※実際のサービスの解約は、各公式サイトから手動で行う必要があります。")
         }
     }
 }

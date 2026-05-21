@@ -120,4 +120,23 @@ final class CalendarViewModel {
     func totalAmount(for subscriptions: [Subscription]) -> Decimal {
         subscriptions.reduce(Decimal.zero) { $0 + $1.amount }
     }
+
+    /// 表示中の月（currentMonth）における、今日以降（今日を含む）の「残り支払件数」と「残り支払い合計額」を計算する。
+    func remainingPayments(from allSubscriptions: [Subscription]) -> (count: Int, total: Decimal) {
+        let todayStart = calendar.startOfDay(for: Date())
+        
+        var count = 0
+        var total: Decimal = 0
+        
+        for sub in allSubscriptions {
+            let dates = PaymentDateCalculator.paymentDates(for: sub, inMonth: currentMonth)
+            for date in dates {
+                if calendar.startOfDay(for: date) >= todayStart {
+                    count += 1
+                    total += sub.amount
+                }
+            }
+        }
+        return (count, total)
+    }
 }

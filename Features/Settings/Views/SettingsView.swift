@@ -137,6 +137,20 @@ struct SettingsView: View {
             }
             .foregroundStyle(.primary)
 
+            // ご意見・お問い合わせ
+            Button {
+                openMailApp()
+            } label: {
+                HStack {
+                    Label("ご意見・お問い合わせ", systemImage: "envelope")
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .foregroundStyle(.primary)
+
             // プライバシーポリシー
             if let url = URL(string: "https://kotesaku.notion.site/e2df7871a2394136ad71216a272eb0bb") {
                 Link(destination: url) {
@@ -200,6 +214,25 @@ struct SettingsView: View {
     /// ビルド番号（Info.plistから取得）
     private static var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+    }
+
+    /// お問い合わせ用メールアプリ起動
+    private func openMailApp() {
+        let email = "support@kotesaku.app"
+        let subject = "【コテサク】お問い合わせ・ご要望"
+        let body = "\n\nアプリへのご意見や不具合報告をご記入ください。"
+        
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = email
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: subject),
+            URLQueryItem(name: "body", value: body)
+        ]
+        
+        if let url = components.url {
+            UIApplication.shared.open(url)
+        }
     }
 }
 

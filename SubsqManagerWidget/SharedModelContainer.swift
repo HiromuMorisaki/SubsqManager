@@ -24,7 +24,7 @@ enum SharedModelContainer {
 
     /// 共有ModelContainerを生成する
     static func create() throws -> ModelContainer {
-        let schema = Schema([Subscription.self])
+        let schema = Schema([Subscription.self, ReductionHistory.self])
         let config = ModelConfiguration(
             schema: schema,
             url: containerURL.appendingPathComponent("SubsqManager.store"),
@@ -35,7 +35,7 @@ enum SharedModelContainer {
 
     /// メインアプリ用: 書き込み可能な共有ModelContainerを生成する
     static func createForApp() throws -> ModelContainer {
-        let schema = Schema([Subscription.self])
+        let schema = Schema([Subscription.self, ReductionHistory.self])
         let config = ModelConfiguration(
             schema: schema,
             url: containerURL.appendingPathComponent("SubsqManager.store")

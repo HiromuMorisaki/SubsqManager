@@ -59,7 +59,7 @@ final class SubscriptionListViewModel {
         }
     }
 
-    /// スワイプ削除の処理。
+    /// スワイプ削除の処理（複数またはインデックス指定での一括用）。
     /// ModelContext はView側の @Environment から受け取る設計。
     /// 削除時に対応するリマインド通知もキャンセルする。
     func deleteSubscriptions(
@@ -69,14 +69,45 @@ final class SubscriptionListViewModel {
     ) {
         for index in offsets {
             let subscription = subscriptions[index]
-
-            // 対応する通知をキャンセル
-            let notificationID = NotificationService.makeIdentifier(
-                name: subscription.name, startDate: subscription.startDate
-            )
-            NotificationService.cancelReminder(identifier: notificationID)
-
-            modelContext.delete(subscription)
+            deleteSubscription(subscription, using: modelContext)
         }
+    }
+
+    /// サブスクリプションを完全に削除する。
+    func deleteSubscription(_ subscription: Subscription, using modelContext: ModelContext) {
+        let notificationID = NotificationService.makeIdentifier(
+            name: subscription.name, startDate: subscription.startDate
+        )
+        NotificationService.cancelReminder(identifier: notificationID)
+        NotificationService.cancelReminder(identifier: notificationID + "_trial")
+        NotificationService.cancelReminder(identifier: notificationID + "_end")
+
+        modelContext.delete(subscription)
+    }
+
+    /// サブスクリプションを解約し、削減履歴に移行して元のデータを削除する。
+    func reduceSubscription(_ subscription: Subscription, using modelContext: ModelContext) -> ReductionHistory {
+        let history = ReductionHistory(
+            name: subscription.name,
+            amount: subscription.amount,
+            billingCycle: subscription.billingCycle,
+            category: subscription.category,
+            cancelledDate: Date(),
+            iconName: subscription.iconName,
+            originalMemo: subscription.notes.isEmpty ? nil : subscription.notes
+        )
+        
+        modelContext.insert(history)
+
+        let notificationID = NotificationService.makeIdentifier(
+            name: subscription.name, startDate: subscription.startDate
+        )
+        NotificationService.cancelReminder(identifier: notificationID)
+        NotificationService.cancelReminder(identifier: notificationID + "_trial")
+        NotificationService.cancelReminder(identifier: notificationID + "_end")
+
+        modelContext.delete(subscription)
+        
+        return history
     }
 }

@@ -34,7 +34,7 @@ struct CategoryChartView: View {
                     
                     SectorMark(
                         angle: .value("Amount", amountDouble),
-                        innerRadius: .ratio(0.6), // ドーナツ型にする
+                        innerRadius: .ratio(0.65), // ドーナツ型にする
                         angularInset: 1.5 // セクター間の隙間
                     )
                     .cornerRadius(4)
@@ -42,8 +42,38 @@ struct CategoryChartView: View {
                 }
                 .frame(height: 200)
                 .padding(.vertical)
-                // 凡例のカスタマイズ（下部に表示）
-                .chartLegend(position: .bottom, alignment: .center, spacing: 16)
+                .chartLegend(.hidden)
+                
+                Divider()
+                    .padding(.vertical, 4)
+                
+                VStack(spacing: 10) {
+                    let totalAmount = data.reduce(Decimal.zero) { $0 + $1.amount }
+                    ForEach(data, id: \.category.id) { item in
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(item.category.color)
+                                .frame(width: 10, height: 10)
+                            
+                            Text(item.category.displayName)
+                                .font(.subheadline)
+                                .foregroundStyle(.primary)
+                            
+                            Spacer()
+                            
+                            Text(CurrencyHelper.formatted(amount: item.amount))
+                                .font(.subheadline.monospacedDigit())
+                                .fontWeight(.semibold)
+                            
+                            let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: item.amount).doubleValue / NSDecimalNumber(decimal: totalAmount).doubleValue * 100) : 0
+                            Text(String(format: "%.1f%%", percentage))
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                                .frame(width: 50, alignment: .trailing)
+                        }
+                    }
+                }
+                .padding(.top, 4)
             }
         }
         .padding()
