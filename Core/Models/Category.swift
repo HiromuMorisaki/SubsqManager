@@ -12,29 +12,47 @@ import SwiftUI
 /// 一覧画面でのグループ表示やフィルタリングに使用。
 enum Category: String, Codable, CaseIterable, Identifiable {
     case entertainment = "entertainment"
-    case work = "work"
-    case lifestyle = "lifestyle"
-    case game = "game"
-    case healthcare = "healthcare"
-    case financial = "financial"
-    case education = "education"
-    case ai = "ai"
-    case other = "other"
+    case music         = "music"
+    case manga         = "manga"
+    case sports        = "sports"
+    case game          = "game"
+    case kids          = "kids"
+    case fanclub       = "fanclub"
+    case education     = "education"
+    case work          = "work"
+    case ai            = "ai"
+    case news          = "news"
+    case cloud         = "cloud"
+    case security      = "security"
+    case healthcare    = "healthcare"
+    case food          = "food"
+    case financial     = "financial"
+    case lifestyle     = "lifestyle"
+    case other         = "other"
 
     var id: String { rawValue }
 
     /// UI表示用のラベル
     var displayName: String {
         switch self {
-        case .entertainment: return "エンタメ"
-        case .work: return "仕事"
-        case .lifestyle: return "ライフスタイル"
-        case .game: return "ゲーム"
-        case .healthcare: return "ヘルスケア"
-        case .financial: return "ファイナンス"
-        case .education: return "教育"
-        case .ai: return "生成AI"
-        case .other: return "その他"
+        case .entertainment: return "動画・エンタメ"
+        case .music:         return "音楽"
+        case .manga:         return "マンガ・電子書籍"
+        case .sports:        return "スポーツ"
+        case .game:          return "ゲーム"
+        case .kids:          return "子育て・キッズ"
+        case .fanclub:       return "ファンクラブ"
+        case .education:     return "学習・教育"
+        case .work:          return "仕事・制作"
+        case .ai:            return "生成AI"
+        case .news:          return "ニュース・読書"
+        case .cloud:         return "クラウド"
+        case .security:      return "セキュリティ"
+        case .healthcare:    return "ヘルスケア"
+        case .food:          return "フード・宅配"
+        case .financial:     return "ファイナンス"
+        case .lifestyle:     return "ライフスタイル"
+        case .other:         return "その他"
         }
     }
 
@@ -42,14 +60,23 @@ enum Category: String, Codable, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .entertainment: return "tv"
-        case .work: return "briefcase"
-        case .lifestyle: return "cart"
-        case .game: return "gamecontroller"
-        case .healthcare: return "heart.text.square"
-        case .financial: return "yensign.circle"
-        case .education: return "book"
-        case .ai: return "sparkles"
-        case .other: return "ellipsis.circle"
+        case .music:         return "music.note"
+        case .manga:         return "book.closed"
+        case .sports:        return "sportscourt"
+        case .game:          return "gamecontroller"
+        case .kids:          return "figure.2.and.child.holdinghands"
+        case .fanclub:       return "star.circle"
+        case .education:     return "graduationcap"
+        case .work:          return "briefcase"
+        case .ai:            return "sparkles"
+        case .news:          return "newspaper"
+        case .cloud:         return "cloud"
+        case .security:      return "lock.shield"
+        case .healthcare:    return "heart.text.square"
+        case .food:          return "fork.knife.circle"
+        case .financial:     return "yensign.circle"
+        case .lifestyle:     return "cart"
+        case .other:         return "ellipsis.circle"
         }
     }
 
@@ -57,14 +84,23 @@ enum Category: String, Codable, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .entertainment: return .purple
-        case .work: return .blue
-        case .lifestyle: return .orange
-        case .game: return .red
-        case .healthcare: return .pink
-        case .financial: return .green
-        case .education: return .mint
-        case .ai: return .cyan
-        case .other: return .gray
+        case .music:         return .teal
+        case .manga:         return .orange
+        case .sports:        return .green
+        case .game:          return .red
+        case .kids:          return .yellow
+        case .fanclub:       return .pink
+        case .education:     return .mint
+        case .work:          return .blue
+        case .ai:            return .cyan
+        case .news:          return Color(.brown)
+        case .cloud:         return .blue
+        case .security:      return .indigo
+        case .healthcare:    return .pink
+        case .food:          return .red
+        case .financial:     return .green
+        case .lifestyle:     return .orange
+        case .other:         return .gray
         }
     }
 }

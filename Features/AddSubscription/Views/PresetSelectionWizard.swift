@@ -17,49 +17,95 @@ struct PresetSelectionWizard: View {
     
     // カテゴリごとのプリセットデータ
     private let groupedPresets = SubscriptionPreset.groupedByCategory
+    
+    @State private var searchText = ""
+    
+    // グリッドの列定義 (2列)
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
+    
+    // 検索ワードに合致する全プリセット
+    private var filteredAllPresets: [SubscriptionPreset] {
+        if searchText.isEmpty {
+            return []
+        }
+        return SubscriptionPreset.defaultPresets.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText) ||
+            $0.category.displayName.localizedCaseInsensitiveContains(searchText)
+        }
+    }
 
     var body: some View {
         NavigationStack {
-            List {
-                // Category.allCasesの順に表示する（定義順）
-                ForEach(Category.allCases, id: \.self) { category in
-                    let presets = groupedPresets[category] ?? []
-                    NavigationLink {
-                        ServiceSelectionView(
-                            category: category,
-                            presets: presets,
-                            onSelect: { preset, plan in
-                                onSelect(preset, plan)
-                                dismiss()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if searchText.isEmpty {
+                        // 通常のグリッド表示
+                        Text("ジャンルから探す")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 4)
+                        
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(Category.allCases, id: \.self) { category in
+                                let presets = groupedPresets[category] ?? []
+                                NavigationLink {
+                                    ServiceSelectionView(
+                                        category: category,
+                                        presets: presets,
+                                        onSelect: { preset, plan in
+                                            onSelect(preset, plan)
+                                            dismiss()
+                                        }
+                                    )
+                                } label: {
+                                    CategoryGridCard(category: category, count: presets.count)
+                                }
+                                .buttonStyle(.plain)
                             }
-                        )
-                    } label: {
-                        HStack(spacing: 16) {
-                            Image(systemName: category.iconName)
-                                .font(.title2)
-                                .foregroundStyle(category.color)
-                                .frame(width: 32)
-                            
-                            Text(category.displayName)
-                                .font(.headline)
-                            
-                            Spacer()
-                            
-                            Text("\(presets.count)件")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
                         }
-                        .padding(.vertical, 8)
+                    } else {
+                        // リアルタイム検索結果の表示
+                        if filteredAllPresets.isEmpty {
+                            ContentUnavailableView(
+                                "サービスが見つかりません",
+                                systemImage: "magnifyingglass",
+                                description: Text("\"\(searchText)\" に一致するプリセットはありません")
+                            )
+                        } else {
+                            Text("検索結果 (\(filteredAllPresets.count)件)")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
+                            
+                            LazyVStack(spacing: 8) {
+                                ForEach(filteredAllPresets) { preset in
+                                    NavigationLink {
+                                        PlanSelectionView(preset: preset, onSelect: { selectedPreset, selectedPlan in
+                                            onSelect(selectedPreset, selectedPlan)
+                                            dismiss()
+                                        })
+                                    } label: {
+                                        SearchResultRow(preset: preset)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
                     }
                 }
+                .padding()
             }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("サブスクを追加")
             #if os(iOS)
-            .listStyle(.insetGrouped)
+            .navigationBarTitleDisplayMode(.large)
             #endif
-            .navigationTitle("ジャンルを選ぶ")
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
+            .searchable(text: $searchText, prompt: "200以上のサービスから検索")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("キャンセル") {
@@ -69,8 +115,94 @@ struct PresetSelectionWizard: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 400, minHeight: 450)
+        .frame(minWidth: 500, minHeight: 600)
         #endif
+    }
+}
+
+/// カテゴリを表示するグリッドカードUI
+private struct CategoryGridCard: View {
+    let category: Category
+    let count: Int
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // アイコン背景をカテゴリカラーのグラデーションに
+            ZStack {
+                Circle()
+                    .fill(category.color.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                
+                Image(systemName: category.iconName)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(category.color)
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(category.displayName)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                
+                Text("\(count)件")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        )
+    }
+}
+
+/// 検索結果の1行ビュー
+private struct SearchResultRow: View {
+    let preset: SubscriptionPreset
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(preset.category.color.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: preset.iconName)
+                    .font(.body)
+                    .foregroundStyle(preset.category.color)
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(preset.name)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                
+                Text(preset.category.displayName)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(preset.category.color.opacity(0.1))
+                    .foregroundStyle(preset.category.color)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 2)
+        )
     }
 }
 
@@ -81,14 +213,23 @@ private struct ServiceSelectionView: View {
     let onSelect: (SubscriptionPreset, SubscriptionPlan) -> Void
     
     @Query private var subscriptions: [Subscription]
+    @State private var innerSearchText = ""
     
     private func isSubscribed(_ preset: SubscriptionPreset) -> Bool {
         subscriptions.contains { $0.name.localizedCaseInsensitiveContains(preset.name) }
     }
     
+    // カテゴリ内での検索フィルタリング
+    private var filteredPresets: [SubscriptionPreset] {
+        if innerSearchText.isEmpty {
+            return presets
+        }
+        return presets.filter { $0.name.localizedCaseInsensitiveContains(innerSearchText) }
+    }
+    
     var body: some View {
         List {
-            ForEach(presets) { preset in
+            ForEach(filteredPresets) { preset in
                 let subscribed = isSubscribed(preset)
                 
                 if preset.plans.count == 1, let singlePlan = preset.plans.first {
@@ -97,9 +238,9 @@ private struct ServiceSelectionView: View {
                         onSelect(preset, singlePlan)
                     } label: {
                         ServiceRowView(preset: preset, isSubscribed: subscribed)
-                            .contentShape(Rectangle()) // 全体をタップ可能にする
+                            .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain) // Macでの不要なボタン背景を消去
+                    .buttonStyle(.plain)
                 } else {
                     // 複数のプランがある場合はNavigationLinkで遷移
                     NavigationLink {
@@ -113,7 +254,8 @@ private struct ServiceSelectionView: View {
         #if os(iOS)
         .listStyle(.insetGrouped)
         #endif
-        .navigationTitle("サービスを選ぶ")
+        .navigationTitle(category.displayName)
+        .searchable(text: $innerSearchText, prompt: "\(category.displayName)内を検索")
     }
 }
 
@@ -124,10 +266,15 @@ private struct ServiceRowView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: preset.iconName)
-                .font(.title)
-                .foregroundStyle(preset.category.color.gradient)
-                .frame(width: 40)
+            ZStack {
+                Circle()
+                    .fill(preset.category.color.opacity(0.12))
+                    .frame(width: 44, height: 44)
+                
+                Image(systemName: preset.iconName)
+                    .font(.title3)
+                    .foregroundStyle(preset.category.color)
+            }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(preset.name)
@@ -143,16 +290,15 @@ private struct ServiceRowView: View {
             
             if isSubscribed {
                 Text("契約中")
-                    .font(.caption)
-                    .fontWeight(.bold)
+                    .font(.system(size: 11, weight: .bold))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.green.opacity(0.2))
+                    .background(Color.green.opacity(0.15))
                     .foregroundStyle(Color.green)
                     .clipShape(Capsule())
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 4)
         .opacity(isSubscribed ? 0.6 : 1.0)
     }
 }
@@ -164,32 +310,40 @@ private struct PlanSelectionView: View {
     
     var body: some View {
         List {
-            ForEach(preset.plans) { plan in
-                Button {
-                    onSelect(preset, plan)
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(plan.name)
-                                .font(.headline)
-                                .foregroundStyle(.primary)
+            Section {
+                ForEach(preset.plans) { plan in
+                    Button {
+                        onSelect(preset, plan)
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(plan.name)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                
+                                Text("\(formatAmount(plan.amount)) / \(plan.billingCycle.displayName)")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
                             
-                            Text("\(formatAmount(plan.amount)) / \(plan.billingCycle.displayName)")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title3)
+                                .foregroundStyle(preset.category.color)
                         }
-                        Spacer()
+                        .padding(.vertical, 4)
+                        .contentShape(Rectangle())
                     }
-                    .padding(.vertical, 4)
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain) // Macでの不要なボタン背景を消去
+            } header: {
+                Text("プランを選択してください")
             }
         }
         #if os(iOS)
         .listStyle(.insetGrouped)
         #endif
-        .navigationTitle("\(preset.name)のプラン")
+        .navigationTitle(preset.name)
     }
     
     private func formatAmount(_ amount: Decimal) -> String {
@@ -197,7 +351,7 @@ private struct PlanSelectionView: View {
         formatter.numberStyle = .currency
         formatter.currencyCode = "JPY"
         formatter.maximumFractionDigits = 0
-        return formatter.string(for: amount) ?? "\(amount)"
+        return formatter.string(for: amount) ?? "¥\(amount)"
     }
 }
 

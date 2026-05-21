@@ -937,6 +937,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.h-morisaki.SubsqManager";
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
+				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -983,6 +985,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.h-morisaki.SubsqManager";
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
+				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -1107,7 +1111,7 @@
 				DEVELOPMENT_TEAM = VDR46HR23A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SubsqManagerWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SubsqManagerWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1140,7 +1144,7 @@
 				DEVELOPMENT_TEAM = VDR46HR23A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SubsqManagerWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SubsqManagerWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LD_RUNPATH_SEARCH_PATHS = (

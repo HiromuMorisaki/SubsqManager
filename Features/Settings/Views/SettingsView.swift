@@ -136,6 +136,20 @@ struct SettingsView: View {
                 }
             }
             .foregroundStyle(.primary)
+
+            // プライバシーポリシー
+            if let url = URL(string: "https://kotesaku.notion.site/e2df7871a2394136ad71216a272eb0bb") {
+                Link(destination: url) {
+                    HStack {
+                        Label("プライバシーポリシー", systemImage: "hand.raised")
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .foregroundStyle(.primary)
+            }
         } header: {
             Label("ヘルプ", systemImage: "info.circle")
         }
