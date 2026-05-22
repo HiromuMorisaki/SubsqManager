@@ -30,8 +30,8 @@ struct SubscriptionListView: View {
     /// プロパティ変更時に自動で再描画される。
     @State private var viewModel = SubscriptionListViewModel()
 
-    /// サブスク追加シートの表示制御フラグ
-    @State private var showingAddSheet = false
+    /// サブスク追加画面の表示制御フラグ
+    @State private var showingAddView = false
 
     /// 編集対象のサブスクリプション（nilなら編集シート非表示）
     @State private var editingSubscription: Subscription?
@@ -81,13 +81,13 @@ struct SubscriptionListView: View {
                 
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showingAddSheet = true
+                        showingAddView = true
                     } label: {
                         Label("追加", systemImage: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAddSheet) {
+            .navigationDestination(isPresented: $showingAddView) {
                 AddSubscriptionView()
             }
             .sheet(item: $editingSubscription) { subscription in

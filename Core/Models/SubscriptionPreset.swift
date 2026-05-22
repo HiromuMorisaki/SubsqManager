@@ -31,10 +31,10 @@ struct SubscriptionPreset: Identifiable, Hashable {
             category: .music,
             iconName: "music.note",
             plans: [
-                SubscriptionPlan(name: "Student", amount: 480, billingCycle: .monthly),
-                SubscriptionPlan(name: "Standard", amount: 980, billingCycle: .monthly),
-                SubscriptionPlan(name: "Duo", amount: 1280, billingCycle: .monthly),
-                SubscriptionPlan(name: "Family", amount: 1580, billingCycle: .monthly)
+                SubscriptionPlan(name: "Student (学割)", amount: 580, billingCycle: .monthly),
+                SubscriptionPlan(name: "Standard (個人)", amount: 1080, billingCycle: .monthly),
+                SubscriptionPlan(name: "Duo (カップル)", amount: 1480, billingCycle: .monthly),
+                SubscriptionPlan(name: "Family (ファミリー)", amount: 1680, billingCycle: .monthly)
             ]
         ),
         SubscriptionPreset(
@@ -129,10 +129,10 @@ struct SubscriptionPreset: Identifiable, Hashable {
             category: .entertainment,
             iconName: "play.rectangle.fill",
             plans: [
-                SubscriptionPlan(name: "個人プラン(月額)", amount: 1280, billingCycle: .monthly),
-                SubscriptionPlan(name: "個人プラン(年額)", amount: 12800, billingCycle: .yearly),
-                SubscriptionPlan(name: "ファミリープラン", amount: 2280, billingCycle: .monthly),
-                SubscriptionPlan(name: "学割プラン", amount: 780, billingCycle: .monthly)
+                SubscriptionPlan(name: "個人プラン(月額)", amount: 1480, billingCycle: .monthly),
+                SubscriptionPlan(name: "個人プラン(年額)", amount: 14800, billingCycle: .yearly),
+                SubscriptionPlan(name: "ファミリープラン", amount: 2980, billingCycle: .monthly),
+                SubscriptionPlan(name: "学割プラン", amount: 980, billingCycle: .monthly)
             ]
         ),
         SubscriptionPreset(
@@ -152,9 +152,9 @@ struct SubscriptionPreset: Identifiable, Hashable {
             category: .entertainment,
             iconName: "film",
             plans: [
-                SubscriptionPlan(name: "広告つきスタンダード", amount: 790, billingCycle: .monthly),
-                SubscriptionPlan(name: "スタンダード", amount: 1490, billingCycle: .monthly),
-                SubscriptionPlan(name: "プレミアム", amount: 1980, billingCycle: .monthly)
+                SubscriptionPlan(name: "広告つきスタンダード", amount: 890, billingCycle: .monthly),
+                SubscriptionPlan(name: "スタンダード", amount: 1590, billingCycle: .monthly),
+                SubscriptionPlan(name: "プレミアム", amount: 2290, billingCycle: .monthly)
             ]
         ),
         SubscriptionPreset(
@@ -1145,12 +1145,9 @@ struct SubscriptionPreset: Identifiable, Hashable {
             category: .ai,
             iconName: "brain.head.profile",
             plans: [
-                SubscriptionPlan(name: "ChatGPT Go ($8/月)", amount: 1400, billingCycle: .monthly),
-                SubscriptionPlan(name: "ChatGPT Plus ($20/月)", amount: 3100, billingCycle: .monthly),
-                SubscriptionPlan(name: "ChatGPT Pro ($200/月)", amount: 31000, billingCycle: .monthly),
-                SubscriptionPlan(name: "ChatGPT Business ($30/月)", amount: 4650, billingCycle: .monthly),
-                SubscriptionPlan(name: "ChatGPT Pro Max ($400/月)", amount: 62000, billingCycle: .monthly),
-                SubscriptionPlan(name: "ChatGPT Ultra ($720/月)", amount: 111600, billingCycle: .monthly)
+                SubscriptionPlan(name: "ChatGPT Plus ($20/月)", amount: 3000, billingCycle: .monthly),
+                SubscriptionPlan(name: "ChatGPT Team ($30/月)", amount: 4500, billingCycle: .monthly),
+                SubscriptionPlan(name: "ChatGPT Pro ($200/月)", amount: 30000, billingCycle: .monthly)
             ]
         ),
         SubscriptionPreset(

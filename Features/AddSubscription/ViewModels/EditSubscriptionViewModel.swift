@@ -27,6 +27,8 @@ final class EditSubscriptionViewModel {
     var endDate: Date
     var iconName: String
     var notes: String
+    var satisfaction: Int
+    var usageFrequency: UsageFrequency
 
     /// 編集対象のサブスクリプション（参照を保持）
     private let subscription: Subscription
@@ -53,6 +55,8 @@ final class EditSubscriptionViewModel {
         self.endDate = subscription.endDate ?? Date().addingTimeInterval(86400 * 30)
         self.iconName = subscription.iconName
         self.notes = subscription.notes
+        self.satisfaction = subscription.satisfaction
+        self.usageFrequency = subscription.usageFrequency
         self.originalName = subscription.name
         self.originalStartDate = subscription.startDate
     }
@@ -87,6 +91,8 @@ final class EditSubscriptionViewModel {
         subscription.notes = notes.trimmingCharacters(in: .whitespaces)
         subscription.trialEndDate = hasTrial ? trialEndDate : nil
         subscription.endDate = hasEndDate ? endDate : nil
+        subscription.satisfaction = satisfaction
+        subscription.usageFrequency = usageFrequency
         subscription.updateNextPaymentDate()
 
         // 旧通知をキャンセルし、新しい通知をスケジュール
@@ -98,10 +104,15 @@ final class EditSubscriptionViewModel {
         let newNotificationID = NotificationService.makeIdentifier(
             name: trimmedName, startDate: startDate
         )
+        
+        let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+        let actualLeadDays = leadDays > 0 ? leadDays : 1
+
         await NotificationService.scheduleReminder(
             subscriptionName: trimmedName,
             nextPaymentDate: subscription.nextPaymentDate,
-            identifier: newNotificationID
+            identifier: newNotificationID,
+            leadDays: actualLeadDays
         )
 
         // 旧トライアル・終了日通知をキャンセル

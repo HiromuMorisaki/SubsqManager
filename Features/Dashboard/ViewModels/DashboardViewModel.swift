@@ -128,4 +128,69 @@ final class DashboardViewModel {
             .sorted { $0.value > $1.value } // 金額の降順
             .map { ($0.key, $0.value) }
     }
+
+    // MARK: - コスパ診断 & 削減目標
+
+    /// コスパ診断の結果を表す構造体
+    struct CostPerformanceIssue: Identifiable {
+        let id = UUID()
+        let subscription: Subscription
+        let isCritical: Bool // 要注意(true) か 見直し候補(false)か
+        let unitCost: Decimal // 1回あたりのコスト
+        let advice: String
+    }
+
+    /// アクティブなサブスクリプションを診断し、警告に引っかかった項目を返す
+    func diagnoseCostPerformance(_ subscriptions: [Subscription]) -> [CostPerformanceIssue] {
+        var issues: [CostPerformanceIssue] = []
+
+        for sub in subscriptions where !sub.isTrial && !sub.isExpired {
+            let monthlyAmount = sub.monthlyAmount
+            let usageCount = sub.monthlyUsageCount
+            let satisfaction = sub.satisfaction
+
+            // 1回あたりのコスト（0回の場合は月額全額）
+            let unitCost: Decimal = usageCount > 0 ? (monthlyAmount / Decimal(usageCount)) : monthlyAmount
+
+            // 🚨 要注意（解約推奨）: 満足度が2点以下、または月間利用回数が0回
+            if satisfaction <= 2 || usageCount == 0 {
+                let advice = usageCount == 0
+                    ? "今月一度も利用されていません。解約することで月 \(CurrencyHelper.formatted(amount: monthlyAmount)) を完全に削減できます。"
+                    : "満足度が低く、利用頻度も少ないため解約をおすすめします。解約により月 \(CurrencyHelper.formatted(amount: monthlyAmount)) の節約になります。"
+                
+                issues.append(CostPerformanceIssue(
+                    subscription: sub,
+                    isCritical: true,
+                    unitCost: unitCost,
+                    advice: advice
+                ))
+            }
+            // ⚠️ 見直し候補: 満足度が3点以下、かつ（1回あたりのコストが ¥1,000 以上 または 月間利用回数が 2回以下）
+            else if satisfaction <= 3 && (unitCost >= 1000 || usageCount <= 2) {
+                let advice = "満足度に対して1回あたりの利用コスト（\(CurrencyHelper.formatted(amount: unitCost))）が高め、もしくは利用回数が少ないです。プラン変更または解約を検討しましょう。"
+                
+                issues.append(CostPerformanceIssue(
+                    subscription: sub,
+                    isCritical: false,
+                    unitCost: unitCost,
+                    advice: advice
+                ))
+            }
+        }
+
+        // 重要度順（要注意が先）にソートして返す
+        return issues.sorted { $0.isCritical && !$1.isCritical }
+    }
+
+    /// 削減目標に対するモチベーションメッセージを取得する
+    func goalMotivationMessage(progress: Double, hasGoal: Bool) -> String {
+        guard hasGoal else { return "目標を設定して、固定費削減を始めましょう！🎯" }
+        if progress >= 1.0 {
+            return "目標達成！おめでとうございます！🎉✨"
+        } else if progress >= 0.5 {
+            return "素晴らしいペースです！あと少しで目標達成！🔥"
+        } else {
+            return "一歩ずつ削減を進めましょう！🌱"
+        }
+    }
 }

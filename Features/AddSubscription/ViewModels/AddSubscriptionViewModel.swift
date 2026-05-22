@@ -45,6 +45,8 @@ final class AddSubscriptionViewModel {
     var endDate: Date = Date().addingTimeInterval(86400 * 30) // デフォルト30日後
     var iconName: String = "creditcard"
     var notes: String = ""
+    var satisfaction: Int = 3
+    var usageFrequency: UsageFrequency = .daily
     var onSaveSuccess: (() -> Void)? = nil
 
     // MARK: - バリデーション
@@ -91,7 +93,10 @@ final class AddSubscriptionViewModel {
             iconName: iconName,
             notes: notes.trimmingCharacters(in: .whitespaces),
             trialEndDate: hasTrial ? trialEndDate : nil,
-            endDate: hasEndDate ? endDate : nil
+            endDate: hasEndDate ? endDate : nil,
+            satisfaction: satisfaction,
+            monthlyUsageCount: usageFrequency.monthlyEstimatedCount,
+            usageFrequencyRawValue: usageFrequency.rawValue
         )
 
         // startDate と billingCycle から正しい次回請求日を計算
@@ -99,14 +104,19 @@ final class AddSubscriptionViewModel {
 
         modelContext.insert(subscription)
 
-        // 請求日前日のリマインド通知をスケジュール
+        // 請求日前のリマインド通知をスケジュール
         let notificationID = NotificationService.makeIdentifier(
             name: trimmedName, startDate: startDate
         )
+        
+        let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+        let actualLeadDays = leadDays > 0 ? leadDays : 1
+
         await NotificationService.scheduleReminder(
             subscriptionName: trimmedName,
             nextPaymentDate: subscription.nextPaymentDate,
-            identifier: notificationID
+            identifier: notificationID,
+            leadDays: actualLeadDays
         )
 
         // トライアルや終了日の設定がある場合はリマインド通知をスケジュール
@@ -128,5 +138,22 @@ final class AddSubscriptionViewModel {
         onSaveSuccess?()
 
         return true
+    }
+
+    /// フォームの入力内容をリセットする
+    func reset() {
+        self.name = ""
+        self.amountText = ""
+        self.billingCycle = .monthly
+        self.category = .other
+        self.startDate = Date()
+        self.hasTrial = false
+        self.trialEndDate = Date().addingTimeInterval(86400 * 14)
+        self.hasEndDate = false
+        self.endDate = Date().addingTimeInterval(86400 * 30)
+        self.iconName = "creditcard"
+        self.notes = ""
+        self.satisfaction = 3
+        self.usageFrequency = .daily
     }
 }

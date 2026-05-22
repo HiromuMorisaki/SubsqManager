@@ -26,7 +26,15 @@ struct DashboardView: View {
 
     @State private var viewModel = DashboardViewModel()
     @State private var showingReviewWizard = false
-    @State private var showingAddSheet = false
+    @State private var showingAddView = false
+    
+    // 削減目標設定用
+    @AppStorage("monthlySavingsGoal") private var monthlySavingsGoal = 0
+    @State private var showingGoalEditSheet = false
+    @State private var tempGoalText = ""
+    
+    // コスパ診断からの直接編集用
+    @State private var selectedSubscriptionForEdit: Subscription? = nil
 
     // MARK: - Body
 
@@ -37,12 +45,17 @@ struct DashboardView: View {
                     emptyStateView
                 } else {
                     VStack(spacing: 20) {
-                        if !reductionHistories.isEmpty {
-                            reducedSummaryCard
-                        }
+                        reducedSummaryCard
+                        
                         reviewButton
                         summaryCards
                         CategoryChartView(data: viewModel.monthlyAmountByCategory(subscriptions))
+                        
+                        let diagnosisIssues = viewModel.diagnoseCostPerformance(subscriptions)
+                        if !diagnosisIssues.isEmpty {
+                            costPerformanceDiagnosisSection(issues: diagnosisIssues)
+                        }
+                        
                         upcomingSection
                     }
                     .padding()
@@ -55,7 +68,7 @@ struct DashboardView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showingAddSheet = true
+                        showingAddView = true
                     } label: {
                         Label("追加", systemImage: "plus")
                     }
@@ -64,8 +77,14 @@ struct DashboardView: View {
             .sheet(isPresented: $showingReviewWizard) {
                 ReviewWizardView(activeSubscriptions: subscriptions)
             }
-            .sheet(isPresented: $showingAddSheet) {
+            .navigationDestination(isPresented: $showingAddView) {
                 AddSubscriptionView()
+            }
+            .sheet(isPresented: $showingGoalEditSheet) {
+                goalEditSheetView
+            }
+            .sheet(item: $selectedSubscriptionForEdit) { subscription in
+                EditSubscriptionView(subscription: subscription)
             }
         }
     }
@@ -94,7 +113,7 @@ struct DashboardView: View {
             }
             
             Button {
-                showingAddSheet = true
+                showingAddView = true
             } label: {
                 Text("最初のサブスクを登録する")
                     .font(.headline)
@@ -115,9 +134,10 @@ struct DashboardView: View {
     // MARK: - 削減累計額カード
     
     private var reducedSummaryCard: some View {
-        NavigationLink(destination: PastSubscriptionsView()) {
+        VStack(spacing: 12) {
+            // 上部：実績表示と実績画面への遷移リンク
             HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
                             .font(.subheadline)
@@ -146,40 +166,111 @@ struct DashboardView: View {
 
                 Spacer()
 
-                VStack(alignment: .center, spacing: 6) {
-                    Text("\(reductionHistories.count)")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                // 削減件数バッジ 兼 削減履歴リンク
+                NavigationLink(destination: PastSubscriptionsView()) {
+                    VStack(alignment: .center, spacing: 4) {
+                        Text("\(reductionHistories.count)")
+                            .font(.system(size: 26, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                        
+                        Text("削減履歴")
+                            .font(.system(size: 9))
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.white.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            Divider()
+                .background(.white.opacity(0.3))
+            
+            // 下部：目標設定と進捗ゲージ
+            let totalMonthlyReduced = viewModel.totalReducedMonthlyAmount(reductionHistories)
+            let progress = monthlySavingsGoal > 0 ? (Double(truncating: totalMonthlyReduced as NSDecimalNumber) / Double(monthlySavingsGoal)) : 0.0
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(viewModel.goalMotivationMessage(progress: progress, hasGoal: monthlySavingsGoal > 0))
+                        .font(.footnote)
+                        .fontWeight(.bold)
                         .foregroundStyle(.white)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(1)
                     
-                    Text("サービス削減")
+                    Spacer()
+                    
+                    Button {
+                        tempGoalText = monthlySavingsGoal > 0 ? "\(monthlySavingsGoal)" : ""
+                        showingGoalEditSheet = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pencil.circle.fill")
+                            Text(monthlySavingsGoal > 0 ? "目標変更" : "目標設定")
+                        }
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .foregroundStyle(.white.opacity(0.9))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.white.opacity(0.25))
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(.white.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                
+                if monthlySavingsGoal > 0 {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("月間目標 \(CurrencyHelper.formatted(amount: Decimal(monthlySavingsGoal)))")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white.opacity(0.85))
+                            Spacer()
+                            Text("\(Int(min(progress, 9.99) * 100))% 達成")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(progress >= 1.0 ? Color.yellow : Color.white)
+                        }
+                        
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(.white.opacity(0.2))
+                                    .frame(height: 6)
+                                
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(progress >= 1.0 ? Color.yellow : Color.white)
+                                    .frame(width: geo.size.width * CGFloat(min(progress, 1.0)), height: 6)
+                                    .shadow(color: progress >= 1.0 ? .yellow : .white, radius: 3)
+                            }
+                        }
+                        .frame(height: 6)
+                    }
+                }
             }
-            .padding()
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color.green.opacity(0.85),
-                        Color.teal.opacity(0.9)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .shadow(color: Color.green.opacity(0.3), radius: 10, x: 0, y: 6)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(.white.opacity(0.25), lineWidth: 1)
-            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding()
+        .background(
+            LinearGradient(
+                colors: [
+                    Color.green.opacity(0.85),
+                    Color.teal.opacity(0.9)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: Color.green.opacity(0.3), radius: 10, x: 0, y: 6)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(.white.opacity(0.25), lineWidth: 1)
+        )
     }
 
     // MARK: - 見直しボタン
@@ -241,6 +332,177 @@ struct DashboardView: View {
                 ForEach(upcoming) { subscription in
                     UpcomingRowView(subscription: subscription)
                 }
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+    // MARK: - 新機能用のビュー
+
+    /// 目標設定編集用シートビュー
+    private var goalEditSheetView: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    HStack {
+                        Text("¥")
+                            .foregroundStyle(.secondary)
+                            .font(.title2)
+                        TextField("目標削減額を入力", text: $tempGoalText)
+                            #if os(iOS)
+                            .keyboardType(.numberPad)
+                            #endif
+                            .font(.title2)
+                    }
+                } header: {
+                    Text("月間削減目標金額")
+                } footer: {
+                    Text("不要なサブスクや固定費を見直して、毎月いくら削減したいかの合計目標金額を設定します。")
+                }
+            }
+            .navigationTitle("目標設定")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") {
+                        showingGoalEditSheet = false
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("保存") {
+                        if let goal = Int(tempGoalText), goal >= 0 {
+                            monthlySavingsGoal = goal
+                        } else if tempGoalText.isEmpty {
+                            monthlySavingsGoal = 0
+                        }
+                        showingGoalEditSheet = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.fraction(0.32)])
+    }
+
+    /// コスパ診断警告セクション
+    private func costPerformanceDiagnosisSection(issues: [DashboardViewModel.CostPerformanceIssue]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("スマートコスパ診断", systemImage: "sparkles")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text("\(issues.count)件の警告")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.red.opacity(0.1))
+                    .foregroundStyle(.red)
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, 4)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(issues) { issue in
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(alignment: .top) {
+                                // カテゴリアイコン
+                                Image(systemName: issue.subscription.iconName)
+                                    .font(.body)
+                                    .padding(8)
+                                    .background(issue.subscription.category.color.opacity(0.2))
+                                    .foregroundStyle(issue.subscription.category.color)
+                                    .clipShape(Circle())
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(issue.subscription.name)
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .lineLimit(1)
+                                    
+                                    Text(CurrencyHelper.formatted(amount: issue.subscription.monthlyAmount) + "/月")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                // 警告ステータス
+                                Text(issue.isCritical ? "解約推奨" : "要検討")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(issue.isCritical ? Color.red.opacity(0.15) : Color.orange.opacity(0.15))
+                                    .foregroundStyle(issue.isCritical ? Color.red : Color.orange)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                            }
+                            
+                            // 満足度と利用頻度
+                            HStack {
+                                HStack(spacing: 3) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundStyle(.yellow)
+                                        .font(.caption2)
+                                    Text("\(issue.subscription.satisfaction)")
+                                }
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                
+                                Spacer()
+                                
+                                Text("月利用: \(issue.subscription.monthlyUsageCount)回")
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 2)
+                            
+                            Divider()
+                                .background(Color.primary.opacity(0.15))
+                            
+                            // アドバイス
+                            Text(issue.advice)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                                .lineLimit(3)
+                                .frame(height: 48, alignment: .topLeading)
+                                .multilineTextAlignment(.leading)
+                            
+                            // ショートカットアクション
+                            HStack(spacing: 8) {
+                                Button {
+                                    selectedSubscriptionForEdit = issue.subscription
+                                } label: {
+                                    Text("見直す・編集")
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .padding(.vertical, 6)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.accentColor.opacity(0.1))
+                                        .foregroundStyle(Color.accentColor)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding()
+                        .frame(width: 240)
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(issue.isCritical ? Color.red.opacity(0.25) : Color.orange.opacity(0.25), lineWidth: 1.5)
+                        )
+                        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
+                    }
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 4)
             }
         }
         .padding()

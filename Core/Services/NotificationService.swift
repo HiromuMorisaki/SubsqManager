@@ -36,25 +36,33 @@ enum NotificationService {
 
     // MARK: - リマインド通知のスケジュール
 
-    /// サブスクリプションの請求日前日にリマインド通知をスケジュールする。
+    /// サブスクリプションの請求日前にリマインド通知をスケジュールする。
     ///
     /// - Parameters:
     ///   - subscriptionName: サブスク名（通知の本文に表示）
     ///   - nextPaymentDate: 次回請求日
     ///   - identifier: 通知の一意識別子（キャンセル時にも使用）
+    ///   - leadDays: 通知を送る何日前か（nilの場合はUserDefaultsの設定またはデフォルト1を使用）
     static func scheduleReminder(
         subscriptionName: String,
         nextPaymentDate: Date,
-        identifier: String
+        identifier: String,
+        leadDays: Int? = nil
     ) async {
         // 設定で通知がOFFの場合はスキップ
         guard UserDefaults.standard.bool(forKey: "notificationsEnabled") else { return }
 
+        // 引数がnilならUserDefaultsから取得（デフォルトは1日前）
+        let days = leadDays ?? {
+            let savedDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+            return savedDays > 0 ? savedDays : 1
+        }()
+
         let calendar = Calendar.current
 
-        // 請求日の前日を計算
+        // 請求日の指定した日数前を計算
         guard let reminderDate = calendar.date(
-            byAdding: .day, value: -1, to: nextPaymentDate
+            byAdding: .day, value: -days, to: nextPaymentDate
         ) else { return }
 
         // 過去の日付にはスケジュールしない
@@ -62,11 +70,12 @@ enum NotificationService {
 
         // 通知コンテンツの作成
         let content = UNMutableNotificationContent()
-        content.title = "明日は請求日です"
+        let dayText = days == 1 ? "明日" : "\(days)日前"
+        content.title = "\(dayText)は請求日です"
         content.body = "\(subscriptionName) の請求があります"
         content.sound = .default
 
-        // 前日の午前9時にトリガーする設定
+        // 指定日前の午前9時にトリガーする設定
         var triggerComponents = calendar.dateComponents(
             [.year, .month, .day], from: reminderDate
         )

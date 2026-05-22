@@ -56,6 +56,8 @@
 		AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B8B2FBF00AF00D94032 /* ReductionCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */; };
+		AD730B912FBF003000D94032 /* UsageFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B902FBF003000D94032 /* UsageFrequency.swift */; };
+		AD730B922FBF003000D94032 /* UsageFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B902FBF003000D94032 /* UsageFrequency.swift */; };
 		ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */; };
 		ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 /* End PBXBuildFile section */
@@ -147,6 +149,7 @@
 		AD2CC8902FBDF4FC0034B9D1 /* SubsqManagerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SubsqManagerWidgetExtension.entitlements; sourceTree = "<group>"; };
 		AD730B872FBF003000D94032 /* ReductionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionHistory.swift; sourceTree = "<group>"; };
 		AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionCelebrationView.swift; sourceTree = "<group>"; };
+		AD730B902FBF003000D94032 /* UsageFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFrequency.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -260,6 +263,7 @@
 		AD2CC7E42FBCC7C90034B9D1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AD730B902FBF003000D94032 /* UsageFrequency.swift */,
 				AD730B872FBF003000D94032 /* ReductionHistory.swift */,
 				AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */,
 				AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */,
@@ -720,6 +724,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD730B912FBF003000D94032 /* UsageFrequency.swift in Sources */,
 				AD2CC83B2FBD53850034B9D1 /* SettingsView.swift in Sources */,
 				AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */,
 				AD2CC80A2FBCD00C0034B9D1 /* Subscription.swift in Sources */,
@@ -780,6 +785,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD730B922FBF003000D94032 /* UsageFrequency.swift in Sources */,
 				AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */,
 				ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */,
 				ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */,

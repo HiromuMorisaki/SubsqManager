@@ -26,11 +26,14 @@ struct SubscriptionFormSections: View {
     @Binding var endDate: Date
     @Binding var iconName: String
     @Binding var notes: String
+    @Binding var satisfaction: Int
+    @Binding var usageFrequency: UsageFrequency
 
     var body: some View {
         Group {
             basicInfoSection
             billingSection
+            costPerformanceSection
             endDateSection
             trialSection
             categorySection
@@ -43,7 +46,7 @@ struct SubscriptionFormSections: View {
 
     /// サブスク名と金額の入力セクション
     private var basicInfoSection: some View {
-        Section("基本情報") {
+        Section(header: Text("基本情報").id("formInputFields")) {
             TextField("サブスク名", text: $name)
             TextField("金額", text: $amountText)
                 #if os(iOS)
@@ -113,6 +116,31 @@ struct SubscriptionFormSections: View {
         Section("メモ") {
             TextField("メモ（任意）", text: $notes, axis: .vertical)
                 .lineLimit(3...6)
+        }
+    }
+
+    /// コスパ診断のための満足度と利用頻度の設定セクション
+    private var costPerformanceSection: some View {
+        Section("満足度と利用頻度（コスパ診断）") {
+            HStack {
+                Text("満足度")
+                Spacer()
+                ForEach(1...5, id: \.self) { star in
+                    Image(systemName: star <= satisfaction ? "star.fill" : "star")
+                        .font(.title3)
+                        .foregroundStyle(star <= satisfaction ? Color.yellow : Color(.systemGray4))
+                        .onTapGesture {
+                            satisfaction = star
+                        }
+                }
+            }
+            .padding(.vertical, 4)
+            
+            Picker("利用頻度", selection: $usageFrequency) {
+                ForEach(UsageFrequency.allCases) { freq in
+                    Text(freq.displayName).tag(freq)
+                }
+            }
         }
     }
 

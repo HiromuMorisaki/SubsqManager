@@ -63,6 +63,15 @@ final class Subscription {
     /// サブスクリプション終了予定日。nilの場合は未定（継続）。
     var endDate: Date?
 
+    /// 満足度（1〜5段階、デフォルト3）
+    var satisfaction: Int = 3
+
+    /// 月の利用回数（デフォルト0）
+    var monthlyUsageCount: Int = 0
+
+    /// 利用頻度の段階設定値（生値）
+    var usageFrequencyRawValue: String?
+
     /// レコード作成日時
     var createdAt: Date
 
@@ -84,7 +93,10 @@ final class Subscription {
         isActive: Bool = true,
         trialEndDate: Date? = nil,
         endDate: Date? = nil,
-        reviewStatusRawValue: String? = nil
+        reviewStatusRawValue: String? = nil,
+        satisfaction: Int = 3,
+        monthlyUsageCount: Int = 0,
+        usageFrequencyRawValue: String? = nil
     ) {
         self.name = name
         self.amount = amount
@@ -98,6 +110,13 @@ final class Subscription {
         self.trialEndDate = trialEndDate
         self.endDate = endDate
         self.reviewStatusRawValue = reviewStatusRawValue
+        self.satisfaction = satisfaction
+        self.usageFrequencyRawValue = usageFrequencyRawValue
+        if let raw = usageFrequencyRawValue, let freq = UsageFrequency(rawValue: raw) {
+            self.monthlyUsageCount = freq.monthlyEstimatedCount
+        } else {
+            self.monthlyUsageCount = monthlyUsageCount
+        }
         self.createdAt = Date()
         self.updatedAt = Date()
     }
@@ -112,6 +131,20 @@ final class Subscription {
         }
         set {
             reviewStatusRawValue = newValue?.rawValue
+        }
+    }
+
+    /// 利用頻度（Enum）へのアクセス用プロパティ。既存の `monthlyUsageCount` と相互補完マッピング
+    var usageFrequency: UsageFrequency {
+        get {
+            if let rawValue = usageFrequencyRawValue, let freq = UsageFrequency(rawValue: rawValue) {
+                return freq
+            }
+            return UsageFrequency.from(monthlyUsageCount: monthlyUsageCount)
+        }
+        set {
+            usageFrequencyRawValue = newValue.rawValue
+            monthlyUsageCount = newValue.monthlyEstimatedCount
         }
     }
 

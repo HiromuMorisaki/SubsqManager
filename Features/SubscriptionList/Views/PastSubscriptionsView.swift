@@ -68,11 +68,13 @@ struct PastSubscriptionsView: View {
             }
         }
         .sheet(item: $restoringHistory) { history in
-            AddSubscriptionView(reductionHistory: history) {
-                // プレフィルされたフォームから新規保存が成功したタイミングで削減履歴から削除
-                withAnimation {
-                    modelContext.delete(history)
-                    try? modelContext.save()
+            NavigationStack {
+                AddSubscriptionView(isModal: true, reductionHistory: history) {
+                    // プレフィルされたフォームから新規保存が成功したタイミングで削減履歴から削除
+                    withAnimation {
+                        modelContext.delete(history)
+                        try? modelContext.save()
+                    }
                 }
             }
         }

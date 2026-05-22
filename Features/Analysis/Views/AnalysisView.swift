@@ -16,7 +16,7 @@ struct AnalysisView: View {
     ) private var subscriptions: [Subscription]
     
     @State private var viewModel = AnalysisViewModel()
-    @State private var showingAddSheet = false
+    @State private var showingAddView = false
     
     var body: some View {
         NavigationStack {
@@ -31,7 +31,7 @@ struct AnalysisView: View {
                             )
                             
                             Button {
-                                showingAddSheet = true
+                                showingAddView = true
                             } label: {
                                 Text("最初のサブスクを登録する")
                                     .font(.headline)
@@ -55,13 +55,13 @@ struct AnalysisView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showingAddSheet = true
+                        showingAddView = true
                     } label: {
                         Label("追加", systemImage: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAddSheet) {
+            .navigationDestination(isPresented: $showingAddView) {
                 AddSubscriptionView()
             }
         }

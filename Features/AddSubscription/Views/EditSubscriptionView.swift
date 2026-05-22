@@ -39,7 +39,9 @@ struct EditSubscriptionView: View {
                     hasEndDate: $viewModel.hasEndDate,
                     endDate: $viewModel.endDate,
                     iconName: $viewModel.iconName,
-                    notes: $viewModel.notes
+                    notes: $viewModel.notes,
+                    satisfaction: $viewModel.satisfaction,
+                    usageFrequency: $viewModel.usageFrequency
                 )
             }
             .navigationTitle("サブスクを編集")
