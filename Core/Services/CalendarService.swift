@@ -52,7 +52,7 @@ enum CalendarService {
 
         // 1. 通常請求日イベントの同期
         if subscription.isActive {
-            let amountText = CurrencyHelper.format(subscription.ownShareAmount)
+            let amountText = CurrencyHelper.formatted(amount: subscription.ownShareAmount)
             let eventTitle = "🔔 コテサク: \(subscription.name) 請求日 (\(amountText))"
             let eventDate = subscription.nextPaymentDate
 
@@ -189,7 +189,7 @@ enum CalendarService {
         notesText += "・サブスク名: \(subscription.name)\n"
         notesText += "・カテゴリ: \(subscription.category.localizedName)\n"
         
-        let amountFormatted = CurrencyHelper.format(subscription.amount)
+        let amountFormatted = CurrencyHelper.formatted(amount: subscription.amount)
         notesText += "・契約料金: \(amountFormatted) / \(subscription.billingCycle.localizedName)\n"
 
         if subscription.isShared {
@@ -197,7 +197,7 @@ enum CalendarService {
             notesText += "  - 共有人数: \(subscription.splitCount) 人\n"
             notesText += "  - 自己負担率: \(Int(subscription.ownSharePercentage * 100)) %\n"
             
-            let ownShareAmountFormatted = CurrencyHelper.format(subscription.ownShareAmount)
+            let ownShareAmountFormatted = CurrencyHelper.formatted(amount: subscription.ownShareAmount)
             notesText += "  - 実質自己負担額: \(ownShareAmountFormatted) / \(subscription.billingCycle.localizedName)\n"
         }
 
