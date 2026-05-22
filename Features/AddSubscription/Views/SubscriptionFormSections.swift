@@ -28,11 +28,15 @@ struct SubscriptionFormSections: View {
     @Binding var notes: String
     @Binding var satisfaction: Int
     @Binding var usageFrequency: UsageFrequency
+    @Binding var isShared: Bool
+    @Binding var splitCount: Int
+    @Binding var ownSharePercentage: Double
 
     var body: some View {
         Group {
             basicInfoSection
             billingSection
+            costSharingSection
             costPerformanceSection
             endDateSection
             trialSection
@@ -140,6 +144,114 @@ struct SubscriptionFormSections: View {
                 ForEach(UsageFrequency.allCases) { freq in
                     Text(freq.displayName).tag(freq)
                 }
+            }
+        }
+    }
+
+    /// 割り勘・ファミリー共有設定セクション
+    private var costSharingSection: some View {
+        Section("割り勘・ファミリー共有") {
+            Toggle("割り勘・コストシェア設定", isOn: $isShared)
+                .onChange(of: isShared) { oldValue, newValue in
+                    if newValue && splitCount < 2 {
+                        splitCount = 2
+                    }
+                    if newValue {
+                        ownSharePercentage = 1.0 / Double(splitCount)
+                    } else {
+                        ownSharePercentage = 1.0
+                    }
+                }
+            
+            if isShared {
+                Stepper("シェア人数: \(splitCount)人", value: $splitCount, in: 2...10)
+                    .onChange(of: splitCount) { oldValue, newValue in
+                        ownSharePercentage = 1.0 / Double(newValue)
+                    }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("自己負担割合")
+                        Spacer()
+                        Text(String(format: "%.1f%%", ownSharePercentage * 100))
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.accentColor)
+                    }
+                    
+                    Slider(value: $ownSharePercentage, in: 0.0...1.0, step: 0.01)
+                        .tint(Color.accentColor)
+                }
+                .padding(.vertical, 4)
+                
+                Button {
+                    withAnimation(.spring()) {
+                        ownSharePercentage = 1.0 / Double(splitCount)
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "divide.circle")
+                        Text("人数で均等に分ける (約\(Int(round(100.0 / Double(splitCount))))%)")
+                    }
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color.accentColor)
+                }
+                .buttonStyle(.borderless)
+                
+                // リアルタイム自己負担額ネオンプレビュー
+                let originalAmount = Decimal(string: amountText) ?? 0
+                let ownAmount = originalAmount * Decimal(ownSharePercentage)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("💡 実質負担額のプレビュー")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("元の金額: \(CurrencyHelper.formatted(amount: originalAmount))/\(billingCycle.displayName)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            
+                            HStack(alignment: .bottom, spacing: 4) {
+                                Text("あなたの実質負担:")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                
+                                Text(CurrencyHelper.formatted(amount: ownAmount))
+                                    .font(.title3)
+                                    .fontWeight(.black)
+                                    .foregroundStyle(Color.accentColor)
+                                
+                                Text("/\(billingCycle.displayName)")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.accentColor.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [Color.accentColor.opacity(0.3), Color.clear],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: Color.accentColor.opacity(0.1), radius: 5, x: 0, y: 3)
+                }
+                .padding(.vertical, 6)
             }
         }
     }

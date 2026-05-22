@@ -74,7 +74,7 @@ final class DashboardViewModel {
         subscriptions
             .filter { !$0.isTrial && !$0.isExpired }
             .reduce(Decimal.zero) { total, subscription in
-                total + subscription.monthlyAmount
+                total + subscription.ownShareMonthlyAmount
             }
     }
 
@@ -85,7 +85,7 @@ final class DashboardViewModel {
         subscriptions
             .filter { !$0.isTrial && !$0.isExpired }
             .reduce(Decimal.zero) { total, subscription in
-                total + subscription.yearlyAmount
+                total + subscription.ownShareYearlyAmount
             }
     }
 
@@ -120,7 +120,7 @@ final class DashboardViewModel {
         var totals: [Category: Decimal] = [:]
         
         for subscription in subscriptions where !subscription.isTrial && !subscription.isExpired {
-            totals[subscription.category, default: 0] += subscription.monthlyAmount
+            totals[subscription.category, default: 0] += subscription.ownShareMonthlyAmount
         }
         
         return totals
@@ -145,7 +145,7 @@ final class DashboardViewModel {
         var issues: [CostPerformanceIssue] = []
 
         for sub in subscriptions where !sub.isTrial && !sub.isExpired {
-            let monthlyAmount = sub.monthlyAmount
+            let monthlyAmount = sub.ownShareMonthlyAmount
             let usageCount = sub.monthlyUsageCount
             let satisfaction = sub.satisfaction
 

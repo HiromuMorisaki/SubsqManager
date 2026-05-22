@@ -91,7 +91,10 @@ struct AddSubscriptionView: View {
                         iconName: $viewModel.iconName,
                         notes: $viewModel.notes,
                         satisfaction: $viewModel.satisfaction,
-                        usageFrequency: $viewModel.usageFrequency
+                        usageFrequency: $viewModel.usageFrequency,
+                        isShared: $viewModel.isShared,
+                        splitCount: $viewModel.splitCount,
+                        ownSharePercentage: $viewModel.ownSharePercentage
                     )
                 }
                 .navigationTitle("サブスクを追加")

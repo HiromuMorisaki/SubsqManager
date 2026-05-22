@@ -30,7 +30,7 @@ final class AnalysisViewModel {
         
         // ざっくりとした計算: 毎月の支払い額を月額換算で一律として扱う
         let activeSubs = subscriptions.filter { !$0.isTrial && !$0.isExpired }
-        let totalMonthly = activeSubs.reduce(Decimal.zero) { $0 + $1.monthlyAmount }
+        let totalMonthly = activeSubs.reduce(Decimal.zero) { $0 + $1.ownShareMonthlyAmount }
         
         for monthOffset in 0..<12 {
             if let date = calendar.date(byAdding: .month, value: monthOffset, to: today) {
@@ -43,7 +43,7 @@ final class AnalysisViewModel {
                     if let endDate = sub.endDate, endDate < monthStart {
                         return total
                     }
-                    return total + sub.monthlyAmount
+                    return total + sub.ownShareMonthlyAmount
                 }
                 
                 data.append(MonthlyData(month: date, amount: amountForMonth))
@@ -59,7 +59,7 @@ final class AnalysisViewModel {
         
         let activeSubs = subscriptions.filter { !$0.isTrial && !$0.isExpired }
         for sub in activeSubs {
-            totals[sub.category, default: 0] += sub.monthlyAmount
+            totals[sub.category, default: 0] += sub.ownShareMonthlyAmount
         }
         
         return totals

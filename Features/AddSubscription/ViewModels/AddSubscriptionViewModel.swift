@@ -47,6 +47,9 @@ final class AddSubscriptionViewModel {
     var notes: String = ""
     var satisfaction: Int = 3
     var usageFrequency: UsageFrequency = .daily
+    var isShared: Bool = false
+    var splitCount: Int = 1
+    var ownSharePercentage: Double = 1.0
     var onSaveSuccess: (() -> Void)? = nil
 
     // MARK: - バリデーション
@@ -96,7 +99,10 @@ final class AddSubscriptionViewModel {
             endDate: hasEndDate ? endDate : nil,
             satisfaction: satisfaction,
             monthlyUsageCount: usageFrequency.monthlyEstimatedCount,
-            usageFrequencyRawValue: usageFrequency.rawValue
+            usageFrequencyRawValue: usageFrequency.rawValue,
+            isShared: isShared,
+            splitCount: splitCount,
+            ownSharePercentage: ownSharePercentage
         )
 
         // startDate と billingCycle から正しい次回請求日を計算
@@ -155,5 +161,8 @@ final class AddSubscriptionViewModel {
         self.notes = ""
         self.satisfaction = 3
         self.usageFrequency = .daily
+        self.isShared = false
+        self.splitCount = 1
+        self.ownSharePercentage = 1.0
     }
 }

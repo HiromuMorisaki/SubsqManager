@@ -29,6 +29,9 @@ final class EditSubscriptionViewModel {
     var notes: String
     var satisfaction: Int
     var usageFrequency: UsageFrequency
+    var isShared: Bool
+    var splitCount: Int
+    var ownSharePercentage: Double
 
     /// 編集対象のサブスクリプション（参照を保持）
     private let subscription: Subscription
@@ -57,6 +60,9 @@ final class EditSubscriptionViewModel {
         self.notes = subscription.notes
         self.satisfaction = subscription.satisfaction
         self.usageFrequency = subscription.usageFrequency
+        self.isShared = subscription.isShared
+        self.splitCount = subscription.splitCount
+        self.ownSharePercentage = subscription.ownSharePercentage
         self.originalName = subscription.name
         self.originalStartDate = subscription.startDate
     }
@@ -93,6 +99,9 @@ final class EditSubscriptionViewModel {
         subscription.endDate = hasEndDate ? endDate : nil
         subscription.satisfaction = satisfaction
         subscription.usageFrequency = usageFrequency
+        subscription.isShared = isShared
+        subscription.splitCount = splitCount
+        subscription.ownSharePercentage = ownSharePercentage
         subscription.updateNextPaymentDate()
 
         // 旧通知をキャンセルし、新しい通知をスケジュール

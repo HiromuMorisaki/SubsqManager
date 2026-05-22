@@ -72,6 +72,15 @@ final class Subscription {
     /// 利用頻度の段階設定値（生値）
     var usageFrequencyRawValue: String?
 
+    /// 割り勘サブスクかどうかのフラグ
+    var isShared: Bool = false
+
+    /// 割り勘人数
+    var splitCount: Int = 1
+
+    /// 自己負担割合（0.0 〜 1.0）
+    var ownSharePercentage: Double = 1.0
+
     /// レコード作成日時
     var createdAt: Date
 
@@ -96,7 +105,10 @@ final class Subscription {
         reviewStatusRawValue: String? = nil,
         satisfaction: Int = 3,
         monthlyUsageCount: Int = 0,
-        usageFrequencyRawValue: String? = nil
+        usageFrequencyRawValue: String? = nil,
+        isShared: Bool = false,
+        splitCount: Int = 1,
+        ownSharePercentage: Double = 1.0
     ) {
         self.name = name
         self.amount = amount
@@ -117,11 +129,33 @@ final class Subscription {
         } else {
             self.monthlyUsageCount = monthlyUsageCount
         }
+        self.isShared = isShared
+        self.splitCount = splitCount
+        self.ownSharePercentage = ownSharePercentage
         self.createdAt = Date()
         self.updatedAt = Date()
     }
 
     // MARK: - 計算プロパティ
+
+    /// 自己負担額 (実質負担額)
+    var ownShareAmount: Decimal {
+        if isShared {
+            return amount * Decimal(ownSharePercentage)
+        } else {
+            return amount
+        }
+    }
+
+    /// 自己負担の月額換算金額
+    var ownShareMonthlyAmount: Decimal {
+        ownShareAmount * billingCycle.monthlyMultiplier
+    }
+
+    /// 自己負担の年額換算金額
+    var ownShareYearlyAmount: Decimal {
+        ownShareAmount * billingCycle.yearlyMultiplier
+    }
 
     /// レビュー状態（enum）へのアクセス用プロパティ
     var reviewStatus: ReviewStatus? {
