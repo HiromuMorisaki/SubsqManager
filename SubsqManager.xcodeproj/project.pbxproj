@@ -12,9 +12,11 @@
 		AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8082FBCD00C0034B9D1 /* Category.swift */; };
 		AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */; };
 		AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC7E12FBCC7C90034B9D1 /* SubsqManagerApp.swift */; };
+		AD2CC8D42FBD48160034B9D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */; };
 		AD2CC80E2FBCD50C0034B9D1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC7DF2FBCC7C90034B9D1 /* ContentView.swift */; };
 		AD2CC8102FBCD54B0034B9D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD2CC7F32FBCC7C90034B9D1 /* Assets.xcassets */; };
 		AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8262FBD48160034B9D1 /* NotificationService.swift */; };
+		AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */; };
 		AD2CC8292FBD50340034B9D1 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 		AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */; };
 		AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */; };
@@ -106,11 +108,13 @@
 		AD2CC7CC2FBCC2040034B9D1 /* SubsqManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubsqManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD2CC7DF2FBCC7C90034B9D1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AD2CC7E12FBCC7C90034B9D1 /* SubsqManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsqManagerApp.swift; sourceTree = "<group>"; };
+		AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD2CC7F32FBCC7C90034B9D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingCycle.swift; sourceTree = "<group>"; };
 		AD2CC8082FBCD00C0034B9D1 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		AD2CC8262FBD48160034B9D1 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDateCalculator.swift; sourceTree = "<group>"; };
 		AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyHelper.swift; sourceTree = "<group>"; };
 		AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareHelper.swift; sourceTree = "<group>"; };
@@ -245,6 +249,7 @@
 		AD2CC7E22FBCC7C90034B9D1 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */,
 				AD2CC7DF2FBCC7C90034B9D1 /* ContentView.swift */,
 				AD2CC7E12FBCC7C90034B9D1 /* SubsqManagerApp.swift */,
 			);
@@ -276,6 +281,7 @@
 		AD2CC7E52FBCC7C90034B9D1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */,
 				AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */,
 				AD2CC8262FBD48160034B9D1 /* NotificationService.swift */,
 			);
@@ -727,6 +733,7 @@
 				AD730B912FBF003000D94032 /* UsageFrequency.swift in Sources */,
 				AD2CC83B2FBD53850034B9D1 /* SettingsView.swift in Sources */,
 				AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */,
+				AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */,
 				AD2CC80A2FBCD00C0034B9D1 /* Subscription.swift in Sources */,
 				AD2CC82E2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift in Sources */,
 				AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */,
@@ -757,6 +764,7 @@
 				AD2CC8692FBD88C20034B9D1 /* SummaryCardView.swift in Sources */,
 				AD2CC86A2FBD88C20034B9D1 /* UpcomingRowView.swift in Sources */,
 				AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */,
+				AD2CC8D42FBD48160034B9D1 /* AppDelegate.swift in Sources */,
 				AD2CC8582FBD73DA0034B9D1 /* PastSubscriptionsView.swift in Sources */,
 				AD2CC8582FBD73DA0034B9D9 /* ShareSavingsCard.swift in Sources */,
 				AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */,
@@ -945,6 +953,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -993,6 +1002,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;

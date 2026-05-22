@@ -82,6 +82,11 @@ final class SubscriptionListViewModel {
         NotificationService.cancelReminder(identifier: notificationID + "_trial")
         NotificationService.cancelReminder(identifier: notificationID + "_end")
 
+        // カレンダーイベントの削除
+        Task {
+            await CalendarService.removeEvents(for: subscription)
+        }
+
         modelContext.delete(subscription)
     }
 
@@ -105,6 +110,11 @@ final class SubscriptionListViewModel {
         NotificationService.cancelReminder(identifier: notificationID)
         NotificationService.cancelReminder(identifier: notificationID + "_trial")
         NotificationService.cancelReminder(identifier: notificationID + "_end")
+
+        // カレンダーイベントの削除
+        Task {
+            await CalendarService.removeEvents(for: subscription)
+        }
 
         modelContext.delete(subscription)
         

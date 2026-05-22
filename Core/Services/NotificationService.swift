@@ -26,12 +26,38 @@ enum NotificationService {
     @discardableResult
     static func requestAuthorization() async -> Bool {
         do {
-            return try await UNUserNotificationCenter.current()
+            let authorized = try await UNUserNotificationCenter.current()
                 .requestAuthorization(options: [.alert, .sound, .badge])
+            if authorized {
+                registerNotificationCategories()
+            }
+            return authorized
         } catch {
             print("通知許可リクエストエラー: \(error)")
             return false
         }
+    }
+
+    /// 通知のカスタムカテゴリとアクション（「見直す」ボタンなど）を登録する。
+    static func registerNotificationCategories() {
+        let center = UNUserNotificationCenter.current()
+
+        // アプリ起動（フォアグラウンド移行）を伴う見直しアクション
+        let reviewAction = UNNotificationAction(
+            identifier: "REVIEW_ACTION",
+            title: "🔍 アプリで今すぐ見直す",
+            options: [.foreground]
+        )
+
+        // トライアル終了警告用のカテゴリ
+        let trialCategory = UNNotificationCategory(
+            identifier: "TRIAL_REMINDER",
+            actions: [reviewAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        center.setNotificationCategories([trialCategory])
     }
 
     // MARK: - リマインド通知のスケジュール
@@ -124,9 +150,13 @@ enum NotificationService {
 
             let content = UNMutableNotificationContent()
             let dayText = offset == -1 ? "明日" : "明後日"
-            content.title = "無料体験が\(dayText)終了します"
-            content.body = "\(subscriptionName) の無料体験期間が終了し、課金が開始される可能性があります。"
+            content.title = "🚨 無料体験終了リマインダー"
+            content.body = "「\(subscriptionName)」の無料体験期間が\(dayText)で終了します！自動的に課金が発生する可能性があります。解約忘れはありませんか？"
             content.sound = .default
+            content.categoryIdentifier = "TRIAL_REMINDER" // リッチアクションカテゴリの適用
+            
+            // ディープリンク等で利用できるようにサブスク名をUserInfoに付与
+            content.userInfo = ["subscriptionName": subscriptionName]
 
             var triggerComponents = calendar.dateComponents([.year, .month, .day], from: reminderDate)
             triggerComponents.hour = 9

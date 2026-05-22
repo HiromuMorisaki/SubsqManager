@@ -141,6 +141,11 @@ final class AddSubscriptionViewModel {
             )
         }
 
+        // カレンダー自動連携がONであれば、カレンダーイベントを登録する
+        if UserDefaults.standard.bool(forKey: "calendarSyncEnabled") {
+            await CalendarService.syncSubscription(subscription)
+        }
+
         onSaveSuccess?()
 
         return true

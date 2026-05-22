@@ -28,18 +28,37 @@ struct SettingsView: View {
     /// 選択中の通貨コード（UserDefaultsに永続化）
     @AppStorage("currencyCode") private var currencyCode = "JPY"
 
+    /// カレンダー自動連携のON/OFFフラグ（UserDefaultsに永続化）
+    @AppStorage("calendarSyncEnabled") private var calendarSyncEnabled = false
+
+    @State private var isSyncing = false
+    @State private var showingSyncSuccessAlert = false
+    @State private var showingSyncErrorAlert = false
+    @State private var alertMessage = ""
+
     // MARK: - Body
 
     var body: some View {
         NavigationStack {
             Form {
                 notificationSection
+                calendarSection
                 currencySection
                 dataSection
                 helpSection
                 appInfoSection
             }
             .navigationTitle("設定")
+            .alert("完了", isPresented: $showingSyncSuccessAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
+            .alert("エラー", isPresented: $showingSyncErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
         }
     }
 
@@ -70,6 +89,35 @@ struct SettingsView: View {
             Text(notificationsEnabled
                  ? "請求日の\(notificationLeadDays == 1 ? "前日" : "\(notificationLeadDays)日前")の午前9時に通知でお知らせします"
                  : "ONにすると、請求日の指定日前に通知でお知らせします")
+        }
+    }
+
+    /// カレンダー連携設定セクション
+    private var calendarSection: some View {
+        Section {
+            Toggle("カレンダー自動連携", isOn: $calendarSyncEnabled)
+                .onChange(of: calendarSyncEnabled) { _, newValue in
+                    handleCalendarSyncToggled(enabled: newValue)
+                }
+
+            if calendarSyncEnabled {
+                Button {
+                    syncAllToCalendar()
+                } label: {
+                    HStack {
+                        Label("既存データをカレンダーに同期", systemImage: "arrow.triangle.2.circlepath")
+                        Spacer()
+                        if isSyncing {
+                            ProgressView()
+                        }
+                    }
+                }
+                .disabled(isSyncing)
+            }
+        } header: {
+            Label("カレンダー連携", systemImage: "calendar")
+        } footer: {
+            Text("有効にすると、サブスクの次回請求日や無料トライアル終了日が自動的にiOS標準カレンダーに登録されます。")
         }
     }
 
@@ -237,6 +285,51 @@ struct SettingsView: View {
             } else {
                 NotificationService.cancelAllReminders()
             }
+        }
+    }
+
+    /// カレンダー連携のトグル切り替え時の処理
+    private func handleCalendarSyncToggled(enabled: Bool) {
+        Task {
+            if enabled {
+                let authorized = await CalendarService.requestAuthorization()
+                if authorized {
+                    await syncAllToCalendarSilently()
+                } else {
+                    calendarSyncEnabled = false
+                    alertMessage = "カレンダーへのアクセス権限がありません。設定アプリからコテサクのカレンダー書き込み権限を許可してください。"
+                    showingSyncErrorAlert = true
+                }
+            } else {
+                isSyncing = true
+                await CalendarService.removeAllEvents(for: subscriptions)
+                isSyncing = false
+                alertMessage = "カレンダーの同期設定をオフにし、登録されたすべてのイベントを削除しました。"
+                showingSyncSuccessAlert = true
+            }
+        }
+    }
+
+    /// カレンダーへの一括サイレント同期
+    private func syncAllToCalendarSilently() async {
+        guard CalendarService.isAuthorized else { return }
+        await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+    }
+
+    /// 既存データをカレンダーに一括同期する（インジケータ表示付き）
+    private func syncAllToCalendar() {
+        Task {
+            isSyncing = true
+            let authorized = await CalendarService.requestAuthorization()
+            if authorized {
+                await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+                alertMessage = "既存のサブスクリプション（\(subscriptions.count)件）をカレンダーに同期しました。"
+                showingSyncSuccessAlert = true
+            } else {
+                alertMessage = "カレンダーへのアクセス権限がありません。設定アプリからコテサクのカレンダー書き込み権限を許可してください。"
+                showingSyncErrorAlert = true
+            }
+            isSyncing = false
         }
     }
 

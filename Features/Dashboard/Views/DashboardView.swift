@@ -86,6 +86,11 @@ struct DashboardView: View {
             .sheet(item: $selectedSubscriptionForEdit) { subscription in
                 EditSubscriptionView(subscription: subscription)
             }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowReviewWizard"))) { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showingReviewWizard = true
+                }
+            }
         }
     }
     

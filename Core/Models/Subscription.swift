@@ -81,6 +81,12 @@ final class Subscription {
     /// 自己負担割合（0.0 〜 1.0）
     var ownSharePercentage: Double = 1.0
 
+    /// カレンダーの通常請求リマインダイベントID
+    var calendarEventIdentifier: String?
+
+    /// カレンダーの無料トライアル終了リマインダイベントID
+    var trialCalendarEventIdentifier: String?
+
     /// レコード作成日時
     var createdAt: Date
 
@@ -108,7 +114,9 @@ final class Subscription {
         usageFrequencyRawValue: String? = nil,
         isShared: Bool = false,
         splitCount: Int = 1,
-        ownSharePercentage: Double = 1.0
+        ownSharePercentage: Double = 1.0,
+        calendarEventIdentifier: String? = nil,
+        trialCalendarEventIdentifier: String? = nil
     ) {
         self.name = name
         self.amount = amount
@@ -132,6 +140,8 @@ final class Subscription {
         self.isShared = isShared
         self.splitCount = splitCount
         self.ownSharePercentage = ownSharePercentage
+        self.calendarEventIdentifier = calendarEventIdentifier
+        self.trialCalendarEventIdentifier = trialCalendarEventIdentifier
         self.createdAt = Date()
         self.updatedAt = Date()
     }

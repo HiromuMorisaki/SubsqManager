@@ -17,33 +17,42 @@ import SwiftData
 /// .tag() で選択状態を管理する。
 struct ContentView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @State private var selectedTab = 0
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             DashboardView()
                 .tabItem {
                     Label("ダッシュボード", systemImage: "chart.bar")
                 }
+                .tag(0)
 
             CalendarView()
                 .tabItem {
                     Label("カレンダー", systemImage: "calendar")
                 }
+                .tag(1)
 
             SubscriptionListView()
                 .tabItem {
                     Label("サブスク", systemImage: "list.bullet")
                 }
+                .tag(2)
 
             AnalysisView()
                 .tabItem {
                     Label("分析", systemImage: "chart.pie")
                 }
+                .tag(3)
 
             SettingsView()
                 .tabItem {
                     Label("設定", systemImage: "gearshape")
                 }
+                .tag(4)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowReviewWizard"))) { _ in
+            selectedTab = 0 // ダッシュボードタブへ切り替え
         }
         #if os(iOS)
         .fullScreenCover(isPresented: .init(get: { !hasSeenOnboarding }, set: { _ in })) {

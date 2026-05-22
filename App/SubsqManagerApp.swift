@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct SubsqManagerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var sharedModelContainer: ModelContainer = {
         do {
             return try SharedModelContainer.createForApp()

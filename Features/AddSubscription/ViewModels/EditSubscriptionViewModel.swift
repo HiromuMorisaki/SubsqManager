@@ -150,6 +150,11 @@ final class EditSubscriptionViewModel {
             )
         }
 
+        // カレンダー自動連携がONであれば、カレンダーイベントを更新（同期）する
+        if UserDefaults.standard.bool(forKey: "calendarSyncEnabled") {
+            await CalendarService.syncSubscription(subscription)
+        }
+
         return true
     }
 }
