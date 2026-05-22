@@ -187,10 +187,10 @@ enum CalendarService {
 
         notesText += "【サブスクリプション詳細】\n"
         notesText += "・サブスク名: \(subscription.name)\n"
-        notesText += "・カテゴリ: \(subscription.category.localizedName)\n"
+        notesText += "・カテゴリ: \(subscription.category.displayName)\n"
         
         let amountFormatted = CurrencyHelper.formatted(amount: subscription.amount)
-        notesText += "・契約料金: \(amountFormatted) / \(subscription.billingCycle.localizedName)\n"
+        notesText += "・契約料金: \(amountFormatted) / \(subscription.billingCycle.displayName)\n"
 
         if subscription.isShared {
             notesText += "・割り勘設定: ON\n"
@@ -198,7 +198,7 @@ enum CalendarService {
             notesText += "  - 自己負担率: \(Int(subscription.ownSharePercentage * 100)) %\n"
             
             let ownShareAmountFormatted = CurrencyHelper.formatted(amount: subscription.ownShareAmount)
-            notesText += "  - 実質自己負担額: \(ownShareAmountFormatted) / \(subscription.billingCycle.localizedName)\n"
+            notesText += "  - 実質自己負担額: \(ownShareAmountFormatted) / \(subscription.billingCycle.displayName)\n"
         }
 
         if !subscription.notes.isEmpty {
