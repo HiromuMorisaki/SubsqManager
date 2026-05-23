@@ -12,11 +12,9 @@
 		AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8082FBCD00C0034B9D1 /* Category.swift */; };
 		AD2CC80C2FBCD00C0034B9D1 /* BillingCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */; };
 		AD2CC80D2FBCD4E80034B9D1 /* SubsqManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC7E12FBCC7C90034B9D1 /* SubsqManagerApp.swift */; };
-		AD2CC8D42FBD48160034B9D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */; };
 		AD2CC80E2FBCD50C0034B9D1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC7DF2FBCC7C90034B9D1 /* ContentView.swift */; };
 		AD2CC8102FBCD54B0034B9D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD2CC7F32FBCC7C90034B9D1 /* Assets.xcassets */; };
 		AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8262FBD48160034B9D1 /* NotificationService.swift */; };
-		AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */; };
 		AD2CC8292FBD50340034B9D1 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 		AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */; };
 		AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */; };
@@ -28,6 +26,7 @@
 		AD2CC8372FBD53620034B9D1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8362FBD53620034B9D1 /* DashboardViewModel.swift */; };
 		AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8382FBD53700034B9D1 /* DashboardView.swift */; };
 		AD2CC83B2FBD53850034B9D1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83A2FBD53850034B9D1 /* SettingsView.swift */; };
+		AD3EE83B2FBD53850034B9F1 /* TimeTreeGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */; };
 		AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */; };
 		AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */; };
 		AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */; };
@@ -55,13 +54,19 @@
 		AD2CC8942FBDF6F30034B9D1 /* SubscriptionPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */; };
 		AD2CC8952FBDF6F90034B9D1 /* BillingCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */; };
 		AD2CC8962FBDF6FE0034B9D1 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8082FBCD00C0034B9D1 /* Category.swift */; };
+		AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */; };
+		AD2CC9E12FBD48160034B9D1 /* AppleSubscriptionImporterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */; };
+		AD2CC8D42FBD48160034B9D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */; };
 		AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B8B2FBF00AF00D94032 /* ReductionCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */; };
 		AD730B912FBF003000D94032 /* UsageFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B902FBF003000D94032 /* UsageFrequency.swift */; };
 		AD730B922FBF003000D94032 /* UsageFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B902FBF003000D94032 /* UsageFrequency.swift */; };
+		AD9999022FBCD00C0034B9D1 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9999012FBCD00C0034B9D1 /* AppTheme.swift */; };
+		AD9999042FBCD00C0034B9D1 /* AppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9999032FBCD00C0034B9D1 /* AppIcon.swift */; };
 		ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */; };
 		ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
+		ADAFC28F2FC0255700F54B47 /* CalendarImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAFC28E2FC0255700F54B47 /* CalendarImportView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,13 +113,11 @@
 		AD2CC7CC2FBCC2040034B9D1 /* SubsqManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubsqManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD2CC7DF2FBCC7C90034B9D1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AD2CC7E12FBCC7C90034B9D1 /* SubsqManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsqManagerApp.swift; sourceTree = "<group>"; };
-		AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD2CC7F32FBCC7C90034B9D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingCycle.swift; sourceTree = "<group>"; };
 		AD2CC8082FBCD00C0034B9D1 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		AD2CC8262FBD48160034B9D1 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
-		AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentDateCalculator.swift; sourceTree = "<group>"; };
 		AD2CC82A2FBD50E60034B9D1 /* CurrencyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyHelper.swift; sourceTree = "<group>"; };
 		AD2CC82A2FBD50E60034B9D9 /* ShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareHelper.swift; sourceTree = "<group>"; };
@@ -126,6 +129,7 @@
 		AD2CC8362FBD53620034B9D1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		AD2CC8382FBD53700034B9D1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		AD2CC83A2FBD53850034B9D1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTreeGuideView.swift; sourceTree = "<group>"; };
 		AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListViewModel.swift; sourceTree = "<group>"; };
 		AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListView.swift; sourceTree = "<group>"; };
 		AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryChartView.swift; sourceTree = "<group>"; };
@@ -151,9 +155,15 @@
 		AD2CC8792FBDB0550034B9D1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		AD2CC88F2FBDF47D0034B9D1 /* SubsqManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SubsqManager.entitlements; sourceTree = "<group>"; };
 		AD2CC8902FBDF4FC0034B9D1 /* SubsqManagerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SubsqManagerWidgetExtension.entitlements; sourceTree = "<group>"; };
+		AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSubscriptionImporterView.swift; sourceTree = "<group>"; };
+		AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AD730B872FBF003000D94032 /* ReductionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionHistory.swift; sourceTree = "<group>"; };
 		AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionCelebrationView.swift; sourceTree = "<group>"; };
 		AD730B902FBF003000D94032 /* UsageFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFrequency.swift; sourceTree = "<group>"; };
+		AD9999012FBCD00C0034B9D1 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		AD9999032FBCD00C0034B9D1 /* AppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIcon.swift; sourceTree = "<group>"; };
+		ADAFC28E2FC0255700F54B47 /* CalendarImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarImportView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -268,6 +278,8 @@
 		AD2CC7E42FBCC7C90034B9D1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AD9999012FBCD00C0034B9D1 /* AppTheme.swift */,
+				AD9999032FBCD00C0034B9D1 /* AppIcon.swift */,
 				AD730B902FBF003000D94032 /* UsageFrequency.swift */,
 				AD730B872FBF003000D94032 /* ReductionHistory.swift */,
 				AD2CC8552FBD709B0034B9D1 /* SubscriptionPreset.swift */,
@@ -311,6 +323,7 @@
 		AD2CC7E82FBCC7C90034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */,
 				AD2CC86F2FBD9E450034B9D1 /* PresetSelectionWizard.swift */,
 				AD2CC8302FBD52F60034B9D1 /* AddSubscriptionView.swift */,
 				AD2CC8312FBD52F60034B9D1 /* EditSubscriptionView.swift */,
@@ -359,6 +372,7 @@
 			isa = PBXGroup;
 			children = (
 				AD2CC83A2FBD53850034B9D1 /* SettingsView.swift */,
+				AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -441,6 +455,7 @@
 		AD2CC8472FBD59D20034B9D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				ADAFC28E2FC0255700F54B47 /* CalendarImportView.swift */,
 				AD2CC8452FBD59D20034B9D1 /* CalendarDateCell.swift */,
 				AD2CC8462FBD59D20034B9D1 /* CalendarView.swift */,
 			);
@@ -732,8 +747,10 @@
 			files = (
 				AD730B912FBF003000D94032 /* UsageFrequency.swift in Sources */,
 				AD2CC83B2FBD53850034B9D1 /* SettingsView.swift in Sources */,
+				AD3EE83B2FBD53850034B9F1 /* TimeTreeGuideView.swift in Sources */,
 				AD2CC8272FBD48160034B9D1 /* NotificationService.swift in Sources */,
 				AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */,
+				AD2CC9E12FBD48160034B9D1 /* AppleSubscriptionImporterView.swift in Sources */,
 				AD2CC80A2FBCD00C0034B9D1 /* Subscription.swift in Sources */,
 				AD2CC82E2FBD52D90034B9D1 /* EditSubscriptionViewModel.swift in Sources */,
 				AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */,
@@ -747,6 +764,7 @@
 				AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */,
 				AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */,
 				AD2CC8702FBD9E450034B9D1 /* PresetSelectionWizard.swift in Sources */,
+				ADAFC28F2FC0255700F54B47 /* CalendarImportView.swift in Sources */,
 				AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */,
 				AD2CC80B2FBCD00C0034B9D1 /* Category.swift in Sources */,
 				AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */,
@@ -772,6 +790,8 @@
 				AD2CC85E2FBD84A00034B9D1 /* AnalysisView.swift in Sources */,
 				AD2CC85F2FBD84A00034B9D1 /* AnalysisViewModel.swift in Sources */,
 				AD2CC8562FBD709B0034B9D1 /* SubscriptionPreset.swift in Sources */,
+				AD9999022FBCD00C0034B9D1 /* AppTheme.swift in Sources */,
+				AD9999042FBCD00C0034B9D1 /* AppIcon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -944,6 +964,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SubsqManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -953,9 +974,10 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "無料トライアル終了日や請求日の登録・更新・重複削除を行うために、カレンダーへのフルアクセス権限が必要です。";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -993,6 +1015,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SubsqManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -1002,9 +1025,10 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "無料トライアル終了日や請求日の登録・更新・重複削除を行うために、カレンダーへのフルアクセス権限が必要です。";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

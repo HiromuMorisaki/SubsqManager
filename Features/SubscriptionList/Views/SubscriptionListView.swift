@@ -87,8 +87,10 @@ struct SubscriptionListView: View {
                     }
                 }
             }
-            .navigationDestination(isPresented: $showingAddView) {
-                AddSubscriptionView()
+            .sheet(isPresented: $showingAddView) {
+                NavigationStack {
+                    AddSubscriptionView(isModal: true)
+                }
             }
             .sheet(item: $editingSubscription) { subscription in
                 EditSubscriptionView(subscription: subscription)

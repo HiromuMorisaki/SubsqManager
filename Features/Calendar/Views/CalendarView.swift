@@ -17,6 +17,7 @@ struct CalendarView: View {
 
     @State private var viewModel = CalendarViewModel()
     @State private var showingAddView = false
+    @State private var showingImportView = false
 
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
@@ -47,6 +48,13 @@ struct CalendarView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingImportView = true
+                    } label: {
+                        Label("外部連携", systemImage: "square.and.arrow.down.on.square")
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingAddView = true
@@ -55,8 +63,13 @@ struct CalendarView: View {
                     }
                 }
             }
-            .navigationDestination(isPresented: $showingAddView) {
-                AddSubscriptionView()
+            .sheet(isPresented: $showingAddView) {
+                NavigationStack {
+                    AddSubscriptionView(isModal: true)
+                }
+            }
+            .sheet(isPresented: $showingImportView) {
+                CalendarImportView()
             }
         }
     }

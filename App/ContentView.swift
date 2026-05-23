@@ -16,6 +16,7 @@ import SwiftData
 /// 各タブには Label（テキスト + SF Symbol）を設定し、
 /// .tag() で選択状態を管理する。
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var selectedTab = 0
 
@@ -53,6 +54,10 @@ struct ContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowReviewWizard"))) { _ in
             selectedTab = 0 // ダッシュボードタブへ切り替え
+        }
+        .task {
+            // 重複サブスクリプションを自動クリーンアップ（自己修復機能）
+            SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
         }
         #if os(iOS)
         .fullScreenCover(isPresented: .init(get: { !hasSeenOnboarding }, set: { _ in })) {

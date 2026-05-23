@@ -17,6 +17,9 @@ struct ReviewWizardView: View {
     @State private var viewModel = ReviewWizardViewModel()
     @State private var cardOffset: CGSize = .zero
     
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+    private var currentTheme: AppTheme { AppTheme(rawValue: appThemeRawValue) ?? .neonGreen }
+    
     enum SwipeDirection {
         case left, right, up
     }
@@ -250,7 +253,7 @@ struct ReviewWizardView: View {
             ZStack {
                 // KEEP (右スワイプ)
                 if cardOffset.width > 20 {
-                    stampOverlay(text: "KEEP", color: .green, angle: -15)
+                    stampOverlay(text: "KEEP", color: currentTheme.color, angle: -15)
                         .opacity(min(1.0, Double((cardOffset.width - 20) / 80)))
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         .padding(32)
@@ -339,7 +342,7 @@ struct ReviewWizardView: View {
                     viewModel.markCurrent(as: .keep)
                 }
             } label: {
-                actionButtonLabel(title: "キープ", icon: "checkmark", color: .green)
+                actionButtonLabel(title: "キープ", icon: "checkmark", color: currentTheme.color)
             }
         }
         .padding(.horizontal)
@@ -366,10 +369,10 @@ struct ReviewWizardView: View {
     /// スワイプのドラッグ移動量に応じたダイナミックなネオン光彩背景
     private var neonBackgroundGlow: some View {
         ZStack {
-            // 右スワイプ (キープ) -> ネオングリーン 🟢
+            // 右スワイプ (キープ) -> テーマカラー
             if cardOffset.width > 0 {
                 RadialGradient(
-                    colors: [Color.green.opacity(Double(min(0.20, cardOffset.width / 400))), Color.clear],
+                    colors: [currentTheme.color.opacity(Double(min(0.20, cardOffset.width / 400))), Color.clear],
                     center: .trailing,
                     startRadius: 20,
                     endRadius: 350
@@ -436,11 +439,11 @@ struct ReviewWizardView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 28))
-                            .foregroundColor(.green)
-                            .shadow(color: .green.opacity(0.8), radius: 6)
+                            .foregroundColor(currentTheme.color)
+                            .shadow(color: currentTheme.color.opacity(0.8), radius: 6)
                         Text("キープ")
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.green)
+                            .foregroundColor(currentTheme.color)
                     }
                     .padding(.trailing, 16)
                     .opacity(rightOpacity)

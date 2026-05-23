@@ -27,6 +27,8 @@ struct DashboardView: View {
     @State private var viewModel = DashboardViewModel()
     @State private var showingReviewWizard = false
     @State private var showingAddView = false
+    @State private var showingAppleImporter = false
+    @State private var showingCalendarImporter = false
     
     // 削減目標設定用
     @AppStorage("monthlySavingsGoal") private var monthlySavingsGoal = 0
@@ -35,6 +37,9 @@ struct DashboardView: View {
     
     // コスパ診断からの直接編集用
     @State private var selectedSubscriptionForEdit: Subscription? = nil
+
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+    private var currentTheme: AppTheme { AppTheme(rawValue: appThemeRawValue) ?? .neonGreen }
 
     // MARK: - Body
 
@@ -77,14 +82,26 @@ struct DashboardView: View {
             .sheet(isPresented: $showingReviewWizard) {
                 ReviewWizardView(activeSubscriptions: subscriptions)
             }
-            .navigationDestination(isPresented: $showingAddView) {
-                AddSubscriptionView()
+            .sheet(isPresented: $showingAddView) {
+                NavigationStack {
+                    AddSubscriptionView(isModal: true)
+                }
             }
             .sheet(isPresented: $showingGoalEditSheet) {
                 goalEditSheetView
             }
             .sheet(item: $selectedSubscriptionForEdit) { subscription in
                 EditSubscriptionView(subscription: subscription)
+            }
+            .sheet(isPresented: $showingAppleImporter) {
+                NavigationStack {
+                    AppleSubscriptionImporterView()
+                }
+            }
+            .sheet(isPresented: $showingCalendarImporter) {
+                NavigationStack {
+                    CalendarImportView()
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowReviewWizard"))) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -97,43 +114,129 @@ struct DashboardView: View {
     // MARK: - 空状態（Empty State）
     
     private var emptyStateView: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 60)
-            
-            Image(systemName: "tray.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .foregroundStyle(Color.accentColor.opacity(0.5))
-            
-            VStack(spacing: 8) {
-                Text("サブスクがありません")
-                    .font(.title2)
-                    .fontWeight(.bold)
+        ScrollView {
+            VStack(spacing: 24) {
+                // ウェルカムヘッダー
+                VStack(spacing: 12) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 40))
+                        .foregroundStyle(currentTheme.color)
+                        .padding(.top, 32)
+                    
+                    Text("さあ、未来を変えましょう！")
+                        .font(.title2)
+                        .fontWeight(.black)
+                    
+                    Text("最初のサブスクを登録して、\n無駄な出費の見える化をスタートしましょう。")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
                 
-                Text("まずは最初のサブスクリプションを登録して、\nダッシュボードを作成しましょう。")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            
-            Button {
-                showingAddView = true
-            } label: {
-                Text("最初のサブスクを登録する")
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                // メインの登録ボタン
+                Button {
+                    showingAddView = true
+                } label: {
+                    Text("最初のサブスクを登録する")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(currentTheme.color)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .shadow(color: currentTheme.color.opacity(0.3), radius: 8, x: 0, y: 4)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                
+                // 迷ったときのアドバイスセクション
+                VStack(alignment: .leading, spacing: 16) {
+                    Label("💡 何を登録すればいいか迷ったら？", systemImage: "lightbulb.max.fill")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .padding(.bottom, 4)
+                    
+                    Text("Amazon Prime、Netflix、Spotify、ジム、iCloudなど、毎月自動で支払っているものを思い出してみましょう。")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineSpacing(4)
+                    
+                    // インポートアクションボタン群
+                    VStack(spacing: 12) {
+                        Button {
+                            showingAppleImporter = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "apple.logo")
+                                    .font(.title3)
+                                    .frame(width: 24)
+                                Text("Apple IDから自動連携する")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .background(Color(.secondarySystemGroupedBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        Button {
+                            showingCalendarImporter = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "calendar")
+                                    .font(.title3)
+                                    .frame(width: 24)
+                                    .foregroundStyle(.red)
+                                Text("カレンダーから自動連携する")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding()
+                            .background(Color(.secondarySystemGroupedBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    
+                    // スクショのアドバイス
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "camera.viewfinder")
+                            .font(.title3)
+                            .foregroundStyle(.blue)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("スクショを見ながら登録")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text("クレジットカードの明細や、設定アプリの『サブスクリプション』画面のスクショを撮って、見ながら入力するのもおすすめです。")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineSpacing(4)
+                        }
+                    }
                     .padding()
-                    .frame(maxWidth: 300)
-                    .background(Color.accentColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(Color.blue.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(20)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                
+                Spacer(minLength: 40)
             }
-            .padding(.top, 16)
-            
-            Spacer()
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - 削減累計額カード
@@ -262,16 +365,13 @@ struct DashboardView: View {
         .padding()
         .background(
             LinearGradient(
-                colors: [
-                    Color.green.opacity(0.85),
-                    Color.teal.opacity(0.9)
-                ],
+                colors: currentTheme.gradientColors,
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         )
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .shadow(color: Color.green.opacity(0.3), radius: 10, x: 0, y: 6)
+        .shadow(color: currentTheme.color.opacity(0.3), radius: 10, x: 0, y: 6)
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(.white.opacity(0.25), lineWidth: 1)

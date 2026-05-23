@@ -17,30 +17,29 @@ struct OnboardingView: View {
     
     var onComplete: (() -> Void)? = nil
 
-    // チュートリアルのコンテンツ定義
     private let pages: [PageContent] = [
         PageContent(
-            title: "毎月、いくら使っていますか？",
-            description: "気がつけば増えているサブスク。使っていないサービスにお金を払い続けていませんか？\nコテサクがあなたの無駄な出費をゼロにします。",
-            systemImage: "questionmark.circle.fill",
+            title: "コテサクへようこそ！",
+            description: "気がつけば増えているサブスク。\n使っていないサービスにお金を払い続けていませんか？\nコテサクがあなたの無駄な出費をゼロにします。",
+            systemImage: "sparkles",
             color: .blue
         ),
         PageContent(
             title: "すべてを一つの場所で",
-            description: "「ダッシュボード」で毎月の合計額を把握し、「カレンダー」で直近の支払いをチェック。\n「分析」タブで支出の偏りを可視化します。",
+            description: "月々の支払いをダッシュボードで一目で把握。\nカレンダーで直近の支払いをチェックし、分析タブで支出の偏りを可視化します。",
             systemImage: "chart.bar.doc.horizontal",
             color: .green
         ),
         PageContent(
             title: "解約忘れを確実にブロック",
-            description: "無料トライアルの終了や、設定した「終了予定日」の前日に通知でお知らせ。\n安心して新しいサービスを試せます。",
+            description: "無料トライアルの終了や、設定した終了予定日の前日に通知でしっかりとお知らせ。\n安心して新しいサービスを試せます。",
             systemImage: "bell.badge.fill",
             color: .orange
         ),
         PageContent(
-            title: "さあ、管理を始めましょう！",
-            description: "継続して利用することで、節約できる金額が目に見えてわかります。\nまずは右上の「＋ボタン」から、最初のサブスクを登録してみましょう！",
-            systemImage: "plus.circle.fill",
+            title: "さあ、未来を変えましょう",
+            description: "1つのサブスクを見直すだけで、年間数万円の節約に。\nコテサクと一緒に、賢く無駄のない生活をスタートしましょう！",
+            systemImage: "arrow.up.forward.app.fill",
             color: .purple
         )
     ]
@@ -188,21 +187,28 @@ struct OnboardingView: View {
                     completeOnboarding()
                 }
             } label: {
-                Text(currentPage == pages.count - 1 ? "はじめる" : "次へ")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 100, height: 44, alignment: .center)
-                    .background(
-                        LinearGradient(
-                            colors: currentPage == pages.count - 1
-                                ? [pages[currentPage].color, pages[currentPage].color.opacity(0.8)]
-                                : [Color.accentColor, Color.accentColor.opacity(0.8)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                HStack(spacing: 6) {
+                    Text(currentPage == pages.count - 1 ? "今すぐ始める" : "次へ")
+                        .font(.system(size: 16, weight: .bold))
+                    if currentPage == pages.count - 1 {
+                        Image(systemName: "chevron.right.circle.fill")
+                    }
+                }
+                .foregroundStyle(.white)
+                .frame(width: currentPage == pages.count - 1 ? 160 : 100, height: 48, alignment: .center)
+                .background(
+                    LinearGradient(
+                        colors: currentPage == pages.count - 1
+                            ? [pages[currentPage].color, pages[currentPage].color.opacity(0.7)]
+                            : [Color.accentColor, Color.accentColor.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
-                    .clipShape(Capsule())
-                    .shadow(color: pages[currentPage].color.opacity(0.3), radius: 6, x: 0, y: 3)
+                )
+                .clipShape(Capsule())
+                .shadow(color: pages[currentPage].color.opacity(0.4), radius: 8, x: 0, y: 4)
+                .scaleEffect(currentPage == pages.count - 1 ? 1.05 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: currentPage)
             }
         }
         .padding(.horizontal, 24)

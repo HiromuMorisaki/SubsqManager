@@ -20,9 +20,15 @@ struct SubsqManagerApp: App {
         }
     }()
 
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+
     var body: some Scene {
         WindowGroup {
+            let currentTheme = AppTheme(rawValue: appThemeRawValue) ?? .neonGreen
+            
             ContentView()
+                .tint(currentTheme.color)
+                .accentColor(currentTheme.color)
                 .task {
                     // アプリ初回起動時に通知許可ダイアログを表示する。
                     // .task はViewの表示時に一度だけ非同期処理を実行する修飾子。

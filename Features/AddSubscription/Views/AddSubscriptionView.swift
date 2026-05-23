@@ -32,7 +32,10 @@ struct AddSubscriptionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AddSubscriptionViewModel
     @State private var activeSheet: AddSubscriptionSheetType? = nil
-    @State private var isQuickAddExpanded = false
+    @State private var isQuickAddExpanded = true
+    
+    // キーボードフォーカス管理
+    @FocusState private var focusedField: FormField?
     
     // トーストフィードバック用の状態
     @State private var showingToast = false
@@ -40,9 +43,9 @@ struct AddSubscriptionView: View {
 
     let isModal: Bool
 
-    init(isModal: Bool = false, reductionHistory: ReductionHistory? = nil, onSaveSuccess: (() -> Void)? = nil) {
+    init(isModal: Bool = false, onSaveSuccess: (() -> Void)? = nil) {
         self.isModal = isModal
-        let vm = AddSubscriptionViewModel(reductionHistory: reductionHistory)
+        let vm = AddSubscriptionViewModel()
         vm.onSaveSuccess = onSaveSuccess
         _viewModel = State(initialValue: vm)
     }
@@ -69,7 +72,7 @@ struct AddSubscriptionView: View {
                             HStack {
                                 Image(systemName: "bolt.fill")
                                     .foregroundColor(.yellow)
-                                Text("⚡️ 爆速クイック・人気サービスから追加")
+                                Text("爆速クイック・人気サービスから追加")
                                     .font(.subheadline)
                                     .fontWeight(.bold)
                             }
@@ -94,8 +97,12 @@ struct AddSubscriptionView: View {
                         usageFrequency: $viewModel.usageFrequency,
                         isShared: $viewModel.isShared,
                         splitCount: $viewModel.splitCount,
-                        ownSharePercentage: $viewModel.ownSharePercentage
+                        ownSharePercentage: $viewModel.ownSharePercentage,
+                        focusedField: $focusedField
                     )
+                }
+                .onTapGesture {
+                    focusedField = nil // カーソル外タップでキーボード自動クローズ
                 }
                 .navigationTitle("サブスクを追加")
                 #if os(iOS)
@@ -110,6 +117,7 @@ struct AddSubscriptionView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("保存") {
                             let savedName = viewModel.name
+                            focusedField = nil // 保存時にキーボードを閉じる
                             Task {
                                 if await viewModel.save(using: modelContext) {
                                     handleSaveSuccess(serviceName: savedName)
@@ -117,6 +125,12 @@ struct AddSubscriptionView: View {
                             }
                         }
                         .disabled(!viewModel.isValid)
+                    }
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("完了") {
+                            focusedField = nil // キーボードの完了ボタン
+                        }
                     }
                 }
                 .sheet(item: $activeSheet) { sheetType in

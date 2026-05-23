@@ -14,6 +14,7 @@ enum BillingCycle: String, Codable, CaseIterable, Identifiable {
     case weekly = "weekly"
     case monthly = "monthly"
     case yearly = "yearly"
+    case oneTime = "oneTime"
 
     var id: String { rawValue }
 
@@ -23,6 +24,7 @@ enum BillingCycle: String, Codable, CaseIterable, Identifiable {
         case .weekly: return "週額"
         case .monthly: return "月額"
         case .yearly: return "年額"
+        case .oneTime: return "1度きり"
         }
     }
 
@@ -33,6 +35,7 @@ enum BillingCycle: String, Codable, CaseIterable, Identifiable {
         case .weekly: return Decimal(52) / Decimal(12)
         case .monthly: return Decimal(1)
         case .yearly: return Decimal(1) / Decimal(12)
+        case .oneTime: return Decimal(0)
         }
     }
 
@@ -42,6 +45,7 @@ enum BillingCycle: String, Codable, CaseIterable, Identifiable {
         case .weekly: return Decimal(52)
         case .monthly: return Decimal(12)
         case .yearly: return Decimal(1)
+        case .oneTime: return Decimal(0)
         }
     }
 }

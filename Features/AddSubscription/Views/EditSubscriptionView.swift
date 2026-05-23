@@ -15,6 +15,9 @@ struct EditSubscriptionView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: EditSubscriptionViewModel
+    
+    // キーボードフォーカス管理
+    @FocusState private var focusedField: FormField?
 
     /// 編集対象の Subscription を受け取ってViewModelを初期化する。
     init(subscription: Subscription) {
@@ -44,8 +47,12 @@ struct EditSubscriptionView: View {
                     usageFrequency: $viewModel.usageFrequency,
                     isShared: $viewModel.isShared,
                     splitCount: $viewModel.splitCount,
-                    ownSharePercentage: $viewModel.ownSharePercentage
+                    ownSharePercentage: $viewModel.ownSharePercentage,
+                    focusedField: $focusedField
                 )
+            }
+            .onTapGesture {
+                focusedField = nil // カーソル外タップでキーボード自動クローズ
             }
             .navigationTitle("サブスクを編集")
             #if os(iOS)
@@ -57,6 +64,7 @@ struct EditSubscriptionView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
+                        focusedField = nil // 保存時にキーボードを閉じる
                         Task {
                             if await viewModel.save() {
                                 dismiss()
@@ -64,6 +72,12 @@ struct EditSubscriptionView: View {
                         }
                     }
                     .disabled(!viewModel.isValid)
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("完了") {
+                        focusedField = nil // キーボードの完了ボタン
+                    }
                 }
             }
         }

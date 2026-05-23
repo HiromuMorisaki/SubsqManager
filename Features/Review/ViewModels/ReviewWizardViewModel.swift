@@ -86,9 +86,18 @@ final class ReviewWizardViewModel {
             NotificationService.cancelReminder(identifier: notificationID + "_trial")
             NotificationService.cancelReminder(identifier: notificationID + "_end")
 
+            // 必要な情報を退避
+            let name = sub.name
+            let eventID = sub.calendarEventIdentifier
+            let trialEventID = sub.trialCalendarEventIdentifier
+
             // カレンダーイベントの削除
             Task {
-                await CalendarService.removeEvents(for: sub)
+                await CalendarService.removeEvents(
+                    name: name,
+                    eventIdentifier: eventID,
+                    trialEventIdentifier: trialEventID
+                )
             }
 
             modelContext.delete(sub)

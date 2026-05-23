@@ -1365,7 +1365,7 @@ struct SubscriptionPreset: Identifiable, Hashable {
             iconName: "cloud",
             plans: [
                 SubscriptionPlan(name: "50GB", amount: 130, billingCycle: .monthly),
-                SubscriptionPlan(name: "200GB", amount: 400, billingCycle: .monthly),
+                SubscriptionPlan(name: "200GB", amount: 450, billingCycle: .monthly),
                 SubscriptionPlan(name: "2TB", amount: 1300, billingCycle: .monthly)
             ]
         ),
@@ -1626,14 +1626,30 @@ struct SubscriptionPreset: Identifiable, Hashable {
                 SubscriptionPlan(name: "年額プラン", amount: 10000, billingCycle: .yearly)
             ]
         ),
+        SubscriptionPreset(
+            name: "ルナルナ",
+            category: .healthcare,
+            iconName: "heart.text.square",
+            plans: [
+                SubscriptionPlan(name: "プレミアムコース", amount: 400, billingCycle: .monthly)
+            ]
+        ),
 
-        // MARK: - フード・宅配 (Food) - 11件
+        // MARK: - フード・宅配 (Food) - 12件
         SubscriptionPreset(
             name: "DREAMBEER",
             category: .food,
             iconName: "mug.fill",
             plans: [
                 SubscriptionPlan(name: "クラフトビール定期購入パック目安", amount: 10000, billingCycle: .monthly)
+            ]
+        ),
+        SubscriptionPreset(
+            name: "ウォーターサーバー",
+            category: .food,
+            iconName: "drop.fill",
+            plans: [
+                SubscriptionPlan(name: "標準プラン(お水2本目安)", amount: 4000, billingCycle: .monthly)
             ]
         ),
         SubscriptionPreset(

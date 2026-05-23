@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import EventKit
 
 /// 設定画面。通知ON/OFF、通貨選択、アプリ情報を表示する。
 ///
@@ -16,6 +17,7 @@ import SwiftData
 /// @State と同様にViewの再描画もトリガーする。
 struct SettingsView: View {
     @Query private var subscriptions: [Subscription]
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = SettingsViewModel()
     @State private var showingOnboarding = false
 
@@ -31,7 +33,26 @@ struct SettingsView: View {
     /// カレンダー自動連携のON/OFFフラグ（UserDefaultsに永続化）
     @AppStorage("calendarSyncEnabled") private var calendarSyncEnabled = false
 
+    /// 選択中の連携先カレンダーのID（UserDefaultsに永続化）
+    @AppStorage("selectedCalendarIdentifier") private var selectedCalendarIdentifier = ""
+
+    /// 書き込み可能なカレンダー一覧
+    @State private var availableCalendars: [EKCalendar] = []
+
+    /// Apple IDインポートアシスタント表示フラグ
+    @State private var showingAppleImporter = false
+
+    /// TimeTree 連携ガイド表示フラグ
+    @State private var showingTimeTreeGuide = false
+
+    /// 現在のアプリテーマ
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+    
+    /// 現在のアプリアイコン
+    @State private var currentAppIcon = AppIcon.current
+
     @State private var isSyncing = false
+    @State private var showingSyncConfirmation = false
     @State private var showingSyncSuccessAlert = false
     @State private var showingSyncErrorAlert = false
     @State private var alertMessage = ""
@@ -39,30 +60,117 @@ struct SettingsView: View {
     // MARK: - Body
 
     var body: some View {
+        let themeColor = AppTheme(rawValue: appThemeRawValue)?.color ?? .green
+        
         NavigationStack {
             Form {
+                appearanceSection
                 notificationSection
                 calendarSection
+                externalIntegrationSection
                 currencySection
                 dataSection
                 helpSection
                 appInfoSection
             }
+            .tint(themeColor)
+            .accentColor(themeColor)
+            .id(appThemeRawValue) // iOS of Formにおける再レンダリングバグを解決するためにID変更
             .navigationTitle("設定")
             .alert("完了", isPresented: $showingSyncSuccessAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(alertMessage)
             }
-            .alert("エラー", isPresented: $showingSyncErrorAlert) {
-                Button("OK", role: .cancel) {}
+            .alert("アクセス権限エラー", isPresented: $showingSyncErrorAlert) {
+                Button("キャンセル", role: .cancel) {}
+                #if os(iOS)
+                Button("設定を開く") {
+                    if let url = URL(string: UIApplication.openSettingsURLString),
+                       UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }
+                #endif
             } message: {
                 Text(alertMessage)
+            }
+            .alert("カレンダー同期の確認", isPresented: $showingSyncConfirmation) {
+                Button("キャンセル", role: .cancel) {}
+                Button("同期する") {
+                    syncAllToCalendar()
+                }
+            } message: {
+                Text("重複登録を防ぐため、すでにカレンダーに登録されているコテサクの請求予定を自動でクリーンアップ（削除）した上で再同期を行います。\n\nよろしいですか？")
+            }
+            .sheet(isPresented: $showingAppleImporter) {
+                NavigationStack {
+                    AppleSubscriptionImporterView()
+                }
+            }
+            .sheet(isPresented: $showingTimeTreeGuide) {
+                TimeTreeGuideView()
+            }
+            .task {
+                fetchCalendars()
             }
         }
     }
 
     // MARK: - セクション
+
+    /// 外観設定セクション
+    private var appearanceSection: some View {
+        Section {
+            // テーマカラー選択
+            VStack(alignment: .leading, spacing: 12) {
+                Text("テーマカラー")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 16) {
+                        ForEach(AppTheme.allCases) { theme in
+                            VStack {
+                                Circle()
+                                    .fill(theme.color)
+                                    .frame(width: 40, height: 40)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.primary, lineWidth: appThemeRawValue == theme.rawValue ? 3 : 0)
+                                            .padding(-4)
+                                    )
+                                    .onTapGesture {
+                                        withAnimation {
+                                            appThemeRawValue = theme.rawValue
+                                        }
+                                    }
+                                
+                                Text(theme.displayName)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(appThemeRawValue == theme.rawValue ? .primary : .secondary)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 4)
+                }
+            }
+            .padding(.vertical, 4)
+            
+            // アプリアイコン選択
+            Picker("アプリアイコン", selection: $currentAppIcon) {
+                ForEach(AppIcon.allCases) { icon in
+                    Text(icon.displayName).tag(icon)
+                }
+            }
+            .onChange(of: currentAppIcon) { _, newValue in
+                newValue.apply()
+            }
+        } header: {
+            Label("外観", systemImage: "paintbrush")
+        }
+    }
 
     /// 通知設定セクション
     private var notificationSection: some View {
@@ -101,8 +209,31 @@ struct SettingsView: View {
                 }
 
             if calendarSyncEnabled {
+                if !availableCalendars.isEmpty {
+                    Picker("同期先カレンダー", selection: $selectedCalendarIdentifier) {
+                        Text("デフォルト").tag("")
+                        ForEach(availableCalendars, id: \.calendarIdentifier) { calendar in
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(Color(cgColor: calendar.cgColor))
+                                    .frame(width: 8, height: 8)
+                                Text(calendar.title)
+                            }
+                            .tag(calendar.calendarIdentifier)
+                        }
+                    }
+                    .onChange(of: selectedCalendarIdentifier) { _, _ in
+                        Task { @MainActor in
+                            isSyncing = true
+                            await CalendarService.removeAllEvents(for: subscriptions)
+                            await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+                            isSyncing = false
+                        }
+                    }
+                }
+
                 Button {
-                    syncAllToCalendar()
+                    showingSyncConfirmation = true
                 } label: {
                     HStack {
                         Label("既存データをカレンダーに同期", systemImage: "arrow.triangle.2.circlepath")
@@ -117,7 +248,7 @@ struct SettingsView: View {
         } header: {
             Label("カレンダー連携", systemImage: "calendar")
         } footer: {
-            Text("有効にすると、サブスクの次回請求日や無料トライアル終了日が自動的にiOS標準カレンダーに登録されます。")
+            Text("有効にすると、サブスクの次回請求日や無料トライアル終了日が自動的にカレンダーに登録されます。GoogleカレンダーやTimeTreeなどの同期カレンダーを登録すれば、それらのアプリにも反映されます。")
         }
     }
 
@@ -158,45 +289,35 @@ struct SettingsView: View {
     /// ヘルプセクション
     private var helpSection: some View {
         Section {
-            Button {
+            SettingsRow(
+                iconName: "questionmark.circle",
+                iconColor: .blue,
+                title: "アプリの使い方を見る",
+                subtitle: nil
+            ) {
                 showingOnboarding = true
-            } label: {
-                HStack {
-                    Label("アプリの使い方を見る", systemImage: "questionmark.circle")
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
             }
-            .foregroundStyle(.primary)
 
-            // ご意見・お問い合わせ
-            Button {
+            SettingsRow(
+                iconName: "envelope",
+                iconColor: .orange,
+                title: "ご意見・お問い合わせ",
+                subtitle: nil,
+                isExternal: true
+            ) {
                 openMailApp()
-            } label: {
-                HStack {
-                    Label("ご意見・お問い合わせ", systemImage: "envelope")
-                    Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
             }
-            .foregroundStyle(.primary)
 
-            // プライバシーポリシー
             if let url = URL(string: "https://kotesaku.notion.site/e2df7871a2394136ad71216a272eb0bb") {
-                Link(destination: url) {
-                    HStack {
-                        Label("プライバシーポリシー", systemImage: "hand.raised")
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                SettingsRow(
+                    iconName: "hand.raised",
+                    iconColor: .purple,
+                    title: "プライバシーポリシー",
+                    subtitle: nil,
+                    isExternal: true
+                ) {
+                    UIApplication.shared.open(url)
                 }
-                .foregroundStyle(.primary)
             }
         } header: {
             Label("ヘルプ", systemImage: "info.circle")
@@ -290,10 +411,12 @@ struct SettingsView: View {
 
     /// カレンダー連携のトグル切り替え時の処理
     private func handleCalendarSyncToggled(enabled: Bool) {
-        Task {
+        Task { @MainActor in
             if enabled {
                 let authorized = await CalendarService.requestAuthorization()
                 if authorized {
+                    fetchCalendars()
+                    await SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
                     await syncAllToCalendarSilently()
                 } else {
                     calendarSyncEnabled = false
@@ -304,9 +427,19 @@ struct SettingsView: View {
                 isSyncing = true
                 await CalendarService.removeAllEvents(for: subscriptions)
                 isSyncing = false
+                availableCalendars = []
                 alertMessage = "カレンダーの同期設定をオフにし、登録されたすべてのイベントを削除しました。"
                 showingSyncSuccessAlert = true
             }
+        }
+    }
+
+    /// カレンダー一覧を取得する
+    private func fetchCalendars() {
+        if calendarSyncEnabled && CalendarService.isAuthorized {
+            availableCalendars = CalendarService.getWritableCalendars()
+        } else {
+            availableCalendars = []
         }
     }
 
@@ -318,10 +451,12 @@ struct SettingsView: View {
 
     /// 既存データをカレンダーに一括同期する（インジケータ表示付き）
     private func syncAllToCalendar() {
-        Task {
+        Task { @MainActor in
             isSyncing = true
             let authorized = await CalendarService.requestAuthorization()
             if authorized {
+                fetchCalendars()
+                await SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
                 await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
                 alertMessage = "既存のサブスクリプション（\(subscriptions.count)件）をカレンダーに同期しました。"
                 showingSyncSuccessAlert = true
@@ -330,6 +465,33 @@ struct SettingsView: View {
                 showingSyncErrorAlert = true
             }
             isSyncing = false
+        }
+    }
+
+    /// 外部サービス連携セクション（Apple ID、TimeTree）
+    private var externalIntegrationSection: some View {
+        Section {
+            SettingsRow(
+                iconName: "applelogo",
+                iconColor: .primary,
+                title: "Apple ID サブスク連携",
+                subtitle: "Apple Store決済サービスを高速一括インポート"
+            ) {
+                showingAppleImporter = true
+            }
+            
+            SettingsRow(
+                iconName: "arrow.triangle.2.circlepath",
+                iconColor: .green,
+                title: "TimeTree 連携ガイド",
+                subtitle: "iOSカレンダーを介したTimeTreeへの自動同期設定手順"
+            ) {
+                showingTimeTreeGuide = true
+            }
+        } header: {
+            Label("外部サービス高度連携", systemImage: "link.badge.plus")
+        } footer: {
+            Text("Apple IDサブスク連携では、Apple Store決済中のサービスを一挙にインポートできます。\nTimeTree連携では、iOS標準カレンダーを介してTimeTreeへ次回請求予定を全自動で同期させる手順を解説します。")
         }
     }
 
@@ -350,6 +512,47 @@ struct SettingsView: View {
         if let url = components.url {
             UIApplication.shared.open(url)
         }
+    }
+}
+
+// MARK: - カスタム設定行コンポーネント (再利用可能)
+
+struct SettingsRow: View {
+    let iconName: String
+    let iconColor: Color
+    let title: String
+    let subtitle: String?
+    var isExternal: Bool = false
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(iconColor.opacity(0.12))
+                        .frame(width: 28, height: 28)
+                    Image(systemName: iconName)
+                        .font(.subheadline)
+                        .foregroundStyle(iconColor)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                Image(systemName: isExternal ? "arrow.up.right" : "chevron.right")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
     }
 }
 

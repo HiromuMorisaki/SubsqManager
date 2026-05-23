@@ -39,6 +39,11 @@ enum PaymentDateCalculator {
     ) -> Date {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: startDate)
+        
+        if billingCycle == .oneTime {
+            return start
+        }
+
         let reference = calendar.startOfDay(for: referenceDate)
 
         // startDate が未来なら、それ自体が次回請求日
@@ -77,7 +82,7 @@ enum PaymentDateCalculator {
 
     /// 指定された月内に発生するすべての請求日を取得する。
     /// - Parameters:
-    ///   - subscription: 対象のサブスクリプション
+    ///   - subscription: 対象 of サブスクリプション
     ///   - targetMonth: 取得対象の月（この日付が含まれる月の1日〜月末までを探索する）
     /// - Returns: 月内の請求日の配列（昇順）
     static func paymentDates(
@@ -93,6 +98,15 @@ enum PaymentDateCalculator {
             return []
         }
         
+        if subscription.billingCycle == .oneTime {
+            let paymentDay = calendar.startOfDay(for: subscription.startDate)
+            if paymentDay >= startOfMonth && paymentDay <= endOfMonth {
+                return [paymentDay]
+            } else {
+                return []
+            }
+        }
+
         var dates: [Date] = []
         var currentRef = startOfMonth
         
@@ -143,6 +157,8 @@ enum PaymentDateCalculator {
             return calendar.dateComponents([.month], from: start, to: reference).month ?? 0
         case .yearly:
             return calendar.dateComponents([.year], from: start, to: reference).year ?? 0
+        case .oneTime:
+            return 0
         }
     }
 
@@ -152,6 +168,7 @@ enum PaymentDateCalculator {
         case .weekly: return .weekOfYear
         case .monthly: return .month
         case .yearly: return .year
+        case .oneTime: return .day
         }
     }
 }

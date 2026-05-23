@@ -13,6 +13,12 @@ import SwiftUI
 /// ### @Binding について
 /// 親View（AddまたはEdit）のViewModel のプロパティへの双方向バインディング。
 /// ユーザーの入力がリアルタイムに親の ViewModel に反映される。
+enum FormField: Hashable {
+    case name
+    case amount
+    case notes
+}
+
 struct SubscriptionFormSections: View {
 
     @Binding var name: String
@@ -31,6 +37,8 @@ struct SubscriptionFormSections: View {
     @Binding var isShared: Bool
     @Binding var splitCount: Int
     @Binding var ownSharePercentage: Double
+    
+    var focusedField: FocusState<FormField?>.Binding
 
     var body: some View {
         Group {
@@ -52,7 +60,9 @@ struct SubscriptionFormSections: View {
     private var basicInfoSection: some View {
         Section(header: Text("基本情報").id("formInputFields")) {
             TextField("サブスク名", text: $name)
+                .focused(focusedField, equals: .name)
             TextField("金額", text: $amountText)
+                .focused(focusedField, equals: .amount)
                 #if os(iOS)
                 .keyboardType(.decimalPad)
                 #endif
@@ -119,6 +129,7 @@ struct SubscriptionFormSections: View {
     private var notesSection: some View {
         Section("メモ") {
             TextField("メモ（任意）", text: $notes, axis: .vertical)
+                .focused(focusedField, equals: .notes)
                 .lineLimit(3...6)
         }
     }
