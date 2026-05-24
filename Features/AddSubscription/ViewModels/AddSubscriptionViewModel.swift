@@ -46,6 +46,8 @@ final class AddSubscriptionViewModel {
     var isShared: Bool = false
     var splitCount: Int = 1
     var ownSharePercentage: Double = 1.0
+    var paymentMethod: PaymentMethod = .notSet
+    var isNotificationEnabled: Bool = true
     var onSaveSuccess: (() -> Void)? = nil
 
     // MARK: - バリデーション
@@ -141,7 +143,9 @@ final class AddSubscriptionViewModel {
             usageFrequencyRawValue: usageFrequency.rawValue,
             isShared: isShared,
             splitCount: splitCount,
-            ownSharePercentage: ownSharePercentage
+            ownSharePercentage: ownSharePercentage,
+            paymentMethodRawValue: paymentMethod.rawValue,
+            isNotificationEnabled: isNotificationEnabled
         )
 
         // startDate と billingCycle から正しい次回請求日を計算
@@ -149,35 +153,38 @@ final class AddSubscriptionViewModel {
 
         modelContext.insert(subscription)
 
-        // 請求日前のリマインド通知をスケジュール
-        let notificationID = NotificationService.makeIdentifier(
-            name: trimmedName, startDate: startDate
-        )
-        
-        let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
-        let actualLeadDays = leadDays > 0 ? leadDays : 1
-
-        await NotificationService.scheduleReminder(
-            subscriptionName: trimmedName,
-            nextPaymentDate: subscription.nextPaymentDate,
-            identifier: notificationID,
-            leadDays: actualLeadDays
-        )
-
-        // トライアルや終了日の設定がある場合はリマインド通知をスケジュール
-        if subscription.trialEndDate != nil {
-            await NotificationService.scheduleTrialReminder(
-                subscriptionName: subscription.name,
-                trialEndDate: subscription.trialEndDate!,
-                identifier: notificationID + "_trial"
+        // 通知が有効な場合のみスケジュールする
+        if isNotificationEnabled {
+            // 請求日前のリマインド通知をスケジュール
+            let notificationID = NotificationService.makeIdentifier(
+                name: trimmedName, startDate: startDate
             )
-        }
-        if subscription.endDate != nil {
-            await NotificationService.scheduleEndDateReminder(
-                subscriptionName: subscription.name,
-                endDate: subscription.endDate!,
-                identifier: notificationID + "_end"
+            
+            let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+            let actualLeadDays = leadDays > 0 ? leadDays : 1
+
+            await NotificationService.scheduleReminder(
+                subscriptionName: trimmedName,
+                nextPaymentDate: subscription.nextPaymentDate,
+                identifier: notificationID,
+                leadDays: actualLeadDays
             )
+
+            // トライアルや終了日の設定がある場合はリマインド通知をスケジュール
+            if subscription.trialEndDate != nil {
+                await NotificationService.scheduleTrialReminder(
+                    subscriptionName: subscription.name,
+                    trialEndDate: subscription.trialEndDate!,
+                    identifier: notificationID + "_trial"
+                )
+            }
+            if subscription.endDate != nil {
+                await NotificationService.scheduleEndDateReminder(
+                    subscriptionName: subscription.name,
+                    endDate: subscription.endDate!,
+                    identifier: notificationID + "_end"
+                )
+            }
         }
 
         // カレンダー自動連携がONであれば、カレンダーイベントを登録する
@@ -209,5 +216,7 @@ final class AddSubscriptionViewModel {
         self.isShared = false
         self.splitCount = 1
         self.ownSharePercentage = 1.0
+        self.paymentMethod = .notSet
+        self.isNotificationEnabled = true
     }
 }

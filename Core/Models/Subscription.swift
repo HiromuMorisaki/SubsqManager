@@ -15,6 +15,33 @@ enum ReviewStatus: String, Codable {
     case cancelCandidate = "cancelCandidate"
 }
 
+/// 支払い方法（サブスクの引き落とし元）
+enum PaymentMethod: String, Codable, CaseIterable, Identifiable {
+    case creditCard = "クレジットカード"
+    case appleID = "Apple ID"
+    case googlePlay = "Google Play"
+    case carrier = "キャリア決済"
+    case bankTransfer = "銀行口座振替"
+    case cash = "現金"
+    case other = "その他"
+    case notSet = "未設定"
+    
+    var id: String { rawValue }
+    
+    var iconName: String {
+        switch self {
+        case .creditCard: return "creditcard"
+        case .appleID: return "apple.logo"
+        case .googlePlay: return "play.rectangle"
+        case .carrier: return "iphone"
+        case .bankTransfer: return "building.columns"
+        case .cash: return "yensign.circle"
+        case .other: return "ellipsis.circle"
+        case .notSet: return "questionmark.circle"
+        }
+    }
+}
+
 /// サブスクリプション情報を永続化するSwiftDataモデル。
 ///
 /// SwiftDataの `@Model` マクロを付与すると、クラスのプロパティが自動的に
@@ -81,6 +108,12 @@ final class Subscription {
     /// 自己負担割合（0.0 〜 1.0）
     var ownSharePercentage: Double = 1.0
 
+    /// 支払い方法（生値）
+    var paymentMethodRawValue: String = PaymentMethod.notSet.rawValue
+
+    /// 更新前のリマインド通知を有効にするかどうか
+    var isNotificationEnabled: Bool = true
+
     /// カレンダーの通常請求リマインダイベントID
     var calendarEventIdentifier: String?
 
@@ -115,6 +148,8 @@ final class Subscription {
         isShared: Bool = false,
         splitCount: Int = 1,
         ownSharePercentage: Double = 1.0,
+        paymentMethodRawValue: String? = nil,
+        isNotificationEnabled: Bool = true,
         calendarEventIdentifier: String? = nil,
         trialCalendarEventIdentifier: String? = nil
     ) {
@@ -140,6 +175,10 @@ final class Subscription {
         self.isShared = isShared
         self.splitCount = splitCount
         self.ownSharePercentage = ownSharePercentage
+        if let pmRaw = paymentMethodRawValue {
+            self.paymentMethodRawValue = pmRaw
+        }
+        self.isNotificationEnabled = isNotificationEnabled
         self.calendarEventIdentifier = calendarEventIdentifier
         self.trialCalendarEventIdentifier = trialCalendarEventIdentifier
         self.createdAt = Date()
@@ -165,6 +204,16 @@ final class Subscription {
     /// 自己負担の年額換算金額
     var ownShareYearlyAmount: Decimal {
         ownShareAmount * billingCycle.yearlyMultiplier
+    }
+
+    /// 支払い方法（Enum）へのアクセス用プロパティ
+    var paymentMethod: PaymentMethod {
+        get {
+            PaymentMethod(rawValue: paymentMethodRawValue) ?? .notSet
+        }
+        set {
+            paymentMethodRawValue = newValue.rawValue
+        }
     }
 
     /// レビュー状態（enum）へのアクセス用プロパティ

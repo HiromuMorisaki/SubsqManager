@@ -204,9 +204,30 @@ struct SubscriptionRowView: View {
                 Text(subscription.name)
                     .font(.headline)
 
-                Text("次回: \(subscription.nextPaymentDate, format: .dateTime.month().day())")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    Text("次回: \(subscription.nextPaymentDate, format: .dateTime.month().day())")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    if subscription.paymentMethod != .notSet {
+                        HStack(spacing: 2) {
+                            Image(systemName: subscription.paymentMethod.iconName)
+                            Text(subscription.paymentMethod.rawValue)
+                        }
+                        .font(.caption2)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.15))
+                        .cornerRadius(4)
+                        .foregroundStyle(.secondary)
+                    }
+                    
+                    if !subscription.isNotificationEnabled {
+                        Image(systemName: "bell.slash.fill")
+                            .font(.caption2)
+                            .foregroundStyle(Color.red.opacity(0.7))
+                    }
+                }
             }
 
             Spacer()

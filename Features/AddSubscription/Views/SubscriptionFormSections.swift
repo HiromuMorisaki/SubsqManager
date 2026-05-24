@@ -37,12 +37,15 @@ struct SubscriptionFormSections: View {
     @Binding var isShared: Bool
     @Binding var splitCount: Int
     @Binding var ownSharePercentage: Double
+    @Binding var paymentMethod: PaymentMethod
+    @Binding var isNotificationEnabled: Bool
     
     var focusedField: FocusState<FormField?>.Binding
 
     var body: some View {
         Group {
             basicInfoSection
+            paymentAndNotificationSection
             billingSection
             costSharingSection
             costPerformanceSection
@@ -66,6 +69,27 @@ struct SubscriptionFormSections: View {
                 #if os(iOS)
                 .keyboardType(.decimalPad)
                 #endif
+        }
+    }
+
+    /// 支払い方法と通知設定セクション
+    private var paymentAndNotificationSection: some View {
+        Section("支払いと通知") {
+            Picker("支払い方法", selection: $paymentMethod) {
+                ForEach(PaymentMethod.allCases) { method in
+                    Label(method.rawValue, systemImage: method.iconName)
+                        .tag(method)
+                }
+            }
+            .pickerStyle(.navigationLink)
+            
+            Toggle(isOn: $isNotificationEnabled) {
+                HStack {
+                    Image(systemName: isNotificationEnabled ? "bell.fill" : "bell.slash")
+                        .foregroundColor(isNotificationEnabled ? .accentColor : .secondary)
+                    Text("更新前のリマインド通知")
+                }
+            }
         }
     }
 

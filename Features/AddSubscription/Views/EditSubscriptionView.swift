@@ -48,6 +48,8 @@ struct EditSubscriptionView: View {
                     isShared: $viewModel.isShared,
                     splitCount: $viewModel.splitCount,
                     ownSharePercentage: $viewModel.ownSharePercentage,
+                    paymentMethod: $viewModel.paymentMethod,
+                    isNotificationEnabled: $viewModel.isNotificationEnabled,
                     focusedField: $focusedField
                 )
             }

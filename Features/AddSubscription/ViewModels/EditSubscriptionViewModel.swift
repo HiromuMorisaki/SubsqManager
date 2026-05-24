@@ -32,6 +32,8 @@ final class EditSubscriptionViewModel {
     var isShared: Bool
     var splitCount: Int
     var ownSharePercentage: Double
+    var paymentMethod: PaymentMethod
+    var isNotificationEnabled: Bool
 
     /// 編集対象のサブスクリプション（参照を保持）
     private let subscription: Subscription
@@ -63,6 +65,8 @@ final class EditSubscriptionViewModel {
         self.isShared = subscription.isShared
         self.splitCount = subscription.splitCount
         self.ownSharePercentage = subscription.ownSharePercentage
+        self.paymentMethod = subscription.paymentMethod
+        self.isNotificationEnabled = subscription.isNotificationEnabled
         self.originalName = subscription.name
         self.originalStartDate = subscription.startDate
     }
@@ -102,52 +106,55 @@ final class EditSubscriptionViewModel {
         subscription.isShared = isShared
         subscription.splitCount = splitCount
         subscription.ownSharePercentage = ownSharePercentage
+        subscription.paymentMethod = paymentMethod
+        subscription.isNotificationEnabled = isNotificationEnabled
         subscription.updateNextPaymentDate()
 
-        // 旧通知をキャンセルし、新しい通知をスケジュール
+        // 旧通知をキャンセル
         let oldNotificationID = NotificationService.makeIdentifier(
             name: originalName, startDate: originalStartDate
         )
         NotificationService.cancelReminder(identifier: oldNotificationID)
-
-        let newNotificationID = NotificationService.makeIdentifier(
-            name: trimmedName, startDate: startDate
-        )
-        
-        let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
-        let actualLeadDays = leadDays > 0 ? leadDays : 1
-
-        await NotificationService.scheduleReminder(
-            subscriptionName: trimmedName,
-            nextPaymentDate: subscription.nextPaymentDate,
-            identifier: newNotificationID,
-            leadDays: actualLeadDays
-        )
-
-        // 旧トライアル・終了日通知をキャンセル
         let oldTrialNotificationID = oldNotificationID + "_trial"
         NotificationService.cancelReminder(identifier: oldTrialNotificationID)
         let oldEndDateNotificationID = oldNotificationID + "_end"
         NotificationService.cancelReminder(identifier: oldEndDateNotificationID)
 
-        // 新しいトライアル通知をスケジュール
-        if hasTrial {
-            let trialNotificationID = newNotificationID + "_trial"
-            await NotificationService.scheduleTrialReminder(
-                subscriptionName: trimmedName,
-                trialEndDate: trialEndDate,
-                identifier: trialNotificationID
+        if isNotificationEnabled {
+            // 新しい通知をスケジュール
+            let newNotificationID = NotificationService.makeIdentifier(
+                name: trimmedName, startDate: startDate
             )
-        }
-        
-        // 新しい終了日通知をスケジュール
-        if hasEndDate {
-            let endDateNotificationID = newNotificationID + "_end"
-            await NotificationService.scheduleEndDateReminder(
+            
+            let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+            let actualLeadDays = leadDays > 0 ? leadDays : 1
+
+            await NotificationService.scheduleReminder(
                 subscriptionName: trimmedName,
-                endDate: endDate,
-                identifier: endDateNotificationID
+                nextPaymentDate: subscription.nextPaymentDate,
+                identifier: newNotificationID,
+                leadDays: actualLeadDays
             )
+
+            // 新しいトライアル通知をスケジュール
+            if hasTrial {
+                let trialNotificationID = newNotificationID + "_trial"
+                await NotificationService.scheduleTrialReminder(
+                    subscriptionName: trimmedName,
+                    trialEndDate: trialEndDate,
+                    identifier: trialNotificationID
+                )
+            }
+            
+            // 新しい終了日通知をスケジュール
+            if hasEndDate {
+                let endDateNotificationID = newNotificationID + "_end"
+                await NotificationService.scheduleEndDateReminder(
+                    subscriptionName: trimmedName,
+                    endDate: endDate,
+                    identifier: endDateNotificationID
+                )
+            }
         }
 
         // カレンダー自動連携がONであれば、カレンダーイベントを更新（同期）する
