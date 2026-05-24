@@ -76,11 +76,20 @@ struct DistributionChartView: View {
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.65),
+                innerRadius: .ratio(0.55),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(by: .value("Category", item.category.displayName))
+            .annotation(position: .overlay) {
+                // 円グラフの中に項目名を表示
+                Text(item.category.displayName)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+            }
         }
         .frame(height: 200)
         .padding(.vertical, 8)
@@ -126,11 +135,20 @@ struct DistributionChartView: View {
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.65),
+                innerRadius: .ratio(0.55),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(chartColors[index % chartColors.count])
+            .annotation(position: .overlay) {
+                // 円グラフの中に項目名を表示
+                Text(item.name)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+            }
         }
         .frame(height: 200)
         .padding(.vertical, 8)

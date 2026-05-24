@@ -110,26 +110,42 @@ struct AddSubscriptionView: View {
 
                     // 爆速クイック追加 & プリセットセクションのアコーディオン
                     Section {
-                        DisclosureGroup(isExpanded: $isQuickAddExpanded) {
-                            VStack(spacing: 0) {
+                        VStack(spacing: 0) {
+                            Button {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    isQuickAddExpanded.toggle()
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "bolt.fill")
+                                        .foregroundColor(.yellow)
+                                    Text("爆速クイック・人気サービスから追加")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .rotationEffect(.degrees(isQuickAddExpanded ? 90 : 0))
+                                }
+                                .padding(.vertical, 12)
+                                .contentShape(Rectangle()) // 行全体をタップ可能にする
+                            }
+                            .buttonStyle(.plain)
+                            
+                            if isQuickAddExpanded {
+                                Divider()
+                                    .padding(.vertical, 4)
+                                
                                 quickAddGrid
-                                    .padding(.top, 8)
+                                    .padding(.top, 4)
                                 
                                 presetWizardButton
                                     .padding(.bottom, 8)
                             }
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                        } label: {
-                            HStack {
-                                Image(systemName: "bolt.fill")
-                                    .foregroundColor(.yellow)
-                                Text("爆速クイック・人気サービスから追加")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                            }
-                            .padding(.vertical, 4)
                         }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     }
                     
                     // メイン入力フォームエリア
@@ -153,9 +169,9 @@ struct AddSubscriptionView: View {
                         focusedField: $focusedField
                     )
                 }
-                .onTapGesture {
-                    focusedField = nil // カーソル外タップでキーボード自動クローズ
-                }
+                // Pickerのタップを吸い込んでしまう不具合を解消するため、onTapGestureを削除
+                // 代わりにスクロール時のキーボード非表示を有効化
+                .scrollDismissesKeyboard(.interactively)
                 .navigationTitle("サブスクを追加")
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
