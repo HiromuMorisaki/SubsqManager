@@ -76,22 +76,26 @@ struct DistributionChartView: View {
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.55),
+                innerRadius: .ratio(0.45),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(by: .value("Category", item.category.displayName))
             .annotation(position: .overlay) {
-                // 円グラフの中に項目名を表示
+                // 円グラフの中に項目名をカプセル状で表示（見やすさとイケてる感を両立）
                 Text(item.category.displayName)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(.regularMaterial)
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+                    .minimumScaleFactor(0.6)
             }
         }
-        .frame(height: 200)
+        .frame(height: 220)
         .padding(.vertical, 8)
         .chartLegend(.hidden)
     }
@@ -135,22 +139,25 @@ struct DistributionChartView: View {
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.55),
+                innerRadius: .ratio(0.45),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(chartColors[index % chartColors.count])
             .annotation(position: .overlay) {
-                // 円グラフの中に項目名を表示
                 Text(item.name)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(.regularMaterial)
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+                    .minimumScaleFactor(0.6)
             }
         }
-        .frame(height: 200)
+        .frame(height: 220)
         .padding(.vertical, 8)
         .chartLegend(.hidden)
     }
