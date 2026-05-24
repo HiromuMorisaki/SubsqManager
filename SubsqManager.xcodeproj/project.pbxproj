@@ -26,7 +26,6 @@
 		AD2CC8372FBD53620034B9D1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8362FBD53620034B9D1 /* DashboardViewModel.swift */; };
 		AD2CC8392FBD53700034B9D1 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8382FBD53700034B9D1 /* DashboardView.swift */; };
 		AD2CC83B2FBD53850034B9D1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83A2FBD53850034B9D1 /* SettingsView.swift */; };
-		AD3EE83B2FBD53850034B9F1 /* TimeTreeGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */; };
 		AD2CC83D2FBD53960034B9D1 /* SubscriptionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */; };
 		AD2CC83F2FBD53A00034B9D1 /* SubscriptionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */; };
 		AD2CC8412FBD55980034B9D1 /* CategoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */; };
@@ -55,8 +54,9 @@
 		AD2CC8952FBDF6F90034B9D1 /* BillingCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8072FBCD00C0034B9D1 /* BillingCycle.swift */; };
 		AD2CC8962FBDF6FE0034B9D1 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8082FBCD00C0034B9D1 /* Category.swift */; };
 		AD2CC8D22FBD48160034B9D1 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */; };
-		AD2CC9E12FBD48160034B9D1 /* AppleSubscriptionImporterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */; };
 		AD2CC8D42FBD48160034B9D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */; };
+		AD2CC9E12FBD48160034B9D1 /* AppleSubscriptionImporterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */; };
+		AD3EE83B2FBD53850034B9F1 /* TimeTreeGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */; };
 		AD730B882FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B892FBF003000D94032 /* ReductionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B872FBF003000D94032 /* ReductionHistory.swift */; };
 		AD730B8B2FBF00AF00D94032 /* ReductionCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */; };
@@ -67,6 +67,7 @@
 		ADA2E6C72FBDFF07002D7706 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8092FBCD00C0034B9D1 /* Subscription.swift */; };
 		ADA2E6C82FBDFF18002D7706 /* PaymentDateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */; };
 		ADAFC28F2FC0255700F54B47 /* CalendarImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAFC28E2FC0255700F54B47 /* CalendarImportView.swift */; };
+		ADBA0E942FC2D00900AFB6FC /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBA0E932FC2D00900AFB6FC /* OCRService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,7 +130,6 @@
 		AD2CC8362FBD53620034B9D1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		AD2CC8382FBD53700034B9D1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		AD2CC83A2FBD53850034B9D1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTreeGuideView.swift; sourceTree = "<group>"; };
 		AD2CC83C2FBD53960034B9D1 /* SubscriptionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListViewModel.swift; sourceTree = "<group>"; };
 		AD2CC83E2FBD53A00034B9D1 /* SubscriptionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListView.swift; sourceTree = "<group>"; };
 		AD2CC8402FBD55980034B9D1 /* CategoryChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryChartView.swift; sourceTree = "<group>"; };
@@ -158,12 +158,14 @@
 		AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		AD2CC8D12FBD48160034B9D3 /* AppleSubscriptionImporterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSubscriptionImporterView.swift; sourceTree = "<group>"; };
 		AD2CC8D32FBD48160034B9D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AD3EE83A2FBD53850034B9F1 /* TimeTreeGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTreeGuideView.swift; sourceTree = "<group>"; };
 		AD730B872FBF003000D94032 /* ReductionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionHistory.swift; sourceTree = "<group>"; };
 		AD730B8A2FBF00AF00D94032 /* ReductionCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReductionCelebrationView.swift; sourceTree = "<group>"; };
 		AD730B902FBF003000D94032 /* UsageFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFrequency.swift; sourceTree = "<group>"; };
 		AD9999012FBCD00C0034B9D1 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		AD9999032FBCD00C0034B9D1 /* AppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIcon.swift; sourceTree = "<group>"; };
 		ADAFC28E2FC0255700F54B47 /* CalendarImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarImportView.swift; sourceTree = "<group>"; };
+		ADBA0E932FC2D00900AFB6FC /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -293,6 +295,7 @@
 		AD2CC7E52FBCC7C90034B9D1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				ADBA0E932FC2D00900AFB6FC /* OCRService.swift */,
 				AD2CC8D12FBD48160034B9D1 /* CalendarService.swift */,
 				AD2CC8282FBD50340034B9D1 /* PaymentDateCalculator.swift */,
 				AD2CC8262FBD48160034B9D1 /* NotificationService.swift */,
@@ -760,6 +763,7 @@
 				AD2CC8332FBD52F60034B9D1 /* AddSubscriptionView.swift in Sources */,
 				AD2CC8342FBD52F60034B9D1 /* EditSubscriptionView.swift in Sources */,
 				AD2CC8352FBD52F60034B9D1 /* SubscriptionFormSections.swift in Sources */,
+				ADBA0E942FC2D00900AFB6FC /* OCRService.swift in Sources */,
 				AD2CC80E2FBCD50C0034B9D1 /* ContentView.swift in Sources */,
 				AD2CC82B2FBD50E60034B9D1 /* CurrencyHelper.swift in Sources */,
 				AD2CC82B2FBD50E60034B9D9 /* ShareHelper.swift in Sources */,
@@ -977,7 +981,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "無料トライアル終了日や請求日の登録・更新・重複削除を行うために、カレンダーへのフルアクセス権限が必要です。";
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "サブスクの次回請求日をカレンダーに登録するためにアクセスが必要です。";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -1028,7 +1032,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "コテサク";
 				INFOPLIST_KEY_CFBundleName = "コテサク-固定費削減/サブスク管理";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "無料トライアル終了日や請求日の登録・更新・重複削除を行うために、カレンダーへのフルアクセス権限が必要です。";
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "無料トライアル終了日や請求日をカレンダーに登録して、解約忘れを防ぐために使用します。";
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "サブスクの次回請求日をカレンダーに登録するためにアクセスが必要です。";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

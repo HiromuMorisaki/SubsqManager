@@ -7,6 +7,9 @@
 
 import Foundation
 import SwiftData
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// サブスク登録画面のViewModel。
 /// フォーム入力の状態を保持し、バリデーションと保存ロジックを提供する。
@@ -19,6 +22,10 @@ import SwiftData
 final class AddSubscriptionViewModel {
 
     init() {}
+
+    // MARK: - OCR 解析状態
+    var isAnalyzingOCR: Bool = false
+    @ObservationIgnored private let ocrService = OCRService()
 
     // MARK: - フォーム状態
 
@@ -61,6 +68,49 @@ final class AddSubscriptionViewModel {
         self.billingCycle = plan.billingCycle
         self.category = preset.category
         self.iconName = preset.iconName
+    }
+
+    // MARK: - OCR 解析
+    
+    @MainActor
+    func processScreenshot(imageData: Data) async {
+        isAnalyzingOCR = true
+        
+        do {
+            let textLines = try await ocrService.extractText(from: imageData)
+            let result = ocrService.parseSubscriptionInfo(from: textLines)
+            
+            if let parsedName = result.name {
+                self.name = parsedName
+                // プリセットからアイコンやカテゴリを補完
+                if let preset = SubscriptionPreset.defaultPresets.first(where: { $0.name == parsedName }) {
+                    self.category = preset.category
+                    self.iconName = preset.iconName
+                }
+            }
+            if let parsedAmount = result.amount {
+                self.amountText = NSDecimalNumber(decimal: parsedAmount).stringValue
+            }
+            if let parsedCycle = result.billingCycle {
+                self.billingCycle = parsedCycle
+            }
+            
+            // AI自動入力時はHaptic Feedbackを鳴らす
+            #if os(iOS)
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            #endif
+            
+        } catch {
+            print("OCR Error: \(error)")
+            // エラー時
+            #if os(iOS)
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
+            #endif
+        }
+        
+        isAnalyzingOCR = false
     }
 
     // MARK: - 保存

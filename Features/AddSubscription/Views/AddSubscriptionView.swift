@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// 追加画面で表示するシートの種類
 enum AddSubscriptionSheetType: Identifiable {
@@ -33,6 +34,7 @@ struct AddSubscriptionView: View {
     @State private var viewModel: AddSubscriptionViewModel
     @State private var activeSheet: AddSubscriptionSheetType? = nil
     @State private var isQuickAddExpanded = true
+    @State private var selectedPhotoItem: PhotosPickerItem? = nil
     
     // キーボードフォーカス管理
     @FocusState private var focusedField: FormField?
@@ -56,6 +58,49 @@ struct AddSubscriptionView: View {
         ZStack {
             ScrollViewReader { proxy in
                 Form {
+                    // AI スクロショ解析セクション
+                    Section {
+                        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "wand.and.stars")
+                                    .font(.title2)
+                                    .foregroundColor(.purple)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("スクショ・画像から自動入力")
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    Text("レシートや画面から情報を自動で抽出します (BETA)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .onChange(of: selectedPhotoItem) { _, newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    await viewModel.processScreenshot(imageData: data)
+                                    withAnimation(.spring()) {
+                                        proxy.scrollTo("formInputFields", anchor: .top)
+                                    }
+                                }
+                                selectedPhotoItem = nil
+                            }
+                        }
+                    }
+                    .listRowBackground(
+                        LinearGradient(
+                            colors: [Color.purple.opacity(0.15), Color.blue.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
                     // 爆速クイック追加 & プリセットセクションのアコーディオン
                     Section {
                         DisclosureGroup(isExpanded: $isQuickAddExpanded) {
@@ -162,6 +207,31 @@ struct AddSubscriptionView: View {
             // プレミアムトーストオーバーレイ
             if showingToast {
                 toastView
+            }
+            
+            // 解析中のローディングオーバーレイ
+            if viewModel.isAnalyzingOCR {
+                ZStack {
+                    Color.black.opacity(0.4).ignoresSafeArea()
+                    VStack(spacing: 20) {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                        Text("画像を解析中...")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text("魔法をかけています ✨")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(32)
+                    .background(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .cornerRadius(20)
+                    .shadow(radius: 20)
+                }
+                .transition(.opacity)
+                .zIndex(2)
             }
         }
     }
