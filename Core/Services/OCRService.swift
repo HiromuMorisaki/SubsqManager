@@ -79,8 +79,8 @@ final class OCRService {
         var parsedAmount: Decimal?
         var parsedCycle: BillingCycle?
         
-        // 1. 金額の抽出
-        // 例: "¥ 1,590", "1590円", "1,500 JPY"
+        // 1. 金額の抽出（すべての候補を上から順に抽出）
+        var extractedAmounts: [Decimal] = []
         let amountPattern = "(?:¥|￥|JPY)\\s*([0-9,]+)|([0-9,]+)\\s*(?:円|yen|JPY)"
         if let regex = try? NSRegularExpression(pattern: amountPattern, options: .caseInsensitive) {
             let matches = regex.matches(in: fullText, range: NSRange(fullText.startIndex..., in: fullText))
@@ -89,43 +89,68 @@ final class OCRService {
                 if let range1 = Range(match.range(at: 1), in: fullText) {
                     let numStr = String(fullText[range1]).replacingOccurrences(of: ",", with: "")
                     if let decimal = Decimal(string: numStr), decimal > 0 {
-                        parsedAmount = decimal
-                        break
+                        extractedAmounts.append(decimal)
                     }
                 } else if let range2 = Range(match.range(at: 2), in: fullText) {
                     let numStr = String(fullText[range2]).replacingOccurrences(of: ",", with: "")
                     if let decimal = Decimal(string: numStr), decimal > 0 {
-                        parsedAmount = decimal
-                        break
+                        extractedAmounts.append(decimal)
                     }
                 }
             }
         }
         
-        // もし正規表現で見つからなかった場合、単独の数字行からも推測（100以上であれば金額と見なす等のヒューリスティクス）
-        if parsedAmount == nil {
-            for line in textLines {
-                let cleanLine = line.replacingOccurrences(of: ",", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                if let decimal = Decimal(string: cleanLine), decimal >= 100 {
-                    parsedAmount = decimal
-                    break
+        // 正規表現で見つからなかった場合等のための単独行数字の抽出
+        for line in textLines {
+            let cleanLine = line.replacingOccurrences(of: ",", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            if let decimal = Decimal(string: cleanLine), decimal >= 100 {
+                if !extractedAmounts.contains(decimal) { // 重複排除
+                    extractedAmounts.append(decimal)
                 }
             }
         }
         
-        // 2. 支払い周期の抽出
-        if lowercasedText.contains("年額") || lowercasedText.contains("年払") || lowercasedText.contains("yearly") || lowercasedText.contains("annual") || lowercasedText.contains("1年") {
-            parsedCycle = .yearly
-        } else if lowercasedText.contains("月額") || lowercasedText.contains("月払") || lowercasedText.contains("monthly") || lowercasedText.contains("1ヶ月") || lowercasedText.contains("1月") {
-            parsedCycle = .monthly
+        // 2. 支払い周期と金額のスマート照合 (Preset Matching)
+        var isSmartMatched = false
+        for preset in SubscriptionPreset.defaultPresets {
+            let presetLower = preset.name.lowercased()
+            // プリセット名の一部（3文字以上の単語）が含まれているか、特例（Amazon Prime -> プライム）
+            let words = presetLower.components(separatedBy: " ").filter { $0.count >= 3 }
+            let hasKeywordMatch = lowercasedText.contains(presetLower) || 
+                                  words.contains(where: { lowercasedText.contains($0) }) || 
+                                  (presetLower == "amazon prime" && lowercasedText.contains("プライム"))
+            
+            if hasKeywordMatch {
+                // 抽出された金額が、このプリセットのプラン金額に存在するか？
+                for amount in extractedAmounts {
+                    if let matchedPlan = preset.plans.first(where: { Decimal(string: "\($0.amount)") == amount }) {
+                        parsedName = preset.name
+                        parsedAmount = amount
+                        parsedCycle = matchedPlan.billingCycle
+                        isSmartMatched = true
+                        break
+                    }
+                }
+            }
+            if isSmartMatched { break }
         }
         
-        // 3. サービス名の抽出 (プリセットとの照合)
-        // SubscriptionPreset.defaultPresets にある名前がテキストに含まれていれば採用
-        for preset in SubscriptionPreset.defaultPresets {
-            if lowercasedText.contains(preset.name.lowercased()) {
-                parsedName = preset.name
-                break
+        // 3. スマート照合できなかった場合のフォールバック（従来の推測）
+        if !isSmartMatched {
+            parsedAmount = extractedAmounts.first
+            
+            // サービス名だけでも当てに行く
+            for preset in SubscriptionPreset.defaultPresets {
+                if lowercasedText.contains(preset.name.lowercased()) {
+                    parsedName = preset.name
+                    break
+                }
+            }
+            
+            if lowercasedText.contains("年額") || lowercasedText.contains("年払") || lowercasedText.contains("yearly") || lowercasedText.contains("annual") || lowercasedText.contains("1年") {
+                parsedCycle = .yearly
+            } else if lowercasedText.contains("月額") || lowercasedText.contains("月払") || lowercasedText.contains("monthly") || lowercasedText.contains("1ヶ月") || lowercasedText.contains("1月") {
+                parsedCycle = .monthly
             }
         }
         

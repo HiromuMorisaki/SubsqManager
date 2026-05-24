@@ -35,6 +35,7 @@ struct AddSubscriptionView: View {
     @State private var activeSheet: AddSubscriptionSheetType? = nil
     @State private var isQuickAddExpanded = true
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
+    @State private var isShowingPhotosPicker = false
     
     // キーボードフォーカス管理
     @FocusState private var focusedField: FormField?
@@ -60,7 +61,10 @@ struct AddSubscriptionView: View {
                 Form {
                     // AI スクロショ解析セクション
                     Section {
-                        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                        Button {
+                            // isPresented で制御する方式に変更
+                            isShowingPhotosPicker = true
+                        } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: "wand.and.stars")
                                     .font(.title2)
@@ -70,7 +74,7 @@ struct AddSubscriptionView: View {
                                     Text("スクショ・画像から自動入力")
                                         .font(.headline)
                                         .foregroundColor(.primary)
-                                    Text("レシートや画面から情報を自動で抽出します (BETA)")
+                                    Text("レシートや画面から情報を自動で抽出します")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -80,7 +84,10 @@ struct AddSubscriptionView: View {
                                     .foregroundColor(.secondary)
                             }
                             .padding(.vertical, 8)
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
+                        .photosPicker(isPresented: $isShowingPhotosPicker, selection: $selectedPhotoItem, matching: .images)
                         .onChange(of: selectedPhotoItem) { _, newItem in
                             Task {
                                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
