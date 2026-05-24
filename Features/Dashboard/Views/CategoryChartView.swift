@@ -76,33 +76,16 @@ struct DistributionChartView: View {
         
         Chart(categoryData, id: \.category) { item in
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
-            let percentage = totalAmount > 0 ? (amountDouble / totalAmount * 100) : 0
             
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.45),
+                innerRadius: .ratio(0.55),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(by: .value("Category", item.category.displayName))
-            .annotation(position: .overlay) {
-                // 割合が5%以上の項目のみ表示し、文字被りを防ぐ
-                if percentage >= 5.0 {
-                    Text(item.category.displayName)
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        // グラフの色味に合わせた半透明色
-                        .background(item.category.color.opacity(0.6))
-                        .clipShape(Capsule())
-                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                }
-            }
         }
-        .frame(height: 220)
+        .frame(height: 200)
         .padding(.vertical, 8)
         .chartLegend(.hidden)
     }
@@ -146,34 +129,17 @@ struct DistributionChartView: View {
         
         Chart(Array(serviceData.enumerated()), id: \.element.id) { index, item in
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
-            let percentage = totalAmount > 0 ? (amountDouble / totalAmount * 100) : 0
             let itemColor = chartColors[index % chartColors.count]
             
             SectorMark(
                 angle: .value("Amount", amountDouble),
-                innerRadius: .ratio(0.45),
+                innerRadius: .ratio(0.55),
                 angularInset: 1.5
             )
             .cornerRadius(4)
             .foregroundStyle(itemColor)
-            .annotation(position: .overlay) {
-                // 割合が5%以上の項目のみ表示し、文字被りを防ぐ
-                if percentage >= 5.0 {
-                    Text(item.name)
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        // グラフの色味に合わせた半透明色
-                        .background(itemColor.opacity(0.6))
-                        .clipShape(Capsule())
-                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                }
-            }
         }
-        .frame(height: 220)
+        .frame(height: 200)
         .padding(.vertical, 8)
         .chartLegend(.hidden)
     }

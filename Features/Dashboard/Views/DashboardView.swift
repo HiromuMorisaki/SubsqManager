@@ -265,16 +265,16 @@ struct DashboardView: View {
                     let totalYearlyReduced = viewModel.totalReducedYearlyAmount(reductionHistories)
                     let totalMonthlyReduced = viewModel.totalReducedMonthlyAmount(reductionHistories)
 
-                    Text(CurrencyHelper.formatted(amount: totalYearlyReduced))
+                    Text(CurrencyHelper.formatted(amount: totalMonthlyReduced))
                         .font(.system(size: 28, weight: .black, design: .rounded))
                         .foregroundStyle(.white)
-                        + Text(" /年 節約中")
+                        + Text(" /月 節約中")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundStyle(.white.opacity(0.9))
 
-                    Text("月額換算: \(CurrencyHelper.formatted(amount: totalMonthlyReduced)) の削減")
-                        .font(.subheadline)
+                    Text("年間換算: 今後1年間で約 \(CurrencyHelper.formatted(amount: totalYearlyReduced)) の節約想定")
+                        .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white.opacity(0.95))
                 }
