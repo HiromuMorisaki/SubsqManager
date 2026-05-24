@@ -41,19 +41,43 @@ struct SubscriptionFormSections: View {
     @Binding var isNotificationEnabled: Bool
     
     var focusedField: FocusState<FormField?>.Binding
+    
+    @State private var showAdvancedSettings = false
 
     var body: some View {
         Group {
             basicInfoSection
-            paymentAndNotificationSection
             billingSection
-            costSharingSection
-            costPerformanceSection
-            endDateSection
-            trialSection
             categorySection
             iconSection
-            notesSection
+            
+            Section {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showAdvancedSettings.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "slider.horizontal.3")
+                        Text(showAdvancedSettings ? "詳細設定を閉じる" : "詳細設定 (任意項目) を開く")
+                            .fontWeight(.bold)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .rotationEffect(.degrees(showAdvancedSettings ? 90 : 0))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .foregroundStyle(Color.accentColor)
+            }
+            
+            if showAdvancedSettings {
+                paymentAndNotificationSection
+                trialSection
+                endDateSection
+                costPerformanceSection
+                costSharingSection
+                notesSection
+            }
         }
     }
 
@@ -62,9 +86,9 @@ struct SubscriptionFormSections: View {
     /// サブスク名と金額の入力セクション
     private var basicInfoSection: some View {
         Section(header: Text("基本情報").id("formInputFields")) {
-            TextField("サブスク名", text: $name)
+            TextField("サブスク名 (必須) ⭐️", text: $name)
                 .focused(focusedField, equals: .name)
-            TextField("金額", text: $amountText)
+            TextField("金額 (必須) ⭐️", text: $amountText)
                 .focused(focusedField, equals: .amount)
                 #if os(iOS)
                 .keyboardType(.decimalPad)
