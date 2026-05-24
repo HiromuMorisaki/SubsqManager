@@ -9,6 +9,7 @@ import Foundation
 
 /// サブスクリプションの利用頻度を表す段階的Enum
 enum UsageFrequency: String, Codable, CaseIterable, Identifiable {
+    case notSet = "notSet"       // 未設定
     case never = "never"         // 使っていない (月0回)
     case rarely = "rarely"       // たまに使う (月1回)
     case sometimes = "sometimes" // ときどき使う (月2〜3回)
@@ -21,6 +22,8 @@ enum UsageFrequency: String, Codable, CaseIterable, Identifiable {
     /// 画面に表示する名称
     var displayName: String {
         switch self {
+        case .notSet:
+            return "未設定"
         case .never:
             return "使っていない (月0回)"
         case .rarely:
@@ -39,6 +42,7 @@ enum UsageFrequency: String, Codable, CaseIterable, Identifiable {
     /// コスパ診断等の計算に利用する、月間換算の推定利用回数
     var monthlyEstimatedCount: Int {
         switch self {
+        case .notSet: return -1 // -1 means unset
         case .never: return 0
         case .rarely: return 1
         case .sometimes: return 3
@@ -50,7 +54,9 @@ enum UsageFrequency: String, Codable, CaseIterable, Identifiable {
 
     /// 数値（月間利用回数）から最も適したUsageFrequencyを返すファクトリメソッド
     static func from(monthlyUsageCount count: Int) -> UsageFrequency {
-        if count <= 0 {
+        if count < 0 {
+            return .notSet
+        } else if count == 0 {
             return .never
         } else if count == 1 {
             return .rarely

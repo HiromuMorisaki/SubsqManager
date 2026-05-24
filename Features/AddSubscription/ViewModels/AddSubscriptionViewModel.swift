@@ -41,8 +41,8 @@ final class AddSubscriptionViewModel {
     var endDate: Date = Date().addingTimeInterval(86400 * 30) // デフォルト30日後
     var iconName: String = "creditcard"
     var notes: String = ""
-    var satisfaction: Int = 3
-    var usageFrequency: UsageFrequency = .daily
+    var satisfaction: Int = 0 // 0 means not set
+    var usageFrequency: UsageFrequency = .notSet
     var isShared: Bool = false
     var splitCount: Int = 1
     var ownSharePercentage: Double = 1.0
@@ -211,8 +211,8 @@ final class AddSubscriptionViewModel {
         self.endDate = Date().addingTimeInterval(86400 * 30)
         self.iconName = "creditcard"
         self.notes = ""
-        self.satisfaction = 3
-        self.usageFrequency = .daily
+        self.satisfaction = 0
+        self.usageFrequency = .notSet
         self.isShared = false
         self.splitCount = 1
         self.ownSharePercentage = 1.0
