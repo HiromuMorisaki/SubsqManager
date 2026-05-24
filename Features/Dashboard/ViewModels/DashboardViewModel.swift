@@ -129,6 +129,27 @@ final class DashboardViewModel {
             .map { ($0.key, $0.value) }
     }
 
+    /// サービスごとの月額合計金額を計算する。
+    /// グラフ表示用に、金額が0より大きいサービスのみを抽出して返す。
+    /// 戻り値はタプルで (ID, 表示名, 金額, アイコン名, ベースカラー) を返す。
+    func monthlyAmountByService(_ subscriptions: [Subscription]) -> [(id: String, name: String, amount: Decimal, iconName: String, color: Color)] {
+        // 同じ名前のサブスクリプションをまとめる（複数契約している場合等）
+        var totals: [String: (amount: Decimal, icon: String, color: Color)] = [:]
+        
+        for sub in subscriptions where !sub.isTrial && !sub.isExpired {
+            if let existing = totals[sub.name] {
+                totals[sub.name] = (existing.amount + sub.ownShareMonthlyAmount, existing.icon, existing.color)
+            } else {
+                totals[sub.name] = (sub.ownShareMonthlyAmount, sub.iconName, sub.category.color)
+            }
+        }
+        
+        return totals
+            .filter { $0.value.amount > 0 }
+            .map { (id: $0.key, name: $0.key, amount: $0.value.amount, iconName: $0.value.icon, color: $0.value.color) }
+            .sorted { $0.amount > $1.amount } // 金額の降順
+    }
+
     // MARK: - コスパ診断 & 削減目標
 
     /// コスパ診断の結果を表す構造体

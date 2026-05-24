@@ -35,6 +35,9 @@ struct DashboardView: View {
     @State private var showingGoalEditSheet = false
     @State private var tempGoalText = ""
     
+    // 追加: グラフの表示モード
+    @State private var chartMode: DashboardChartMode = .byService
+    
     // コスパ診断からの直接編集用
     @State private var selectedSubscriptionForEdit: Subscription? = nil
 
@@ -54,7 +57,11 @@ struct DashboardView: View {
                         
                         reviewButton
                         summaryCards
-                        CategoryChartView(data: viewModel.monthlyAmountByCategory(subscriptions))
+                        DistributionChartView(
+                            mode: $chartMode,
+                            categoryData: viewModel.monthlyAmountByCategory(subscriptions),
+                            serviceData: viewModel.monthlyAmountByService(subscriptions)
+                        )
                         
                         let diagnosisIssues = viewModel.diagnoseCostPerformance(subscriptions)
                         if !diagnosisIssues.isEmpty {
