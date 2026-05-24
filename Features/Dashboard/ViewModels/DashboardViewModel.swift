@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 /// ダッシュボード画面のViewModel。
 /// サブスクリプション一覧から月額合計・年額合計・次回請求情報を計算する。
