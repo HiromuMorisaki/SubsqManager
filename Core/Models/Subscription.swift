@@ -54,32 +54,32 @@ enum PaymentMethod: String, Codable, CaseIterable, Identifiable {
 final class Subscription {
 
     /// サブスク名（例: "Netflix", "Spotify"）
-    var name: String
+    var name: String = ""
 
     /// 金額。Decimal型を使用し浮動小数点誤差を防止。
     /// SwiftDataはDecimalをNSDecimalNumberとしてブリッジして永続化する。
-    var amount: Decimal
+    var amount: Decimal = 0
 
     /// 請求サイクル（週額/月額/年額）
-    var billingCycle: BillingCycle
+    var billingCycle: BillingCycle = BillingCycle.monthly
 
     /// カテゴリ（エンタメ/仕事/ライフスタイル/教育/その他）
-    var category: Category
+    var category: Category = Category.other
 
     /// サブスク開始日
-    var startDate: Date
+    var startDate: Date = Date()
 
     /// 次回請求日（startDateとbillingCycleから自動計算、または手動設定）
-    var nextPaymentDate: Date
+    var nextPaymentDate: Date = Date()
 
     /// SF Symbol名（例: "tv", "music.note"）。UI上でアイコン表示に使用。
-    var iconName: String
+    var iconName: String = "creditcard"
 
     /// メモ（任意入力）
-    var notes: String
+    var notes: String = ""
 
     /// 有効/無効フラグ。解約済みサブスクを非アクティブにして保持可能。
-    var isActive: Bool
+    var isActive: Bool = true
 
     /// 見直し（オーディット）のステータス保存用
     var reviewStatusRawValue: String?
@@ -114,6 +114,9 @@ final class Subscription {
     /// 更新前のリマインド通知を有効にするかどうか
     var isNotificationEnabled: Bool = true
 
+    /// 仕事用・経費かどうかのフラグ
+    var isExpense: Bool = false
+
     /// カレンダーの通常請求リマインダイベントID
     var calendarEventIdentifier: String?
 
@@ -121,10 +124,10 @@ final class Subscription {
     var trialCalendarEventIdentifier: String?
 
     /// レコード作成日時
-    var createdAt: Date
+    var createdAt: Date = Date()
 
     /// レコード更新日時
-    var updatedAt: Date
+    var updatedAt: Date = Date()
 
     /// 指定イニシャライザ。
     /// createdAt / updatedAt は自動で現在日時を設定。
@@ -150,6 +153,7 @@ final class Subscription {
         ownSharePercentage: Double = 1.0,
         paymentMethodRawValue: String? = nil,
         isNotificationEnabled: Bool = true,
+        isExpense: Bool = false,
         calendarEventIdentifier: String? = nil,
         trialCalendarEventIdentifier: String? = nil
     ) {
@@ -167,7 +171,7 @@ final class Subscription {
         self.reviewStatusRawValue = reviewStatusRawValue
         self.satisfaction = satisfaction
         self.usageFrequencyRawValue = usageFrequencyRawValue
-        if let raw = usageFrequencyRawValue, let freq = UsageFrequency(rawValue: raw) {
+        if let freq = UsageFrequency(rawValue: usageFrequencyRawValue) {
             self.monthlyUsageCount = freq.monthlyEstimatedCount
         } else {
             self.monthlyUsageCount = monthlyUsageCount
@@ -175,10 +179,11 @@ final class Subscription {
         self.isShared = isShared
         self.splitCount = splitCount
         self.ownSharePercentage = ownSharePercentage
-        if let pmRaw = paymentMethodRawValue {
-            self.paymentMethodRawValue = pmRaw
+        if let initialPaymentMethod = paymentMethodRawValue as String? {
+            self.paymentMethodRawValue = initialPaymentMethod
         }
         self.isNotificationEnabled = isNotificationEnabled
+        self.isExpense = isExpense
         self.calendarEventIdentifier = calendarEventIdentifier
         self.trialCalendarEventIdentifier = trialCalendarEventIdentifier
         self.createdAt = Date()
@@ -283,5 +288,140 @@ final class Subscription {
             billingCycle: billingCycle
         )
         updatedAt = Date()
+    }
+}
+
+enum ExpenseFilter: String, CaseIterable, Identifiable, Codable {
+    case all = "すべて"
+    case privateOnly = "プライベート"
+    case expenseOnly = "経費・仕事用"
+    var id: String { rawValue }
+}
+
+// MARK: - ProManager
+
+import StoreKit
+import Observation
+
+/// アプリのPro機能ロック解除ステータスを統合管理するサービス。
+/// iOS 17以降の `@Observable` マクロを採用し、SwiftUIビューからリアクティブに状態を購読できる。
+@Observable
+final class ProManager {
+    
+    static let shared = ProManager()
+    
+    /// Proプランの購入済みステータス。
+    /// 内部的には UserDefaults で永続化し、ビューへの通知も `@Observable` でシームレスに行う。
+    private(set) var isProUnlocked: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: "isProUnlocked")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "isProUnlocked")
+        }
+    }
+    
+    /// StoreKitの監視タスク保持用
+    private var transactionListenerTask: Task<Void, Error>?
+    
+    private init() {
+        // アプリ起動時に購入状況のアップデートとStoreKitトランザクションのリスナーを開始
+        startTransactionListener()
+        Task {
+            await updatePurchasedProducts()
+        }
+    }
+    
+    deinit {
+        transactionListenerTask?.cancel()
+    }
+    
+    /// 【デバッグ・開発用】Proプランのステータスを手動で切り替える（テスト用裏機能）
+    func debugToggleProStatus() {
+        #if DEBUG
+        isProUnlocked.toggle()
+        print("Pro Status Toggled manually to: \(isProUnlocked)")
+        #endif
+    }
+    
+    /// 購入状態を手動でシミュレートする（StoreKit実装前の確認用）
+    func unlockProManually() {
+        isProUnlocked = true
+    }
+    
+    /// 購入状態をリセットする
+    func lockProManually() {
+        isProUnlocked = false
+    }
+    
+    // MARK: - StoreKit 2 実装 (骨組みとトランザクション監視)
+    
+    /// StoreKit 2 のアクティブなトランザクションをリッスンし、リアルタイムでの購入・払い戻しに追従する。
+    func startTransactionListener() {
+        transactionListenerTask = Task.detached(priority: .background) {
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try self.checkVerified(result)
+                    
+                    // トランザクションが検証されたら、Proステータスを有効にする
+                    await MainActor.run {
+                        self.isProUnlocked = true
+                    }
+                    
+                    // App Store にトランザクションの処理完了を通知
+                    await transaction.finish()
+                } catch {
+                    print("Transaction verification failed: \(error)")
+                }
+            }
+        }
+    }
+    
+    /// 既に購入済みのアイテム（アクティブなサブスクや買い切り）があるか確認し、ステータスを復元する
+    func updatePurchasedProducts() async {
+        var hasActivePro = false
+        
+        // 現在アクティブなエンタイトルメント（購入済み商品）をスキャン
+        for await result in Transaction.currentEntitlements {
+            do {
+                let transaction = try checkVerified(result)
+                
+                // コテサクProのプロダクトID群（想定）
+                if transaction.productID.contains("SubsqManager.pro") || transaction.productID.contains("pro_") {
+                    // 有効なトランザクションがある場合
+                    hasActivePro = true
+                }
+            } catch {
+                print("Failed to verify transaction entitlement: \(error)")
+            }
+        }
+        
+        // 開発環境かつStoreKitテスト構成がない場合は、UserDefaultsの値を尊重
+        #if DEBUG
+        // DEBUG環境下では手動でのON/OFF切り替えを阻害しないよう、
+        // もしアクティブなトランザクションが実際に検知された場合のみ上書きする
+        if hasActivePro {
+            await MainActor.run {
+                self.isProUnlocked = true
+            }
+        }
+        #else
+        // 本番環境では実トランザクションの状態を同期
+        await MainActor.run {
+            self.isProUnlocked = hasActivePro
+        }
+        #endif
+    }
+    
+    /// StoreKitのトランザクション検証処理
+    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        switch result {
+        case .unverified(_, let error):
+            // 署名検証に失敗した場合
+            throw error
+        case .verified(let safe):
+            // 署名が正しく検証された場合
+            return safe
+        }
     }
 }

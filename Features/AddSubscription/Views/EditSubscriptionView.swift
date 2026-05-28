@@ -14,7 +14,9 @@ import SwiftData
 struct EditSubscriptionView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel: EditSubscriptionViewModel
+    @State private var showingDeleteConfirm = false
     
     // キーボードフォーカス管理
     @FocusState private var focusedField: FormField?
@@ -50,11 +52,21 @@ struct EditSubscriptionView: View {
                     ownSharePercentage: $viewModel.ownSharePercentage,
                     paymentMethod: $viewModel.paymentMethod,
                     isNotificationEnabled: $viewModel.isNotificationEnabled,
+                    isExpense: $viewModel.isExpense,
                     focusedField: $focusedField
                 )
-            }
-            .onTapGesture {
-                focusedField = nil // カーソル外タップでキーボード自動クローズ
+                
+                Section {
+                    Button(role: .destructive) {
+                        showingDeleteConfirm = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("このサブスクリプションを削除")
+                            Spacer()
+                        }
+                    }
+                }
             }
             .navigationTitle("サブスクを編集")
             #if os(iOS)
@@ -81,6 +93,15 @@ struct EditSubscriptionView: View {
                         focusedField = nil // キーボードの完了ボタン
                     }
                 }
+            }
+            .alert("サブスクリプションの削除", isPresented: $showingDeleteConfirm) {
+                Button("キャンセル", role: .cancel) { }
+                Button("削除", role: .destructive) {
+                    viewModel.delete(using: modelContext)
+                    dismiss()
+                }
+            } message: {
+                Text("本当に「\(viewModel.name)」を削除しますか？この操作は元に戻せません。")
             }
         }
     }

@@ -39,6 +39,12 @@ struct SubscriptionListView: View {
     /// 解約/削除アクション確認対象のサブスクリプション
     @State private var subscriptionToProcess: Subscription?
     @State private var showingActionSheet = false
+    
+    /// Proアップグレード画面の表示制御フラグ
+    @State private var showingProUpgradeSheet = false
+    
+    /// ProManagerの監視用（リアクティブな状態購読用）
+    private var proManager = ProManager.shared
 
     /// お祝い画面用のプレデータ構造体
     struct CelebrationData: Identifiable {
@@ -55,12 +61,25 @@ struct SubscriptionListView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if subscriptions.isEmpty {
-                    emptyStateView
-                } else {
-                    subscriptionList
+            VStack(spacing: 0) {
+                // 用途フィルタ用セグメント
+                Picker("用途", selection: $viewModel.expenseFilter) {
+                    ForEach(ExpenseFilter.allCases) { filter in
+                        Text(filter.rawValue).tag(filter)
+                    }
                 }
+                .pickerStyle(.segmented)
+                .padding()
+                
+                Group {
+                    if subscriptions.isEmpty {
+                        emptyStateView
+                    } else {
+                        subscriptionList
+                    }
+                }
+                
+                limitStatusBar
             }
             .navigationTitle("サブスクリプション")
             .searchable(text: $viewModel.searchText, prompt: "サブスクを検索")
@@ -80,10 +99,22 @@ struct SubscriptionListView: View {
                 #endif
                 
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showingAddView = true
-                    } label: {
-                        Label("追加", systemImage: "plus")
+                    HStack {
+                        Menu {
+                            Picker("並び替え", selection: $viewModel.sortOption) {
+                                ForEach(SortOption.allCases) { option in
+                                    Text(option.rawValue).tag(option)
+                                }
+                            }
+                        } label: {
+                            Label("並び替え", systemImage: "arrow.up.arrow.down")
+                        }
+                        
+                        Button {
+                            showingAddView = true
+                        } label: {
+                            Label("追加", systemImage: "plus")
+                        }
                     }
                 }
             }
@@ -131,6 +162,9 @@ struct SubscriptionListView: View {
                     iconName: data.iconName
                 )
             }
+            .sheet(isPresented: $showingProUpgradeSheet) {
+                ProUpgradeSheet()
+            }
         }
     }
 
@@ -145,31 +179,26 @@ struct SubscriptionListView: View {
         }
     }
 
-    /// カテゴリ別にグループ化されたサブスクリプションのリスト
+    /// サブスクリプションのリスト
     private var subscriptionList: some View {
         let filtered = viewModel.filteredSubscriptions(subscriptions)
-        let grouped = viewModel.groupedByCategory(filtered)
-
+        
         return List {
-            ForEach(grouped, id: \.category) { group in
-                Section {
-                    ForEach(group.subscriptions) { subscription in
-                        SubscriptionRowView(subscription: subscription)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                editingSubscription = subscription
-                            }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    subscriptionToProcess = subscription
-                                    showingActionSheet = true
-                                } label: {
-                                    Label("削除", systemImage: "trash")
-                                }
-                            }
+            if viewModel.sortOption == .categoryAndDate {
+                let grouped = viewModel.groupedByCategory(filtered)
+                ForEach(grouped, id: \.category) { group in
+                    Section {
+                        ForEach(group.subscriptions) { subscription in
+                            rowView(for: subscription)
+                        }
+                    } header: {
+                        Label(group.category.displayName, systemImage: group.category.iconName)
                     }
-                } header: {
-                    Label(group.category.displayName, systemImage: group.category.iconName)
+                }
+            } else {
+                let sorted = viewModel.sortedSubscriptions(filtered)
+                ForEach(sorted) { subscription in
+                    rowView(for: subscription)
                 }
             }
         }
@@ -178,6 +207,74 @@ struct SubscriptionListView: View {
         #else
         .listStyle(.inset)
         #endif
+    }
+    
+    private func rowView(for subscription: Subscription) -> some View {
+        SubscriptionRowView(subscription: subscription)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                editingSubscription = subscription
+            }
+            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                Button(role: .destructive) {
+                    subscriptionToProcess = subscription
+                    showingActionSheet = true
+                } label: {
+                    Label("削除", systemImage: "trash")
+                }
+            }
+    }
+    
+    /// 無料枠上限の表示およびProアップグレードへの誘導を司るステータスバー
+    private var limitStatusBar: some View {
+        let activeCount = viewModel.activeSubscriptionCount(subscriptions)
+        let isPro = proManager.isProUnlocked
+        
+        return Group {
+            if !isPro {
+                Button {
+                    showingProUpgradeSheet = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.accentColor)
+                        
+                        Text("登録状況: \(activeCount) / 10件（残り \(max(0, 10 - activeCount))枠）")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        
+                        Spacer()
+                        
+                        Text("不要なサブスクを削減すると枠が増えます 💡")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                }
+                .buttonStyle(.plain)
+            } else {
+                HStack {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.accentColor)
+                    
+                    Text("コテサク Pro 有効（登録上限なし）")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .padding(.horizontal)
+                .padding(.bottom, 4)
+            }
+        }
     }
 }
 

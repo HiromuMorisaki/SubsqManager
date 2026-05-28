@@ -543,7 +543,6 @@ struct AnalysisView: View {
         )
         
         let totalYearly = activeSubs.reduce(Decimal.zero) { $0 + $1.ownShareYearlyAmount }
-        let afterYearly = totalYearly - yearlySavings
         let savingsPercent = totalYearly > 0 ? (NSDecimalNumber(decimal: yearlySavings).doubleValue / NSDecimalNumber(decimal: totalYearly).doubleValue * 100) : 0.0
         
         return VStack(spacing: 16) {

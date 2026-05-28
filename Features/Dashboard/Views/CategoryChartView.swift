@@ -72,7 +72,6 @@ struct DistributionChartView: View {
     
     @ViewBuilder
     private var chartByCategory: some View {
-        let totalAmount = NSDecimalNumber(decimal: categoryData.reduce(Decimal.zero) { $0 + $1.amount }).doubleValue
         
         Chart(categoryData, id: \.category) { item in
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
@@ -92,8 +91,8 @@ struct DistributionChartView: View {
     
     @ViewBuilder
     private var listByCategory: some View {
+        let totalAmount = NSDecimalNumber(decimal: categoryData.reduce(Decimal.zero) { $0 + $1.amount }).doubleValue
         VStack(spacing: 10) {
-            let totalAmount = categoryData.reduce(Decimal.zero) { $0 + $1.amount }
             ForEach(categoryData, id: \.category.id) { item in
                 HStack(spacing: 8) {
                     Circle()
@@ -109,8 +108,7 @@ struct DistributionChartView: View {
                     Text(CurrencyHelper.formatted(amount: item.amount))
                         .font(.subheadline.monospacedDigit())
                         .fontWeight(.semibold)
-                    
-                    let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: item.amount).doubleValue / NSDecimalNumber(decimal: totalAmount).doubleValue * 100) : 0
+                    let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: item.amount).doubleValue / totalAmount * 100) : 0
                     Text(String(format: "%.1f%%", percentage))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
@@ -125,7 +123,6 @@ struct DistributionChartView: View {
     
     @ViewBuilder
     private var chartByService: some View {
-        let totalAmount = NSDecimalNumber(decimal: serviceData.reduce(Decimal.zero) { $0 + $1.amount }).doubleValue
         
         Chart(Array(serviceData.enumerated()), id: \.element.id) { index, item in
             let amountDouble = NSDecimalNumber(decimal: item.amount).doubleValue
@@ -146,8 +143,8 @@ struct DistributionChartView: View {
     
     @ViewBuilder
     private var listByService: some View {
+        let totalAmount = NSDecimalNumber(decimal: serviceData.reduce(Decimal.zero) { $0 + $1.amount }).doubleValue
         VStack(spacing: 10) {
-            let totalAmount = serviceData.reduce(Decimal.zero) { $0 + $1.amount }
             ForEach(Array(serviceData.enumerated()), id: \.element.id) { index, item in
                 HStack(spacing: 8) {
                     Circle()
@@ -164,8 +161,7 @@ struct DistributionChartView: View {
                     Text(CurrencyHelper.formatted(amount: item.amount))
                         .font(.subheadline.monospacedDigit())
                         .fontWeight(.semibold)
-                    
-                    let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: item.amount).doubleValue / NSDecimalNumber(decimal: totalAmount).doubleValue * 100) : 0
+                    let percentage = totalAmount > 0 ? (NSDecimalNumber(decimal: item.amount).doubleValue / totalAmount * 100) : 0
                     Text(String(format: "%.1f%%", percentage))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)

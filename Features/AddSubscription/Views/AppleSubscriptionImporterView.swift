@@ -343,7 +343,7 @@ struct AppleSubscriptionImporterView: View {
             for subscription in createdSubscriptions {
                 group.addTask {
                     // 請求日前の通知スケジュール
-                    let notificationID = NotificationService.makeIdentifier(
+                    let notificationID = await NotificationService.makeIdentifier(
                         name: subscription.name, startDate: subscription.startDate
                     )
                     let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")

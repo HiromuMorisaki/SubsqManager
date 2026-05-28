@@ -19,6 +19,14 @@ import SwiftData
 /// ### SwiftData の @Query との役割分担
 /// - データ取得: View側の @Query が自動的にDBを監視・取得する
 /// - ビジネスロジック: ViewModel がフィルタリング・グルーピング・削除を担当
+enum SortOption: String, CaseIterable, Identifiable {
+    case categoryAndDate = "カテゴリ別"
+    case nextPaymentAscending = "請求日が近い順"
+    case amountDescending = "金額が高い順"
+    case satisfactionDescending = "満足度順"
+    var id: String { rawValue }
+}
+
 @Observable
 final class SubscriptionListViewModel {
 
@@ -27,10 +35,25 @@ final class SubscriptionListViewModel {
 
     /// カテゴリフィルタ（nilなら全カテゴリ表示）
     var selectedCategory: Category?
+    
+    /// 現在アクティブな（isActive == true）サブスクリプションの総数を取得する。
+    func activeSubscriptionCount(_ subscriptions: [Subscription]) -> Int {
+        subscriptions.filter { $0.isActive }.count
+    }
+    
+    /// 無料枠の上限（10件）に達しているかどうか（10件以上かつProプラン未開放）。
+    func isFreeLimitReached(_ subscriptions: [Subscription]) -> Bool {
+        guard !ProManager.shared.isProUnlocked else { return false }
+        return activeSubscriptionCount(subscriptions) >= 10
+    }
 
-    /// サブスクリプションを検索テキストとカテゴリでフィルタリングする。
-    /// - Parameter subscriptions: @Queryで取得された全アクティブサブスクリプション
-    /// - Returns: フィルタ条件に一致するサブスクリプションの配列
+    /// 用途フィルタ
+    var expenseFilter: ExpenseFilter = .all
+
+    /// 並び替えオプション
+    var sortOption: SortOption = .categoryAndDate
+
+    /// サブスクリプションをフィルタリングおよびソートする。
     func filteredSubscriptions(_ subscriptions: [Subscription]) -> [Subscription] {
         var result = subscriptions
 
@@ -44,7 +67,28 @@ final class SubscriptionListViewModel {
             result = result.filter { $0.category == category }
         }
 
+        switch expenseFilter {
+        case .all: break
+        case .privateOnly: result = result.filter { !$0.isExpense }
+        case .expenseOnly: result = result.filter { $0.isExpense }
+        }
+
         return result
+    }
+
+    /// 指定されたオプションでソートする
+    func sortedSubscriptions(_ subscriptions: [Subscription]) -> [Subscription] {
+        switch sortOption {
+        case .categoryAndDate:
+            // カテゴリ別表示の場合はView側で groupedByCategory を使うため、ここでは何もしない
+            return subscriptions.sorted { $0.nextPaymentDate < $1.nextPaymentDate }
+        case .nextPaymentAscending:
+            return subscriptions.sorted { $0.nextPaymentDate < $1.nextPaymentDate }
+        case .amountDescending:
+            return subscriptions.sorted { $0.monthlyAmount > $1.monthlyAmount }
+        case .satisfactionDescending:
+            return subscriptions.sorted { $0.satisfaction > $1.satisfaction }
+        }
     }
 
     /// サブスクリプションをカテゴリ別にグループ化する。

@@ -14,17 +14,19 @@ struct CalendarView: View {
 
     @Query(filter: #Predicate<Subscription> { $0.isActive == true })
     private var subscriptions: [Subscription]
+    @Environment(\.modelContext) private var modelContext
 
     @State private var viewModel = CalendarViewModel()
     @State private var showingAddView = false
     @State private var showingImportView = false
+    @State private var selectedSubscriptionForEdit: Subscription? = nil
 
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            List {
                 VStack(spacing: 20) {
                     calendarHeader
                     
@@ -38,11 +40,15 @@ struct CalendarView: View {
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .padding(.horizontal)
-
-                    selectedDateDetails
                 }
                 .padding(.vertical)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+
+                selectedDateDetails
             }
+            .listStyle(.plain)
             .navigationTitle("カレンダー")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -70,6 +76,9 @@ struct CalendarView: View {
             }
             .sheet(isPresented: $showingImportView) {
                 CalendarImportView()
+            }
+            .sheet(item: $selectedSubscriptionForEdit) { subscription in
+                EditSubscriptionView(subscription: subscription)
             }
         }
     }
@@ -163,10 +172,15 @@ struct CalendarView: View {
                 let paymentAmount = viewModel.totalAmount(for: daySubs)
                 let isSelected = Calendar.current.isDate(calDate.date, inSameDayAs: viewModel.selectedDate)
                 
+                let hasExpense = daySubs.contains(where: { $0.isExpense })
+                let hasPrivate = daySubs.contains(where: { !$0.isExpense })
+                
                 CalendarDateCell(
                     date: calDate,
                     isSelected: isSelected,
-                    paymentAmount: paymentAmount
+                    paymentAmount: paymentAmount,
+                    hasExpense: hasExpense,
+                    hasPrivate: hasPrivate
                 )
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -181,25 +195,9 @@ struct CalendarView: View {
 
     /// 選択された日付に支払いが予定されているサブスクリストと合計金額
     private var selectedDateDetails: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            let selectedSubs = viewModel.subscriptions(for: viewModel.selectedDate, from: subscriptions)
-            
-            HStack {
-                Text(dateString(from: viewModel.selectedDate))
-                    .font(.headline)
-                
-                Spacer()
-                
-                if !selectedSubs.isEmpty {
-                    let total = viewModel.totalAmount(for: selectedSubs)
-                    Text("合計: \(CurrencyHelper.formatted(amount: total))")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .padding(.horizontal)
-
+        let selectedSubs = viewModel.subscriptions(for: viewModel.selectedDate, from: subscriptions)
+        
+        return Section {
             if selectedSubs.isEmpty {
                 ContentUnavailableView {
                     Label("支払いなし", systemImage: "checkmark.circle")
@@ -207,6 +205,8 @@ struct CalendarView: View {
                     Text("この日の支払いは予定されていません。")
                 }
                 .frame(height: 150)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             } else {
                 ForEach(selectedSubs) { sub in
                     HStack {
@@ -215,9 +215,29 @@ struct CalendarView: View {
                             .frame(width: 30)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(sub.name)
-                                .font(.body)
-                                .fontWeight(.medium)
+                            HStack {
+                                Text(sub.name)
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                
+                                if sub.isExpense {
+                                    Text("💼 経費")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(.purple)
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 2)
+                                        .background(Color.purple.opacity(0.1))
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                } else {
+                                    Text("🏠 プライベート")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(.blue)
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 2)
+                                        .background(Color.blue.opacity(0.1))
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                }
+                            }
                             
                             if let days = daysRemaining(to: viewModel.selectedDate) {
                                 let badgeText: String = {
@@ -258,10 +278,54 @@ struct CalendarView: View {
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedSubscriptionForEdit = sub
+                    }
+                    .contextMenu {
+                        Button {
+                            selectedSubscriptionForEdit = sub
+                        } label: {
+                            Label("編集", systemImage: "pencil")
+                        }
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            modelContext.delete(sub)
+                        } label: {
+                            Label("削除", systemImage: "trash")
+                        }
+                    }
+                    .swipeActions(edge: .leading) {
+                        Button {
+                            selectedSubscriptionForEdit = sub
+                        } label: {
+                            Label("編集", systemImage: "pencil")
+                        }
+                        .tint(.blue)
+                    }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                 }
             }
+        } header: {
+            HStack {
+                Text(dateString(from: viewModel.selectedDate))
+                    .font(.headline)
+                
+                Spacer()
+                
+                if !selectedSubs.isEmpty {
+                    let total = viewModel.totalAmount(for: selectedSubs)
+                    Text("合計: \(CurrencyHelper.formatted(amount: total))")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.horizontal)
         }
-        .padding(.top, 8)
     }
 
     // MARK: - ヘルパー

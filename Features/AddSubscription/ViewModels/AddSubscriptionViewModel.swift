@@ -26,6 +26,9 @@ final class AddSubscriptionViewModel {
     // MARK: - OCR 解析状態
     var isAnalyzingOCR: Bool = false
     @ObservationIgnored private let ocrService = OCRService()
+    
+    /// 一括インポーターで検出されたサブスクデータ
+    var parsedBulkItems: [ParsedBulkItem] = []
 
     // MARK: - フォーム状態
 
@@ -48,6 +51,7 @@ final class AddSubscriptionViewModel {
     var ownSharePercentage: Double = 1.0
     var paymentMethod: PaymentMethod = .notSet
     var isNotificationEnabled: Bool = true
+    var isExpense: Bool = false
     var onSaveSuccess: (() -> Void)? = nil
 
     // MARK: - バリデーション
@@ -77,27 +81,52 @@ final class AddSubscriptionViewModel {
     @MainActor
     func processScreenshot(imageData: Data) async {
         isAnalyzingOCR = true
+        parsedBulkItems.removeAll() // リセット
         
         do {
-            let textLines = try await ocrService.extractText(from: imageData)
-            let result = ocrService.parseSubscriptionInfo(from: textLines)
+            // 位置（Y座標）情報付きで画像からテキストを抽出
+            let elements = try await ocrService.extractTextWithPositions(from: imageData)
+            let fullText = elements.map { $0.text }.joined(separator: " ")
             
-            if let parsedName = result.name {
-                self.name = parsedName
-                // プリセットからアイコンやカテゴリを補完
-                if let preset = SubscriptionPreset.defaultPresets.first(where: { $0.name == parsedName }) {
-                    self.category = preset.category
-                    self.iconName = preset.iconName
+            // 「更新日」「有効期限」「更新予定」「有効期間」などのキーワードの出現回数をカウント
+            let keywords = ["更新日", "有効期限", "更新予定", "有効期間"]
+            var count = 0
+            for keyword in keywords {
+                let textToSearch = fullText
+                var range = textToSearch.startIndex..<textToSearch.endIndex
+                while let foundRange = textToSearch.range(of: keyword, options: .caseInsensitive, range: range) {
+                    count += 1
+                    range = foundRange.upperBound..<textToSearch.endIndex
                 }
             }
-            if let parsedAmount = result.amount {
-                self.amountText = NSDecimalNumber(decimal: parsedAmount).stringValue
-            }
-            if let parsedCycle = result.billingCycle {
-                self.billingCycle = parsedCycle
+            
+            if count >= 2 {
+                // 💡 複数検知（一括インポート）と判断！
+                let bulkItems = ocrService.parseBulkSubscriptionInfo(from: elements)
+                if !bulkItems.isEmpty {
+                    self.parsedBulkItems = bulkItems
+                }
+            } else {
+                // 💡 単一のサブスクスクショと判断し、従来通りパースしてフォームに適用
+                let textLines = elements.map { $0.text }
+                let result = ocrService.parseSubscriptionInfo(from: textLines)
+                
+                if let parsedName = result.name {
+                    self.name = parsedName
+                    if let preset = SubscriptionPreset.defaultPresets.first(where: { $0.name == parsedName }) {
+                        self.category = preset.category
+                        self.iconName = preset.iconName
+                    }
+                }
+                if let parsedAmount = result.amount {
+                    self.amountText = NSDecimalNumber(decimal: parsedAmount).stringValue
+                }
+                if let parsedCycle = result.billingCycle {
+                    self.billingCycle = parsedCycle
+                }
             }
             
-            // AI自動入力時はHaptic Feedbackを鳴らす
+            // AI自動入力・一括検知時はHaptic Feedbackを鳴らす
             #if os(iOS)
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
@@ -105,7 +134,6 @@ final class AddSubscriptionViewModel {
             
         } catch {
             print("OCR Error: \(error)")
-            // エラー時
             #if os(iOS)
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
@@ -145,7 +173,8 @@ final class AddSubscriptionViewModel {
             splitCount: splitCount,
             ownSharePercentage: ownSharePercentage,
             paymentMethodRawValue: paymentMethod.rawValue,
-            isNotificationEnabled: isNotificationEnabled
+            isNotificationEnabled: isNotificationEnabled,
+            isExpense: isExpense
         )
 
         // startDate と billingCycle から正しい次回請求日を計算
@@ -218,5 +247,7 @@ final class AddSubscriptionViewModel {
         self.ownSharePercentage = 1.0
         self.paymentMethod = .notSet
         self.isNotificationEnabled = true
+        self.isExpense = false
+        self.onSaveSuccess = nil
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 /// 見直し結果のサマリーを表示し、一括解約アクションを提供するView
 struct ReviewSummaryView: View {
@@ -16,6 +17,13 @@ struct ReviewSummaryView: View {
     
     @State private var showingConfirmation = false
     @State private var hasConfirmed = false
+    
+    // お祝い画面（セレブレーション）用ステート
+    @State private var showingCelebration = false
+    @State private var celebrationName = ""
+    @State private var celebrationIcon = ""
+    @State private var celebrationCategory: Category = .other
+    @State private var celebrationAmount: Decimal = 0
     
     var body: some View {
         ScrollView {
@@ -78,9 +86,13 @@ struct ReviewSummaryView: View {
                                 
                                 Spacer()
                                 
-                                Text(CurrencyHelper.formatted(amount: sub.monthlyAmount))
-                                    .fontWeight(.medium)
-                                    + Text("/月").font(.caption).foregroundStyle(.secondary)
+                                HStack(alignment: .lastTextBaseline, spacing: 2) {
+                                    Text(CurrencyHelper.formatted(amount: sub.monthlyAmount))
+                                        .fontWeight(.medium)
+                                    Text("/月")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                             .padding()
                             .background(Color.secondary.opacity(0.1))
@@ -122,12 +134,42 @@ struct ReviewSummaryView: View {
             }
             .padding(.bottom, 40)
         }
+        .sheet(isPresented: $showingCelebration) {
+            ReductionCelebrationView(
+                serviceName: celebrationName,
+                amount: celebrationAmount,
+                billingCycle: .monthly,
+                category: celebrationCategory,
+                iconName: celebrationIcon
+            )
+        }
         .alert("一括解約の確認", isPresented: $showingConfirmation) {
             Button("キャンセル", role: .cancel) {}
             Button("削減実績に記録する", role: .destructive) {
+                // 削除を実行する前に金額と件数を退避
+                let totalMonthly = viewModel.potentialMonthlySavings
+                let count = viewModel.cancelCandidates.count
+                let firstSubName = viewModel.cancelCandidates.first?.name ?? ""
+                let firstSubIcon = viewModel.cancelCandidates.first?.iconName ?? "sparkles"
+                let firstSubCategory = viewModel.cancelCandidates.first?.category ?? .other
+                
                 withAnimation {
                     viewModel.confirmCancellations(using: modelContext)
                     hasConfirmed = true
+                    
+                    // 保存した値を用いてお祝い画面用のデータをセット
+                    self.celebrationName = count == 1
+                        ? firstSubName
+                        : "解約候補のサブスク（\(count)件）"
+                    self.celebrationIcon = count == 1
+                        ? firstSubIcon
+                        : "sparkles.rectangle.stack"
+                    self.celebrationCategory = count == 1
+                        ? firstSubCategory
+                        : .other
+                    self.celebrationAmount = totalMonthly
+                    
+                    showingCelebration = true
                 }
             }
         } message: {

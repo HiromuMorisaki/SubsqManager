@@ -20,6 +20,9 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = SettingsViewModel()
     @State private var showingOnboarding = false
+    
+    /// Proアップグレードシート表示フラグ
+    @State private var showingProUpgrade = false
 
     /// 通知のON/OFFフラグ（UserDefaultsに永続化）
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
@@ -64,6 +67,7 @@ struct SettingsView: View {
         
         NavigationStack {
             Form {
+                proSection
                 appearanceSection
                 notificationSection
                 calendarSection
@@ -108,12 +112,59 @@ struct SettingsView: View {
                     AppleSubscriptionImporterView()
                 }
             }
+            .sheet(isPresented: $showingProUpgrade) {
+                ProUpgradeSheet()
+            }
             .sheet(isPresented: $showingTimeTreeGuide) {
                 TimeTreeGuideView()
             }
             .task {
                 fetchCalendars()
             }
+        }
+    }
+    
+    /// Proプランのセクション
+    private var proSection: some View {
+        let isPro = ProManager.shared.isProUnlocked
+        let themeColor = AppTheme(rawValue: appThemeRawValue)?.color ?? .green
+        
+        return Section {
+            Button {
+                showingProUpgrade = true
+            } label: {
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(LinearGradient(colors: [themeColor, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .frame(width: 44, height: 44)
+                        
+                        Image(systemName: "crown.fill")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(isPro ? "コテサク Pro 有効化済み" : "コテサク Pro にアップグレード")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Text(isPro ? "すべての制限が解除され、全機能が有効です 👑" : "登録上限の解放、OCR無制限、複数通知などをアンロック")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+        } header: {
+            Label("アカウント & メンバーシップ", systemImage: "person.crop.circle.badge.checkmark")
         }
     }
 
@@ -416,7 +467,7 @@ struct SettingsView: View {
                 let authorized = await CalendarService.requestAuthorization()
                 if authorized {
                     fetchCalendars()
-                    await SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
+                    SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
                     await syncAllToCalendarSilently()
                 } else {
                     calendarSyncEnabled = false
@@ -456,7 +507,7 @@ struct SettingsView: View {
             let authorized = await CalendarService.requestAuthorization()
             if authorized {
                 fetchCalendars()
-                await SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
+                SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
                 await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
                 alertMessage = "既存のサブスクリプション（\(subscriptions.count)件）をカレンダーに同期しました。"
                 showingSyncSuccessAlert = true
@@ -560,4 +611,255 @@ struct SettingsRow: View {
 
 #Preview {
     SettingsView()
+}
+
+// MARK: - ProUpgradeSheet
+
+/// Proプランのアップグレード画面（ハーフシート）。
+/// コテサクProで開放されるプレミアム価値を美しく訴求し、購入および復元アクションを提供する。
+struct ProUpgradeSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    // ProManagerのObservable状態を購読
+    @State private var proManager = ProManager.shared
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // MARK: - ヘッダー（プレミアム感のあるネオン調）
+                VStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [AppTheme(rawValue: appThemeRawValue)?.color ?? .green, Color.purple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 80, height: 80)
+                            .shadow(color: (AppTheme(rawValue: appThemeRawValue)?.color ?? .green).opacity(0.5), radius: 15)
+                        
+                        Image(systemName: "crown.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.top, 24)
+                    
+                    Text("コテサク Pro")
+                        .font(.system(.title, design: .rounded))
+                        .fontWeight(.black)
+                    
+                    Text("無駄なサブスクを見直して、スマートに削減")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                
+                // MARK: - プレミアム機能一覧
+                VStack(spacing: 16) {
+                    featureRow(
+                        icon: "infinity",
+                        color: .blue,
+                        title: "登録枠を無制限に解放",
+                        description: "10件の無料制限を完全撤廃。何個でも登録・管理可能。"
+                    )
+                    
+                    featureRow(
+                        icon: "camera.viewfinder",
+                        color: .green,
+                        title: "スクショ自動解析 (OCR) 無制限",
+                        description: "領収書や明細スクショの自動読み込みを何回でも快適に。"
+                    )
+                    
+                    featureRow(
+                        icon: "bell.badge.fill",
+                        color: .orange,
+                        title: "複数リマインド通知",
+                        description: "「3日前」「前日」「当日」など、複数回通知で解約漏れゼロへ。"
+                    )
+                    
+                    featureRow(
+                        icon: "doc.arrow.up.fill",
+                        color: .purple,
+                        title: "確定申告CSV/Excel書き出し",
+                        description: "経費指定のサブスクデータを一括出力。freeeや弥生等に即インポート。"
+                    )
+                    
+                    featureRow(
+                        icon: "paintpalette.fill",
+                        color: .pink,
+                        title: "限定プレミアムテーマ＆アイコン",
+                        description: "グラスモーフィズムを極限まで活かした限定カラーやアイコン群。"
+                    )
+                }
+                .padding(.horizontal)
+                
+                // MARK: - 料金プランカード（買い切り ＆ サブスク）
+                VStack(spacing: 12) {
+                    // 買い切りプラン（ライフタイム）- 推奨
+                    planCard(
+                        title: "買い切り (ライフタイム)",
+                        price: "¥3,600",
+                        subtitle: "一度の支払いで一生使い放題（一番人気）🌟",
+                        isRecommended: true
+                    ) {
+                        proManager.unlockProManually()
+                        dismiss()
+                    }
+                    
+                    HStack(spacing: 12) {
+                        // 年額プラン
+                        planCard(
+                            title: "年額プラン",
+                            price: "¥1,980/年",
+                            subtitle: "1週間無料トライアル付き",
+                            isRecommended: false
+                        ) {
+                            proManager.unlockProManually()
+                            dismiss()
+                        }
+                        
+                        // 月額プラン
+                        planCard(
+                            title: "月額プラン",
+                            price: "¥250/月",
+                            subtitle: "いつでも解約可能",
+                            isRecommended: false
+                        ) {
+                            proManager.unlockProManually()
+                            dismiss()
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                
+                // MARK: - フッター案内
+                VStack(spacing: 8) {
+                    Button {
+                        // 復元処理（StoreKitのモック）
+                        Task {
+                            await proManager.updatePurchasedProducts()
+                            if proManager.isProUnlocked {
+                                dismiss()
+                            }
+                        }
+                    } label: {
+                        Text("購入を復元 (Restore Purchases)")
+                            .font(.footnote)
+                            .foregroundColor(AppTheme(rawValue: appThemeRawValue)?.color ?? .green)
+                    }
+                    
+                    Text("無料枠の範囲（最大10件）で使いたい場合は、不要なサブスクを1件「削減（非アクティブ化）」すれば、新しいサブスクを追加できます。")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                }
+                
+                // MARK: - 開発用デバッグエリア
+                #if DEBUG
+                VStack(spacing: 8) {
+                    Divider()
+                        .padding(.top)
+                    
+                    Text("🛠 開発用テスト機能")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.secondary)
+                    
+                    HStack {
+                        Button("Pro状態をトグル (現在: \(proManager.isProUnlocked ? "Pro" : "Free"))") {
+                            proManager.debugToggleProStatus()
+                        }
+                        .font(.caption)
+                        .padding(8)
+                        .background(Color.secondary.opacity(0.2))
+                        .cornerRadius(6)
+                    }
+                }
+                .padding(.bottom, 24)
+                #endif
+            }
+            .padding(.bottom, 32)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+    
+    // MARK: - 補助ビューコンポーネント
+    
+    private func featureRow(icon: String, color: Color, title: String, description: String) -> some View {
+        HStack(alignment: .top, spacing: 16) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(color.opacity(0.15))
+                    .frame(width: 42, height: 42)
+                
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(color)
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+            Spacer()
+        }
+        .padding(12)
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(12)
+    }
+    
+    private func planCard(title: String, price: String, subtitle: String, isRecommended: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                if isRecommended {
+                    Text("RECOMMENDED")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(AppTheme(rawValue: appThemeRawValue)?.color ?? .green)
+                        .cornerRadius(10)
+                        .padding(.top, -14)
+                }
+                
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+                
+                Text(price)
+                    .font(.title2)
+                    .fontWeight(.black)
+                    .foregroundColor(.primary)
+                
+                Text(subtitle)
+                    .font(.system(size: 9))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.secondarySystemGroupedBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isRecommended ? (AppTheme(rawValue: appThemeRawValue)?.color ?? .green) : Color.clear, lineWidth: 2)
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.04), radius: 5, x: 0, y: 3)
+        }
+        .buttonStyle(.plain)
+        .padding(.top, isRecommended ? 12 : 0)
+    }
 }

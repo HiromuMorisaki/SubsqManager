@@ -11,31 +11,31 @@ import SwiftData
 @Model
 final class ReductionHistory {
     /// 削減したサービス名
-    var name: String
+    var name: String = ""
 
     /// 削減された金額
-    var amount: Decimal
+    var amount: Decimal = 0
 
     /// 削減時の請求サイクル
-    var billingCycleRawValue: String
+    var billingCycleRawValue: String = BillingCycle.monthly.rawValue
 
     /// 削減時のカテゴリ
-    var categoryRawValue: String
+    var categoryRawValue: String = Category.other.rawValue
 
     /// 解約日（削減した日）
-    var cancelledDate: Date
+    var cancelledDate: Date = Date()
 
     /// SF Symbol名
-    var iconName: String
+    var iconName: String = "creditcard"
 
     /// 解約時のメモ（元のメモなどを残せるようにする）
     var originalMemo: String?
 
     /// 通貨コード（将来の多通貨対応用、デフォルトは"JPY"）
-    var currencyCode: String
+    var currencyCode: String = "JPY"
 
     /// レコード作成日時
-    var createdAt: Date
+    var createdAt: Date = Date()
 
     init(
         name: String,

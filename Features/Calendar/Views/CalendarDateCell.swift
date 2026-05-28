@@ -12,6 +12,8 @@ struct CalendarDateCell: View {
     let date: CalendarDate
     let isSelected: Bool
     let paymentAmount: Decimal
+    let hasExpense: Bool
+    let hasPrivate: Bool
 
     @AppStorage("currencyCode") private var currencyCode = "JPY"
 
@@ -77,16 +79,25 @@ struct CalendarDateCell: View {
                 .clipShape(Circle())
 
             // 支払いがある日のインジケーター（ドット）
-            ZStack {
-                if paymentAmount > 0 {
+            HStack(spacing: 2) {
+                if hasPrivate {
+                    Circle()
+                        .fill(Color.blue.opacity(dotOpacity))
+                        .frame(width: dotSize, height: dotSize)
+                }
+                if hasExpense {
+                    Circle()
+                        .fill(Color.purple.opacity(dotOpacity))
+                        .frame(width: dotSize, height: dotSize)
+                }
+                if !hasPrivate && !hasExpense && paymentAmount > 0 {
+                    // フォールバック
                     Circle()
                         .fill(Color.accentColor.opacity(dotOpacity))
                         .frame(width: dotSize, height: dotSize)
-                } else {
-                    Color.clear
                 }
             }
-            .frame(width: 8, height: 8)
+            .frame(height: 8)
         }
         .padding(.vertical, 4)
         // タップ領域を広げる
@@ -123,17 +134,23 @@ struct CalendarDateCell: View {
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: true),
             isSelected: false,
-            paymentAmount: Decimal(1500)
+            paymentAmount: Decimal(1500),
+            hasExpense: false,
+            hasPrivate: true
         )
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: true),
             isSelected: true,
-            paymentAmount: Decimal(0)
+            paymentAmount: Decimal(0),
+            hasExpense: false,
+            hasPrivate: false
         )
         CalendarDateCell(
             date: CalendarDate(date: Date(), isCurrentMonth: false),
             isSelected: false,
-            paymentAmount: Decimal(12000)
+            paymentAmount: Decimal(12000),
+            hasExpense: true,
+            hasPrivate: true
         )
     }
     .padding()

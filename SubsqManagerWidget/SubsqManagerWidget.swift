@@ -14,8 +14,12 @@ import SwiftData
 /// ウィジェットに表示するデータを格納するエントリ
 struct SubsqEntry: TimelineEntry {
     let date: Date
-    /// 月額合計金額
+    /// 月額合計金額（すべて）
     let monthlyTotal: Decimal
+    /// 月額合計（プライベート）
+    let privateTotal: Decimal
+    /// 月額合計（経費）
+    let expenseTotal: Decimal
     /// アクティブなサブスク数
     let activeCount: Int
     /// 次回請求が近いサブスク（上位3件）
@@ -39,6 +43,8 @@ struct SubsqTimelineProvider: TimelineProvider {
         SubsqEntry(
             date: Date(),
             monthlyTotal: 5980,
+            privateTotal: 2980,
+            expenseTotal: 3000,
             activeCount: 5,
             upcomingSubscriptions: [
                 .init(name: "Netflix", amount: 1490, nextPaymentDate: Date(), iconName: "film", categoryColor: "entertainment"),
@@ -81,6 +87,9 @@ struct SubsqTimelineProvider: TimelineProvider {
             let subscriptions = try context.fetch(descriptor)
 
             let monthlyTotal = subscriptions.reduce(Decimal.zero) { $0 + $1.monthlyAmount }
+            let privateTotal = subscriptions.filter { !$0.isExpense }.reduce(Decimal.zero) { $0 + $1.monthlyAmount }
+            let expenseTotal = subscriptions.filter { $0.isExpense }.reduce(Decimal.zero) { $0 + $1.monthlyAmount }
+            
             let upcoming = subscriptions.prefix(3).map { sub in
                 SubsqEntry.UpcomingItem(
                     name: sub.name,
@@ -94,6 +103,8 @@ struct SubsqTimelineProvider: TimelineProvider {
             return SubsqEntry(
                 date: Date(),
                 monthlyTotal: monthlyTotal,
+                privateTotal: privateTotal,
+                expenseTotal: expenseTotal,
                 activeCount: subscriptions.count,
                 upcomingSubscriptions: upcoming
             )
@@ -102,6 +113,8 @@ struct SubsqTimelineProvider: TimelineProvider {
             return SubsqEntry(
                 date: Date(),
                 monthlyTotal: 0,
+                privateTotal: 0,
+                expenseTotal: 0,
                 activeCount: 0,
                 upcomingSubscriptions: []
             )
@@ -115,7 +128,7 @@ struct MonthlyTotalWidgetView: View {
     var entry: SubsqEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Image(systemName: "creditcard.fill")
                     .foregroundStyle(.blue)
@@ -132,9 +145,21 @@ struct MonthlyTotalWidgetView: View {
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
 
-            Text("\(entry.activeCount)件のサブスク")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            if entry.expenseTotal > 0 {
+                HStack(spacing: 4) {
+                    Text("経費:")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text(CurrencyHelper.formatted(amount: entry.expenseTotal))
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.orange)
+                }
+            } else {
+                Text("\(entry.activeCount)件のサブスク")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(4)

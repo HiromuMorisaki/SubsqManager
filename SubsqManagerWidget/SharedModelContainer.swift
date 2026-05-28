@@ -38,7 +38,9 @@ enum SharedModelContainer {
         let schema = Schema([Subscription.self, ReductionHistory.self])
         let config = ModelConfiguration(
             schema: schema,
-            url: containerURL.appendingPathComponent("SubsqManager.store")
+            url: containerURL.appendingPathComponent("SubsqManager.store"),
+//            cloudKitDatabase: .none // 一旦 .none にして、Xcode側でiCloud (CloudKit) のCapabilityが設定されるまでの起動時クラッシュを防止します
+            cloudKitDatabase: .private("iCloud.com.h-morisaki.SubsqManager")
         )
         return try ModelContainer(for: schema, configurations: [config])
     }

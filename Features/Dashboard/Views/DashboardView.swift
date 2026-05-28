@@ -53,22 +53,49 @@ struct DashboardView: View {
                     emptyStateView
                 } else {
                     VStack(spacing: 20) {
+                        Picker("用途", selection: $viewModel.expenseFilter) {
+                            ForEach(ExpenseFilter.allCases) { filter in
+                                Text(filter.rawValue).tag(filter)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal)
+                        
+                        let filteredSubs = viewModel.filteredSubscriptions(subscriptions)
+                        
                         reducedSummaryCard
                         
                         reviewButton
-                        summaryCards
+                        
+                        actualBillingCard(filteredSubs)
+                        
+                        HStack(spacing: 12) {
+                            SummaryCardView(
+                                title: "月額換算",
+                                amount: viewModel.totalMonthlyAmount(filteredSubs),
+                                iconName: "calendar",
+                                color: .blue
+                            )
+                            SummaryCardView(
+                                title: "年額換算",
+                                amount: viewModel.totalYearlyAmount(filteredSubs),
+                                iconName: "calendar.badge.clock",
+                                color: .purple
+                            )
+                        }
+                        
                         DistributionChartView(
                             mode: $chartMode,
-                            categoryData: viewModel.monthlyAmountByCategory(subscriptions),
-                            serviceData: viewModel.monthlyAmountByService(subscriptions)
+                            categoryData: viewModel.monthlyAmountByCategory(filteredSubs),
+                            serviceData: viewModel.monthlyAmountByService(filteredSubs)
                         )
                         
-                        let diagnosisIssues = viewModel.diagnoseCostPerformance(subscriptions)
+                        let diagnosisIssues = viewModel.diagnoseCostPerformance(filteredSubs)
                         if !diagnosisIssues.isEmpty {
                             costPerformanceDiagnosisSection(issues: diagnosisIssues)
                         }
                         
-                        upcomingSection
+                        upcomingSection(filteredSubs)
                     }
                     .padding()
                 }
@@ -264,15 +291,15 @@ struct DashboardView: View {
 
                     let totalYearlyReduced = viewModel.totalReducedYearlyAmount(reductionHistories)
                     let totalMonthlyReduced = viewModel.totalReducedMonthlyAmount(reductionHistories)
-
-                    Text(CurrencyHelper.formatted(amount: totalMonthlyReduced))
-                        .font(.system(size: 28, weight: .black, design: .rounded))
-                        .foregroundStyle(.white)
-                        + Text(" /月 節約中")
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white.opacity(0.9))
-
+                    HStack(alignment: .lastTextBaseline, spacing: 2) {
+                        Text(CurrencyHelper.formatted(amount: totalMonthlyReduced))
+                            .font(.system(size: 28, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                        Text("/月 節約中")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
                     Text("年間換算: 今後1年間で約 \(CurrencyHelper.formatted(amount: totalYearlyReduced)) の節約想定")
                         .font(.caption)
                         .fontWeight(.semibold)
@@ -385,6 +412,50 @@ struct DashboardView: View {
         )
     }
 
+    // MARK: - 今月の実際の請求額カード
+    
+    private func actualBillingCard(_ filteredSubs: [Subscription]) -> some View {
+        let actualAmount = viewModel.actualBillingAmountThisMonth(filteredSubs)
+        
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Label("今月実際に支払う総額", systemImage: "yensign.circle.fill")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("実際のキャッシュフロー")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.orange)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.orange.opacity(0.15))
+                    .clipShape(Capsule())
+            }
+            
+            HStack(alignment: .bottom, spacing: 4) {
+                Text(CurrencyHelper.formatted(amount: actualAmount))
+                    .font(.system(size: 32, weight: .black, design: .rounded))
+                    .foregroundStyle(.primary)
+                
+                Text("今月")
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom, 6)
+            }
+            
+            Text("※ 月額・年額などの更新日をもとに、今月中に引き落とされる金額の合計です。")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+
     // MARK: - 見直しボタン
 
     private var reviewButton: some View {
@@ -404,35 +475,15 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - サマリーカード
-
-    /// 月額・年額合計を表示するカードエリア
-    private var summaryCards: some View {
-        HStack(spacing: 12) {
-            SummaryCardView(
-                title: "月額合計",
-                amount: viewModel.totalMonthlyAmount(subscriptions),
-                iconName: "calendar",
-                color: .blue
-            )
-            SummaryCardView(
-                title: "年額合計",
-                amount: viewModel.totalYearlyAmount(subscriptions),
-                iconName: "calendar.badge.clock",
-                color: .purple
-            )
-        }
-    }
-
     // MARK: - 直近の請求予定
 
     /// 直近の請求予定セクション
-    private var upcomingSection: some View {
+    private func upcomingSection(_ filteredSubs: [Subscription]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("直近の請求予定")
                 .font(.headline)
 
-            let upcoming = viewModel.upcomingSubscriptions(subscriptions)
+            let upcoming = viewModel.upcomingSubscriptions(filteredSubs)
 
             if upcoming.isEmpty {
                 Text("予定されている請求はありません")

@@ -30,10 +30,11 @@ final class EditSubscriptionViewModel {
     var satisfaction: Int
     var usageFrequency: UsageFrequency
     var isShared: Bool
-    var splitCount: Int
-    var ownSharePercentage: Double
-    var paymentMethod: PaymentMethod
-    var isNotificationEnabled: Bool
+    var splitCount: Int = 1
+    var ownSharePercentage: Double = 1.0
+    var paymentMethod: PaymentMethod = .notSet
+    var isNotificationEnabled: Bool = true
+    var isExpense: Bool = false
 
     /// 編集対象のサブスクリプション（参照を保持）
     private let subscription: Subscription
@@ -67,6 +68,7 @@ final class EditSubscriptionViewModel {
         self.ownSharePercentage = subscription.ownSharePercentage
         self.paymentMethod = subscription.paymentMethod
         self.isNotificationEnabled = subscription.isNotificationEnabled
+        self.isExpense = subscription.isExpense
         self.originalName = subscription.name
         self.originalStartDate = subscription.startDate
     }
@@ -108,6 +110,7 @@ final class EditSubscriptionViewModel {
         subscription.ownSharePercentage = ownSharePercentage
         subscription.paymentMethod = paymentMethod
         subscription.isNotificationEnabled = isNotificationEnabled
+        subscription.isExpense = isExpense
         subscription.updateNextPaymentDate()
 
         // 旧通知をキャンセル
@@ -163,5 +166,18 @@ final class EditSubscriptionViewModel {
         }
 
         return true
+    }
+
+    /// サブスクリプションを削除する
+    func delete(using modelContext: ModelContext) {
+        // 関連する通知をキャンセル
+        let oldNotificationID = NotificationService.makeIdentifier(
+            name: originalName, startDate: originalStartDate
+        )
+        NotificationService.cancelReminder(identifier: oldNotificationID)
+        NotificationService.cancelReminder(identifier: oldNotificationID + "_trial")
+        NotificationService.cancelReminder(identifier: oldNotificationID + "_end")
+
+        modelContext.delete(subscription)
     }
 }

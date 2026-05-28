@@ -39,6 +39,7 @@ struct SubscriptionFormSections: View {
     @Binding var ownSharePercentage: Double
     @Binding var paymentMethod: PaymentMethod
     @Binding var isNotificationEnabled: Bool
+    @Binding var isExpense: Bool
     
     var focusedField: FocusState<FormField?>.Binding
     
@@ -48,8 +49,6 @@ struct SubscriptionFormSections: View {
         Group {
             basicInfoSection
             billingSection
-            categorySection
-            iconSection
             
             Section {
                 Button {
@@ -68,9 +67,12 @@ struct SubscriptionFormSections: View {
                     }
                 }
                 .foregroundStyle(Color.accentColor)
+                .listRowBackground(Color.accentColor.opacity(0.1))
             }
             
             if showAdvancedSettings {
+                categorySection
+                iconSection
                 paymentAndNotificationSection
                 trialSection
                 endDateSection
@@ -153,12 +155,17 @@ struct SubscriptionFormSections: View {
 
     /// カテゴリ選択セクション
     private var categorySection: some View {
-        Section("カテゴリ") {
+        Section("カテゴリ・用途") {
             Picker("カテゴリ", selection: $category) {
                 ForEach(Category.allCases) { cat in
                     Label(cat.displayName, systemImage: cat.iconName).tag(cat)
                 }
             }
+            Picker("用途", selection: $isExpense) {
+                Text("プライベート").tag(false)
+                Text("仕事・経費").tag(true)
+            }
+            .pickerStyle(.segmented)
         }
     }
 

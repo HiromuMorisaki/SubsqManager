@@ -19,6 +19,18 @@ import SwiftUI
 @Observable
 final class DashboardViewModel {
 
+    /// 用途フィルタ
+    var expenseFilter: ExpenseFilter = .all
+
+    /// フィルタ適用後のサブスクリプションを返す
+    func filteredSubscriptions(_ subscriptions: [Subscription]) -> [Subscription] {
+        switch expenseFilter {
+        case .all: return subscriptions
+        case .privateOnly: return subscriptions.filter { !$0.isExpense }
+        case .expenseOnly: return subscriptions.filter { $0.isExpense }
+        }
+    }
+
     /// 旧データ（isActive == false）から ReductionHistory へのマイグレーション処理を実行する。
     /// 一度だけ実行されるように UserDefaults で管理する。
     func migrateLegacyInactiveSubscriptions(using modelContext: ModelContext) {
@@ -88,6 +100,24 @@ final class DashboardViewModel {
             .reduce(Decimal.zero) { total, subscription in
                 total + subscription.ownShareYearlyAmount
             }
+    }
+
+    /// 今月実際に発生する請求予定額の合計を計算する。
+    /// - Parameter subscriptions: @Queryで取得されたアクティブサブスクリプション
+    /// - Returns: 今月実際に支払う合計金額（Decimal）
+    func actualBillingAmountThisMonth(_ subscriptions: [Subscription]) -> Decimal {
+        let now = Date()
+        var totalAmount: Decimal = 0
+        
+        for sub in subscriptions where !sub.isTrial && !sub.isExpired {
+            let paymentDatesThisMonth = PaymentDateCalculator.paymentDates(for: sub, inMonth: now)
+            let numberOfPayments = Decimal(paymentDatesThisMonth.count)
+            // 実際の自己負担額（1回あたりの金額 × 自己負担割合 × 今月の支払い回数）
+            let actualAmountForSub = (sub.amount * Decimal(sub.ownSharePercentage)) * numberOfPayments
+            totalAmount += actualAmountForSub
+        }
+        
+        return totalAmount
     }
 
     /// 次回請求が最も近いサブスクリプションを返す。
