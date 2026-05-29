@@ -216,6 +216,80 @@ enum NotificationService {
         }
     }
 
+    /// 月1サブスク見直しリマインド通知をスケジュールする。
+    /// 指定された日にち（1〜31日。その月の日数に自動クランプ）および時間に、今後12ヶ月分の個別通知をスケジュールします。
+    /// - Parameters:
+    ///   - day: 毎月通知を送る日にち（1〜31）
+    ///   - hour: 通知を送る時間（時）
+    ///   - minute: 通知を送る時間（分）
+    static func scheduleMonthlyReviewReminder(day: Int, hour: Int, minute: Int) async {
+        // 設定で通知がOFFの場合はキャンセルしてスキップ
+        guard UserDefaults.standard.bool(forKey: "monthlyReviewNotificationEnabled") else {
+            cancelMonthlyReviewReminder()
+            return
+        }
+
+        let center = UNUserNotificationCenter.current()
+        
+        // 既存のすべての個別見直し通知を一度キャンセルして重複を防ぐ
+        cancelMonthlyReviewReminder()
+
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // 今後12ヶ月分の見直し通知をそれぞれ算出してスケジュール
+        for i in 0..<12 {
+            if let targetMonthDate = calendar.date(byAdding: .month, value: i, to: today) {
+                var targetComp = calendar.dateComponents([.year, .month], from: targetMonthDate)
+                let y = targetComp.year ?? 2026
+                let m = targetComp.month ?? 1
+                
+                // その月の日数に合わせて日にちを自動クランプ（例: 2月31日 ➡ 2月28日/29日）
+                var targetDay = day
+                if let monthRange = calendar.range(of: .day, in: .month, for: targetMonthDate) {
+                    let maxDays = monthRange.count
+                    if targetDay > maxDays {
+                        targetDay = maxDays
+                    }
+                }
+                
+                targetComp.day = targetDay
+                targetComp.hour = hour
+                targetComp.minute = minute
+                
+                if let finalDate = calendar.date(from: targetComp), finalDate > today {
+                    let content = UNMutableNotificationContent()
+                    content.title = "🔍 【月1コテサク見直しデー】無駄な出費を削減！"
+                    content.body = "今月もサブスクの『見直し診断』を行う日になりました！使用していないアプリや、満足度の低いサービスはありませんか？アプリを開いて、固定費を即座に削減しましょう！💰✨"
+                    content.sound = .default
+                    content.userInfo = ["type": "monthly_review"]
+                    
+                    let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: finalDate)
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+                    
+                    let request = UNNotificationRequest(
+                        identifier: "monthly_review_reminder_\(i)",
+                        content: content,
+                        trigger: trigger
+                    )
+                    
+                    do {
+                        try await center.add(request)
+                    } catch {
+                        print("月1見直し個別通知スケジュールエラー (月\(i)): \(error)")
+                    }
+                }
+            }
+        }
+    }
+
+    /// 月1サブスク見直しリマインド通知をキャンセルする。
+    static func cancelMonthlyReviewReminder() {
+        let identifiers = (0..<12).map { "monthly_review_reminder_\($0)" }
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
     // MARK: - 通知のキャンセル
 
     /// 指定した識別子の通知をキャンセルする。
@@ -242,5 +316,90 @@ enum NotificationService {
     static func makeIdentifier(name: String, startDate: Date) -> String {
         let timestamp = Int(startDate.timeIntervalSince1970)
         return "reminder_\(name)_\(timestamp)"
+    }
+}
+
+// MARK: - ReviewRequestService
+
+import StoreKit
+import UIKit
+
+/// ASO対策としての「App Store レビュー促進機能」を管理するサービス
+/// ユーザーが最も満足し、アプリの価値を実感している瞬間（Aha! Moment）にレビューを促します。
+class ReviewRequestService {
+    static let shared = ReviewRequestService()
+
+    /// UserDefaults を直接用いてデータを永続化（SwiftUI依存を排除）
+    private var launchCount: Int {
+        get { UserDefaults.standard.integer(forKey: "reviewRequestLaunchCount") }
+        set { UserDefaults.standard.set(newValue, forKey: "reviewRequestLaunchCount") }
+    }
+
+    private var lastVersionPromptedForReview: String {
+        get { UserDefaults.standard.string(forKey: "lastVersionPromptedForReview") ?? "" }
+        set { UserDefaults.standard.set(newValue, forKey: "lastVersionPromptedForReview") }
+    }
+
+    private init() {}
+
+    /// アプリ起動回数をインクリメントします
+    func incrementLaunchCount() {
+        launchCount += 1
+        print("[ReviewRequestService] Launch count incremented: \(launchCount)")
+    }
+
+    /// アプリ起動時の条件判定に基づき、レビューを要求します
+    /// - 条件: 起動回数が3回以上 ＆ 登録サブスクが1件以上
+    @MainActor
+    func requestReviewIfLaunchConditionsMet(activeSubscriptionCount: Int) {
+        guard launchCount >= 3 else {
+            print("[ReviewRequestService] Launch check - Review skipped: Launch count is \(launchCount) (requires >= 3)")
+            return
+        }
+        guard activeSubscriptionCount >= 1 else {
+            print("[ReviewRequestService] Launch check - Review skipped: Registered subscription count is \(activeSubscriptionCount) (requires >= 1)")
+            return
+        }
+        print("[ReviewRequestService] Launch conditions met! Proceeding to prompt review...")
+        requestReview()
+    }
+
+    /// 新規サブスクリプションの登録が成功した瞬間にレビューを要求します（Aha! Moment 1）
+    @MainActor
+    func requestReviewIfSubscriptionAdded() {
+        print("[ReviewRequestService] Add subscription trigger - Proceeding to prompt review...")
+        requestReview()
+    }
+
+    /// 無駄なサブスクの削減・解約に成功した瞬間にレビューを要求します（Aha! Moment 2）
+    @MainActor
+    func requestReviewIfSavingsAchieved() {
+        print("[ReviewRequestService] Savings achieved trigger - Proceeding to prompt review...")
+        requestReview()
+    }
+
+    /// コアとなるStoreKitレビュー要求ロジック
+    @MainActor
+    private func requestReview() {
+        // 現在のアプリバージョン（例: "1.0.1"）を取得
+        guard let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
+            print("[ReviewRequestService] Error: Could not retrieve CFBundleShortVersionString")
+            return
+        }
+
+        // 同一バージョンでの重複表示防止（ユーザー体験の保護）
+        if currentVersion == lastVersionPromptedForReview {
+            print("[ReviewRequestService] Review skipped: Already prompted for version \(currentVersion) to prevent spamming")
+            return
+        }
+
+        // アクティブなUIWindowSceneを取得して要求を実行
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            AppStore.requestReview(in: scene)
+            lastVersionPromptedForReview = currentVersion
+            print("[ReviewRequestService] StoreKit requestReview executed successfully for version \(currentVersion)!")
+        } else {
+            print("[ReviewRequestService] Error: Active UIWindowScene could not be retrieved")
+        }
     }
 }

@@ -11,7 +11,8 @@ def main():
     target_width = 1284
     target_height = 2778
     
-    for i in range(1, 5):
+    # 7枚のスクリーンショットに対応
+    for i in range(1, 8):
         filename = f"Screenshot_{i}.png"
         input_path = os.path.join(input_dir, filename)
         output_path = os.path.join(output_dir, filename)

@@ -183,16 +183,28 @@ final class DashboardViewModel {
 
     // MARK: - コスパ診断 & 削減目標
 
+    /// コスパ診断結果の深刻度・推奨度を表す種別
+    enum DiagnosisType: String, Codable, CaseIterable {
+        case critical   // 🚨 要注意（解約推奨：満足度2以下、または利用回数0回）
+        case warning    // ⚠️ 要検討（見直し候補：満足度3以下、かつコスト高または利用少）
+        case excellence // ✨ コスパ優秀・大満足（満足度4以上でよく使っている、または満足度5）
+    }
+
     /// コスパ診断の結果を表す構造体
     struct CostPerformanceIssue: Identifiable {
         let id = UUID()
         let subscription: Subscription
-        let isCritical: Bool // 要注意(true) か 見直し候補(false)か
+        let type: DiagnosisType
         let unitCost: Decimal // 1回あたりのコスト
         let advice: String
+        
+        // 既存コードとの後方互換性のためのゲッター
+        var isCritical: Bool {
+            type == .critical
+        }
     }
 
-    /// アクティブなサブスクリプションを診断し、警告に引っかかった項目を返す
+    /// アクティブなサブスクリプションを診断し、警告および優秀な項目を返す
     func diagnoseCostPerformance(_ subscriptions: [Subscription]) -> [CostPerformanceIssue] {
         var issues: [CostPerformanceIssue] = []
 
@@ -212,7 +224,7 @@ final class DashboardViewModel {
                 
                 issues.append(CostPerformanceIssue(
                     subscription: sub,
-                    isCritical: true,
+                    type: .critical,
                     unitCost: unitCost,
                     advice: advice
                 ))
@@ -223,15 +235,44 @@ final class DashboardViewModel {
                 
                 issues.append(CostPerformanceIssue(
                     subscription: sub,
-                    isCritical: false,
+                    type: .warning,
+                    unitCost: unitCost,
+                    advice: advice
+                ))
+            }
+            // ✨ コスパ優秀・大満足: 満足度が5点満点、または満足度が4点以上かつ月間利用回数が4回以上
+            else if satisfaction >= 5 || (satisfaction >= 4 && usageCount >= 4) {
+                let advice = satisfaction >= 5
+                    ? "満足度が最高評価です！非常にお気に入りのサービスとして、生活に素晴らしい価値をもたらしています。このまま愛用しましょう。✨"
+                    : "大満足で活用されており、1回あたりのコスト（\(CurrencyHelper.formatted(amount: unitCost))）も十分に抑えられています。大変お得です！👍"
+                
+                issues.append(CostPerformanceIssue(
+                    subscription: sub,
+                    type: .excellence,
                     unitCost: unitCost,
                     advice: advice
                 ))
             }
         }
 
-        // 重要度順（要注意が先）にソートして返す
-        return issues.sorted { $0.isCritical && !$1.isCritical }
+        // 重要度順（要注意 -> 要検討 -> 優秀）にソートして返す
+        return issues.sorted { a, b in
+            let orderA: Int
+            switch a.type {
+            case .critical: orderA = 0
+            case .warning: orderA = 1
+            case .excellence: orderA = 2
+            }
+            
+            let orderB: Int
+            switch b.type {
+            case .critical: orderB = 0
+            case .warning: orderB = 1
+            case .excellence: orderB = 2
+            }
+            
+            return orderA < orderB
+        }
     }
 
     /// 削減目標に対するモチベーションメッセージを取得する

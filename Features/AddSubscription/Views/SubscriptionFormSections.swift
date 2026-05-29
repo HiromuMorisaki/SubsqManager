@@ -48,7 +48,6 @@ struct SubscriptionFormSections: View {
     var body: some View {
         Group {
             basicInfoSection
-            billingSection
             
             Section {
                 Button {
@@ -58,7 +57,7 @@ struct SubscriptionFormSections: View {
                 } label: {
                     HStack {
                         Image(systemName: "slider.horizontal.3")
-                        Text(showAdvancedSettings ? "詳細設定を閉じる" : "詳細設定 (任意項目) を開く")
+                        Text(showAdvancedSettings ? "詳細設定を閉じる" : "詳細設定 (周期・開始日・カテゴリ等) を開く")
                             .fontWeight(.bold)
                         Spacer()
                         Image(systemName: "chevron.right")
@@ -71,6 +70,7 @@ struct SubscriptionFormSections: View {
             }
             
             if showAdvancedSettings {
+                billingSection
                 categorySection
                 iconSection
                 paymentAndNotificationSection
@@ -206,11 +206,48 @@ struct SubscriptionFormSections: View {
             }
             .padding(.vertical, 4)
             
-            Picker("利用頻度", selection: $usageFrequency) {
-                ForEach(UsageFrequency.allCases) { freq in
-                    Text(freq.displayName).tag(freq)
+            VStack(alignment: .leading, spacing: 10) {
+                Text("利用頻度")
+                    .font(.body)
+                
+                HStack(spacing: 6) {
+                    let options: [(UsageFrequency, String, String)] = [
+                        (.never, "ほぼ未使用", "💤"),
+                        (.sometimes, "たまに", "🗓"),
+                        (.often, "よく使う", "🏃‍♂️"),
+                        (.daily, "ほぼ毎日", "🔥")
+                    ]
+                    
+                    ForEach(options, id: \.0) { item in
+                        let isSelected = usageFrequency == item.0
+                        Button {
+                            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+                                usageFrequency = item.0
+                            }
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text(item.2)
+                                    .font(.title3)
+                                Text(item.1)
+                                    .font(.system(size: 9, weight: .bold))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color(.systemGray6))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 1.5)
+                            )
+                            .foregroundStyle(isSelected ? Color.accentColor : .primary)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
+            .padding(.vertical, 6)
         }
     }
 

@@ -39,20 +39,45 @@ struct SettingsView: View {
     /// 選択中の連携先カレンダーのID（UserDefaultsに永続化）
     @AppStorage("selectedCalendarIdentifier") private var selectedCalendarIdentifier = ""
 
+    /// 月1見直しリマインド通知のON/OFFフラグ（UserDefaultsに永続化）
+    @AppStorage("monthlyReviewNotificationEnabled") private var monthlyReviewNotificationEnabled = false
+
+    /// 月1見直しリマインドを送る日にち（1〜31）（UserDefaultsに永続化、デフォルトは25日）
+    @AppStorage("monthlyReviewDay") private var monthlyReviewDay = 25
+
+    /// 月1見直しリマインドを送る時間（時）（UserDefaultsに永続化、デフォルトは9時）
+    @AppStorage("monthlyReviewHour") private var monthlyReviewHour = 9
+
+    /// 月1見直しリマインドを送る時間（分）（UserDefaultsに永続化、デフォルトは0分）
+    @AppStorage("monthlyReviewMinute") private var monthlyReviewMinute = 0
+
+    /// 月1見直し予定のカレンダー追加ON/OFFフラグ（UserDefaultsに永続化）
+    @AppStorage("monthlyReviewCalendarEnabled") private var monthlyReviewCalendarEnabled = false
+
+    /// DatePicker選択用の一時変数
+    @State private var selectedReviewTime = Date()
+
     /// 書き込み可能なカレンダー一覧
     @State private var availableCalendars: [EKCalendar] = []
 
     /// Apple IDインポートアシスタント表示フラグ
     @State private var showingAppleImporter = false
 
-    /// TimeTree 連携ガイド表示フラグ
-    @State private var showingTimeTreeGuide = false
-
     /// 現在のアプリテーマ
     @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
     
     /// 現在のアプリアイコン
     @State private var currentAppIcon = AppIcon.current
+
+    /// 現在のテーマカラー (helper views からも参照可能に)
+    private var themeColor: Color {
+        AppTheme(rawValue: appThemeRawValue)?.color ?? .green
+    }
+
+    /// 現在のテーマのグラデーションカラー
+    private var themeGradientColors: [Color] {
+        AppTheme(rawValue: appThemeRawValue)?.gradientColors ?? [.green, .teal]
+    }
 
     @State private var isSyncing = false
     @State private var showingSyncConfirmation = false
@@ -63,8 +88,6 @@ struct SettingsView: View {
     // MARK: - Body
 
     var body: some View {
-        let themeColor = AppTheme(rawValue: appThemeRawValue)?.color ?? .green
-        
         NavigationStack {
             Form {
                 proSection
@@ -115,11 +138,15 @@ struct SettingsView: View {
             .sheet(isPresented: $showingProUpgrade) {
                 ProUpgradeSheet()
             }
-            .sheet(isPresented: $showingTimeTreeGuide) {
-                TimeTreeGuideView()
-            }
             .task {
                 fetchCalendars()
+                initializeReviewTime()
+            }
+            .onChange(of: selectedReviewTime) { _, newValue in
+                let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                monthlyReviewHour = components.hour ?? 9
+                monthlyReviewMinute = components.minute ?? 0
+                updateMonthlyReviewNotification()
             }
         }
     }
@@ -242,12 +269,146 @@ struct SettingsView: View {
                     rescheduleAllNotifications(enabled: notificationsEnabled, leadDays: newValue)
                 }
             }
+
+            // 月1コテサク見直しDAY設定 (テーマカラー連動 ＆ 美しいグラデーションと動的発光でプレミアム感を最大化)
+            HStack(spacing: 12) {
+                ZStack {
+                    if monthlyReviewNotificationEnabled {
+                        Circle()
+                            .fill(LinearGradient(
+                                colors: themeGradientColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .frame(width: 36, height: 36)
+                            .shadow(color: themeColor.opacity(0.35), radius: 5, x: 0, y: 2)
+                    } else {
+                        Circle()
+                            .fill(Color.gray.opacity(0.12))
+                            .frame(width: 36, height: 36)
+                    }
+                    
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(monthlyReviewNotificationEnabled ? .white : Color.secondary)
+                }
+                
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text("月1コテサク見直しDAY")
+                            .font(.system(size: 14, weight: .black))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85) // 幅が狭い画面でも改行させず綺麗に収める
+                            .layoutPriority(1) // 2行回り込み（改行）を防止
+                        
+                        Text("節約 🚀")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Group {
+                                    if monthlyReviewNotificationEnabled {
+                                        LinearGradient(
+                                            colors: themeGradientColors,
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    } else {
+                                        LinearGradient(
+                                            colors: [Color.gray.opacity(0.4), Color.gray.opacity(0.5)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    }
+                                }
+                            )
+                            .cornerRadius(4)
+                            .lineLimit(1)
+                    }
+                    
+                    Text("無駄な固定費を削減して家計を最適化する日")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
+                }
+                
+                Spacer()
+                
+                Toggle("", isOn: $monthlyReviewNotificationEnabled)
+                    .labelsHidden()
+                    .toggleStyle(SwitchToggleStyle(tint: themeColor)) // テーマカラーのインジケーター
+            }
+            .padding(.vertical, 4)
+            .listRowBackground(
+                Group {
+                    if monthlyReviewNotificationEnabled {
+                        // プレミアムな発光効果：テーマカラーに合わせた極薄のグラデーション背景
+                        LinearGradient(
+                            colors: [themeColor.opacity(0.08), themeColor.opacity(0.02)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    } else {
+                        Color(.secondarySystemGroupedBackground)
+                    }
+                }
+            )
+            .onChange(of: monthlyReviewNotificationEnabled) { _, newValue in
+                if newValue {
+                    Task {
+                        let authorized = await NotificationService.requestAuthorization()
+                        if !authorized {
+                            monthlyReviewNotificationEnabled = false
+                            alertMessage = "通知権限がありません。設定アプリから通知を許可してください。"
+                            showingSyncErrorAlert = true
+                        } else {
+                            updateMonthlyReviewNotification()
+                        }
+                    }
+                } else {
+                    updateMonthlyReviewNotification()
+                }
+            }
+
+            if monthlyReviewNotificationEnabled {
+                Picker("リマインド日", selection: $monthlyReviewDay) {
+                    ForEach(1...31, id: \.self) { day in
+                        if day == 31 {
+                            Text("毎月 31 日 (または月末)").tag(day)
+                        } else {
+                            Text("毎月 \(day) 日").tag(day)
+                        }
+                    }
+                }
+                .onChange(of: monthlyReviewDay) { _, _ in
+                    updateMonthlyReviewNotification()
+                    if calendarSyncEnabled && monthlyReviewCalendarEnabled {
+                        updateMonthlyReviewCalendar()
+                    }
+                }
+
+                DatePicker("通知時間", selection: $selectedReviewTime, displayedComponents: .hourAndMinute)
+            }
         } header: {
             Label("通知", systemImage: "bell")
         } footer: {
-            Text(notificationsEnabled
-                 ? "請求日の\(notificationLeadDays == 1 ? "前日" : "\(notificationLeadDays)日前")の午前9時に通知でお知らせします"
-                 : "ONにすると、請求日の指定日前に通知でお知らせします")
+            VStack(alignment: .leading, spacing: 4) {
+                if notificationsEnabled {
+                    Text("請求日の\(notificationLeadDays == 1 ? "前日" : "\(notificationLeadDays)日前")の午前9時に通知でお知らせします")
+                }
+                if monthlyReviewNotificationEnabled {
+                    let timeFormatted = selectedReviewTime.formatted(date: .omitted, time: .shortened)
+                    let dayString = monthlyReviewDay == 31 ? "31 日 (または月末)" : "\(monthlyReviewDay) 日"
+                    Text("毎月 \(dayString) の \(timeFormatted) にサブスク見直しを促す通知でお知らせします")
+                        .foregroundColor(themeColor)
+                        .fontWeight(.semibold)
+                }
+                if !notificationsEnabled && !monthlyReviewNotificationEnabled {
+                    Text("ONにすると、請求日や定期的な見直し日に通知でお知らせします")
+                }
+            }
         }
     }
 
@@ -259,29 +420,34 @@ struct SettingsView: View {
                     handleCalendarSyncToggled(enabled: newValue)
                 }
 
-            if calendarSyncEnabled {
+             if calendarSyncEnabled {
                 if !availableCalendars.isEmpty {
                     Picker("同期先カレンダー", selection: $selectedCalendarIdentifier) {
                         Text("デフォルト").tag("")
                         ForEach(availableCalendars, id: \.calendarIdentifier) { calendar in
-                            HStack(spacing: 8) {
-                                Circle()
-                                    .fill(Color(cgColor: calendar.cgColor))
-                                    .frame(width: 8, height: 8)
-                                Text(calendar.title)
-                            }
-                            .tag(calendar.calendarIdentifier)
+                            // iOS 14+ のネイティブメニュー平坦化バグを防ぐため、HStack を廃止し単一テキストで表現
+                            Text("\(calendar.title) (\(friendlySourceName(for: calendar)))")
+                                .tag(calendar.calendarIdentifier)
                         }
                     }
                     .onChange(of: selectedCalendarIdentifier) { _, _ in
                         Task { @MainActor in
                             isSyncing = true
                             await CalendarService.removeAllEvents(for: subscriptions)
+                            await CalendarService.removeMonthlyReviewEvents()
                             await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+                            if monthlyReviewCalendarEnabled {
+                                await CalendarService.syncMonthlyReviewEvents(day: monthlyReviewDay)
+                            }
                             isSyncing = false
                         }
                     }
                 }
+
+                Toggle("月1コテサクリマインドを追加", isOn: $monthlyReviewCalendarEnabled)
+                    .onChange(of: monthlyReviewCalendarEnabled) { _, newValue in
+                        updateMonthlyReviewCalendar()
+                    }
 
                 Button {
                     showingSyncConfirmation = true
@@ -477,6 +643,7 @@ struct SettingsView: View {
             } else {
                 isSyncing = true
                 await CalendarService.removeAllEvents(for: subscriptions)
+                await CalendarService.removeMonthlyReviewEvents()
                 isSyncing = false
                 availableCalendars = []
                 alertMessage = "カレンダーの同期設定をオフにし、登録されたすべてのイベントを削除しました。"
@@ -488,7 +655,12 @@ struct SettingsView: View {
     /// カレンダー一覧を取得する
     private func fetchCalendars() {
         if calendarSyncEnabled && CalendarService.isAuthorized {
-            availableCalendars = CalendarService.getWritableCalendars()
+            let writable = CalendarService.getWritableCalendars()
+            // 「iPhone標準カレンダー」および「Googleカレンダー」の2つに厳密に絞り込み
+            availableCalendars = writable.filter { calendar in
+                let sourceName = friendlySourceName(for: calendar)
+                return sourceName == "iPhone標準カレンダー" || sourceName == "Googleカレンダー"
+            }
         } else {
             availableCalendars = []
         }
@@ -498,6 +670,9 @@ struct SettingsView: View {
     private func syncAllToCalendarSilently() async {
         guard CalendarService.isAuthorized else { return }
         await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+        if monthlyReviewCalendarEnabled {
+            await CalendarService.syncMonthlyReviewEvents(day: monthlyReviewDay)
+        }
     }
 
     /// 既存データをカレンダーに一括同期する（インジケータ表示付き）
@@ -509,7 +684,10 @@ struct SettingsView: View {
                 fetchCalendars()
                 SubscriptionDeduplicator.deduplicateActiveSubscriptions(using: modelContext)
                 await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
-                alertMessage = "既存のサブスクリプション（\(subscriptions.count)件）をカレンダーに同期しました。"
+                if monthlyReviewCalendarEnabled {
+                    await CalendarService.syncMonthlyReviewEvents(day: monthlyReviewDay)
+                }
+                alertMessage = "既存のサブスクリプション（\(subscriptions.count)件）および見直し予定をカレンダーに同期しました。"
                 showingSyncSuccessAlert = true
             } else {
                 alertMessage = "カレンダーへのアクセス権限がありません。設定アプリからコテサクのカレンダー書き込み権限を許可してください。"
@@ -519,30 +697,21 @@ struct SettingsView: View {
         }
     }
 
-    /// 外部サービス連携セクション（Apple ID、TimeTree）
+    /// 外部サービス連携セクション（Apple ID）
     private var externalIntegrationSection: some View {
         Section {
             SettingsRow(
                 iconName: "applelogo",
                 iconColor: .primary,
                 title: "Apple ID サブスク連携",
-                subtitle: "Apple Store決済サービスを高速一括インポート"
+                subtitle: "Apple Store決済中のサービスをスクショから一括インポート"
             ) {
                 showingAppleImporter = true
             }
-            
-            SettingsRow(
-                iconName: "arrow.triangle.2.circlepath",
-                iconColor: .green,
-                title: "TimeTree 連携ガイド",
-                subtitle: "iOSカレンダーを介したTimeTreeへの自動同期設定手順"
-            ) {
-                showingTimeTreeGuide = true
-            }
         } header: {
-            Label("外部サービス高度連携", systemImage: "link.badge.plus")
+            Label("外部サービスを確認・画像から登録", systemImage: "link")
         } footer: {
-            Text("Apple IDサブスク連携では、Apple Store決済中のサービスを一挙にインポートできます。\nTimeTree連携では、iOS標準カレンダーを介してTimeTreeへ次回請求予定を全自動で同期させる手順を解説します。")
+            Text("Apple IDサブスク連携では、App Storeアプリの「サブスクリプション」画面のスクリーンショットから、コテサクへデータを自動解析して高速一括インポートできます。")
         }
     }
 
@@ -562,6 +731,59 @@ struct SettingsView: View {
         
         if let url = components.url {
             UIApplication.shared.open(url)
+        }
+    }
+
+    /// カレンダーのソース（アカウント）を分かりやすい日本語名に変換します
+    private func friendlySourceName(for calendar: EKCalendar) -> String {
+        let sourceTitle = calendar.source.title.lowercased()
+        if sourceTitle.contains("icloud") {
+            return "iPhone標準カレンダー"
+        } else if sourceTitle.contains("google") || sourceTitle.contains("gmail") {
+            return "Googleカレンダー"
+        } else if calendar.source.sourceType == .local {
+            return "iPhoneローカル"
+        } else {
+            return calendar.source.title
+        }
+    }
+
+    /// 月1見直し通知時間の一時状態を初期化します
+    private func initializeReviewTime() {
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        components.hour = monthlyReviewHour
+        components.minute = monthlyReviewMinute
+        if let date = Calendar.current.date(from: components) {
+            selectedReviewTime = date
+        }
+    }
+
+    /// 月1見直し通知スケジュールを更新します
+    private func updateMonthlyReviewNotification() {
+        Task {
+            if monthlyReviewNotificationEnabled {
+                await NotificationService.scheduleMonthlyReviewReminder(
+                    day: monthlyReviewDay,
+                    hour: monthlyReviewHour,
+                    minute: monthlyReviewMinute
+                )
+            } else {
+                NotificationService.cancelMonthlyReviewReminder()
+            }
+        }
+    }
+
+    /// 月1見直しカレンダーイベントを更新します
+    private func updateMonthlyReviewCalendar() {
+        Task { @MainActor in
+            if calendarSyncEnabled && monthlyReviewCalendarEnabled {
+                let authorized = await CalendarService.requestAuthorization()
+                if authorized {
+                    await CalendarService.syncMonthlyReviewEvents(day: monthlyReviewDay)
+                }
+            } else {
+                await CalendarService.removeMonthlyReviewEvents()
+            }
         }
     }
 }
@@ -695,44 +917,48 @@ struct ProUpgradeSheet: View {
                 }
                 .padding(.horizontal)
                 
-                // MARK: - 料金プランカード（買い切り ＆ サブスク）
-                VStack(spacing: 12) {
-                    // 買い切りプラン（ライフタイム）- 推奨
-                    planCard(
-                        title: "買い切り (ライフタイム)",
-                        price: "¥3,600",
-                        subtitle: "一度の支払いで一生使い放題（一番人気）🌟",
-                        isRecommended: true
-                    ) {
-                        proManager.unlockProManually()
-                        dismiss()
-                    }
-                    
+                // MARK: - 料金プランカード（戦略的価格 ＆ 最上位リオーダー）
+                VStack(spacing: 16) {
                     HStack(spacing: 12) {
-                        // 年額プラン
-                        planCard(
-                            title: "年額プラン",
-                            price: "¥1,980/年",
-                            subtitle: "1週間無料トライアル付き",
-                            isRecommended: false
-                        ) {
-                            proManager.unlockProManually()
-                            dismiss()
-                        }
-                        
                         // 月額プラン
                         planCard(
                             title: "月額プラン",
-                            price: "¥250/月",
+                            price: "¥150/月",
                             subtitle: "いつでも解約可能",
                             isRecommended: false
                         ) {
                             proManager.unlockProManually()
                             dismiss()
                         }
+                        
+                        // 年額プラン (最推奨・1週間お試し)
+                        planCard(
+                            title: "年額プラン",
+                            price: "¥980/年",
+                            subtitle: "1週間無料体験付き",
+                            isRecommended: true
+                        ) {
+                            proManager.unlockProManually()
+                            dismiss()
+                        }
+                    }
+                    
+                    // 買い切りプラン（ライフタイム）- 下部に配置して圧迫感を軽減
+                    planCard(
+                        title: "一生使い放題 (買い切りライフタイム)",
+                        price: "¥2,400",
+                        subtitle: "追加課金なし・永久サポート ♾",
+                        isRecommended: false
+                    ) {
+                        proManager.unlockProManually()
+                        dismiss()
                     }
                 }
                 .padding(.horizontal)
+                
+                // MARK: - 美しき機能比較マトリクス
+                comparisonMatrix
+                
                 
                 // MARK: - フッター案内
                 VStack(spacing: 8) {
@@ -861,5 +1087,80 @@ struct ProUpgradeSheet: View {
         }
         .buttonStyle(.plain)
         .padding(.top, isRecommended ? 12 : 0)
+    }
+
+    private var comparisonMatrix: some View {
+        VStack(spacing: 12) {
+            Text("無料プラン と Proプラン の比較")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.secondary)
+                .padding(.top, 16)
+            
+            VStack(spacing: 0) {
+                // ヘッダー行
+                HStack(spacing: 0) {
+                    Text("機能・特典")
+                        .font(.system(size: 11, weight: .bold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Text("無料")
+                        .font(.system(size: 11, weight: .bold))
+                        .frame(width: 70, alignment: .center)
+                        .foregroundColor(.secondary)
+                    
+                    Text("Pro 👑")
+                        .font(.system(size: 11, weight: .bold))
+                        .frame(width: 80, alignment: .center)
+                        .foregroundColor(.purple)
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .background(Color.secondary.opacity(0.08))
+                
+                Divider()
+                
+                // 行データ
+                let rows: [(String, String, String)] = [
+                    ("登録枠上限", "最大10件", "無制限 ♾"),
+                    ("スクショ自動解析", "月3回まで", "無制限 📸"),
+                    ("リマインド通知", "1日前のみ", "複数回対応 ⏰"),
+                    ("確定申告・経費CSV", "非対応 ❌", "書き出し対応 📄"),
+                    ("テーマ＆アイコン", "非対応 ❌", "全解放 ✨")
+                ]
+                
+                ForEach(0..<rows.count, id: \.self) { index in
+                    let row = rows[index]
+                    HStack(spacing: 0) {
+                        Text(row.0)
+                            .font(.system(size: 12, weight: .semibold))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text(row.1)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .frame(width: 70, alignment: .center)
+                        
+                        Text(row.2)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.purple)
+                            .frame(width: 80, alignment: .center)
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 12)
+                    .background(index % 2 == 1 ? Color.secondary.opacity(0.03) : Color.clear)
+                    
+                    if index < rows.count - 1 {
+                        Divider()
+                    }
+                }
+            }
+            .background(Color(.secondarySystemGroupedBackground))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.secondary.opacity(0.15), lineWidth: 1)
+            )
+        }
+        .padding(.horizontal)
     }
 }

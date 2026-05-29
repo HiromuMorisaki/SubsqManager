@@ -46,6 +46,18 @@ struct SubscriptionListView: View {
     /// ProManagerの監視用（リアクティブな状態購読用）
     private var proManager = ProManager.shared
 
+    // 月1見直しリマインダー連携用
+    @AppStorage("monthlyReviewNotificationEnabled") private var monthlyReviewNotificationEnabled = false
+    @AppStorage("monthlyReviewDay") private var monthlyReviewDay = 25
+    @AppStorage("monthlyReviewHour") private var monthlyReviewHour = 9
+    @AppStorage("monthlyReviewMinute") private var monthlyReviewMinute = 0
+    @AppStorage("monthlyReviewCalendarEnabled") private var monthlyReviewCalendarEnabled = false
+    @AppStorage("calendarSyncEnabled") private var calendarSyncEnabled = false
+
+    // アプリテーマ取得用
+    @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
+    private var currentTheme: AppTheme { AppTheme(rawValue: appThemeRawValue) ?? .neonGreen }
+
     /// お祝い画面用のプレデータ構造体
     struct CelebrationData: Identifiable {
         let id = UUID()
@@ -70,6 +82,13 @@ struct SubscriptionListView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding()
+                
+                // 月1コテサク見直しデーが未登録で、サブスクが1件以上ある場合のみ、美しきインラインバナーを表示
+                if !monthlyReviewNotificationEnabled && !subscriptions.isEmpty {
+                    monthlyReviewNudgeBanner
+                        .padding(.bottom, 12)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
                 
                 Group {
                     if subscriptions.isEmpty {
@@ -168,6 +187,127 @@ struct SubscriptionListView: View {
         }
     }
 
+    // MARK: - インライン月1コテサク見直し登録バナー (未登録ユーザー向け)
+    
+    private var monthlyReviewNudgeBanner: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                // 美しい光彩を放つテーマカラーのアイコン
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LinearGradient(colors: currentTheme.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 44, height: 44)
+                        .shadow(color: currentTheme.color.opacity(0.4), radius: 6, x: 0, y: 3)
+                    
+                    Image(systemName: "sparkles")
+                        .font(.title3)
+                        .foregroundColor(.white)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text("月1回のコテサク見直しを始めませんか？")
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                        
+                        Text("節約効果 💡")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(LinearGradient(colors: currentTheme.gradientColors, startPoint: .leading, endPoint: .trailing))
+                            .cornerRadius(6)
+                            .lineLimit(1)
+                    }
+                    
+                    Text("給料日前後の「毎月25日」に見直し診断を行うだけで、年間平均3〜5万円の無駄な“払い損”を防止できます。忘れがちなサブスク管理を完全に自動化しましょう。")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineSpacing(4)
+                }
+            }
+            
+            HStack(spacing: 12) {
+                Button {
+                    // 1タップ登録処理 (Haptic Feedback)
+                    #if os(iOS)
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.success)
+                    #endif
+                    
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                        monthlyReviewDay = 25
+                        monthlyReviewNotificationEnabled = true
+                        monthlyReviewCalendarEnabled = true
+                    }
+                    
+                    Task {
+                        let authorized = await NotificationService.requestAuthorization()
+                        if authorized {
+                            await NotificationService.scheduleMonthlyReviewReminder(day: 25, hour: 9, minute: 0)
+                            
+                            if calendarSyncEnabled {
+                                let calAuthorized = await CalendarService.requestAuthorization()
+                                if calAuthorized {
+                                    await CalendarService.syncMonthlyReviewEvents(day: 25)
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "bell.badge.fill")
+                        Text("給料日の25日にリマインドを設定 (1タップ)")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 9)
+                    .padding(.horizontal, 14)
+                    .background(
+                        LinearGradient(colors: [Color.purple, Color.blue], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .cornerRadius(10)
+                    .shadow(color: Color.purple.opacity(0.3), radius: 5, x: 0, y: 3)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Button {
+                    // 設定画面へ遷移する通知を投稿
+                    NotificationCenter.default.post(name: NSNotification.Name("SwitchToSettingsTab"), object: nil)
+                } label: {
+                    Text("別の日を設定")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 9)
+                        .padding(.horizontal, 14)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(10)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.purple.opacity(0.3), Color.clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .padding(.horizontal)
+    }
+
     // MARK: - サブビュー
 
     /// サブスクが0件の場合に表示する空状態ビュー
@@ -222,7 +362,51 @@ struct SubscriptionListView: View {
                 } label: {
                     Label("削除", systemImage: "trash")
                 }
+                
+                Button {
+                    toggleNotification(for: subscription)
+                } label: {
+                    Label(subscription.isNotificationEnabled ? "消音" : "通知",
+                          systemImage: subscription.isNotificationEnabled ? "bell.slash" : "bell")
+                }
+                .tint(.orange)
             }
+    }
+    
+    private func toggleNotification(for subscription: Subscription) {
+        // Haptic Feedback
+        #if os(iOS)
+        let impactMed = UIImpactFeedbackGenerator(style: .medium)
+        impactMed.impactOccurred()
+        #endif
+        
+        subscription.isNotificationEnabled.toggle()
+        try? modelContext.save()
+        
+        Task {
+            let notificationID = NotificationService.makeIdentifier(
+                name: subscription.name, startDate: subscription.startDate
+            )
+            
+            if subscription.isNotificationEnabled {
+                // 通知をスケジュール
+                let authorized = await NotificationService.requestAuthorization()
+                if authorized {
+                    let leadDays = UserDefaults.standard.integer(forKey: "notificationLeadDays")
+                    let actualLeadDays = leadDays > 0 ? leadDays : 1
+                    
+                    await NotificationService.scheduleReminder(
+                        subscriptionName: subscription.name,
+                        nextPaymentDate: subscription.nextPaymentDate,
+                        identifier: notificationID,
+                        leadDays: actualLeadDays
+                    )
+                }
+            } else {
+                // 通知をキャンセル
+                NotificationService.cancelReminder(identifier: notificationID)
+            }
+        }
     }
     
     /// 無料枠上限の表示およびProアップグレードへの誘導を司るステータスバー

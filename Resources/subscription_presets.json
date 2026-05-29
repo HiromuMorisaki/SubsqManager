@@ -1,0 +1,5364 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-05-29",
+  "presets": [
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "category": "music",
+      "iconName": "music.note",
+      "plans": [
+        {
+          "id": "spotify_student",
+          "name": "Student (学割)",
+          "amount": 580,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "spotify_standard",
+          "name": "Standard",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "spotify_duo",
+          "name": "Duo",
+          "amount": 1480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "spotify_family",
+          "name": "Family",
+          "amount": 1680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "apple_music",
+      "name": "Apple Music",
+      "category": "music",
+      "iconName": "applelogo",
+      "plans": [
+        {
+          "id": "apple_music_student",
+          "name": "学生",
+          "amount": 580,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "apple_music_individual",
+          "name": "個人",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "apple_music_family",
+          "name": "ファミリー",
+          "amount": 1680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "amazon_music_unlimited",
+      "name": "Amazon Music Unlimited",
+      "category": "music",
+      "iconName": "music.mic",
+      "plans": [
+        {
+          "id": "amazon_music_unlimited_prime_monthly",
+          "name": "プライム会員月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "amazon_music_unlimited_prime_yearly",
+          "name": "プライム会員年額",
+          "amount": 9800,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "amazon_music_unlimited_general_monthly",
+          "name": "一般会員月額",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "youtube_music_premium",
+      "name": "YouTube Music Premium",
+      "category": "music",
+      "iconName": "play.rectangle.fill",
+      "plans": [
+        {
+          "id": "youtube_music_premium_student",
+          "name": "学生",
+          "amount": 580,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_music_premium_individual",
+          "name": "個人",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_music_premium_family",
+          "name": "ファミリー",
+          "amount": 1680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "line_music",
+      "name": "LINE MUSIC",
+      "category": "music",
+      "iconName": "music.quaver.bowl.and.waveform",
+      "plans": [
+        {
+          "id": "line_music_student",
+          "name": "学生",
+          "amount": 580,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "line_music_general",
+          "name": "一般",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "line_music_family",
+          "name": "ファミリー",
+          "amount": 1680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "awa",
+      "name": "AWA",
+      "category": "music",
+      "iconName": "waveform",
+      "plans": [
+        {
+          "id": "awa_standard_monthly",
+          "name": "STANDARD月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "awa_standard_yearly",
+          "name": "STANDARD年額",
+          "amount": 9800,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "awa_student",
+          "name": "学生",
+          "amount": 480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "d_hits",
+      "name": "dヒッツ",
+      "category": "music",
+      "iconName": "earphones",
+      "plans": [
+        {
+          "id": "d_hits_500",
+          "name": "500枠コース",
+          "amount": 550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "d_hits_no_myhits",
+          "name": "Myヒッツなしコース",
+          "amount": 330,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kkbox",
+      "name": "KKBOX",
+      "category": "music",
+      "iconName": "music.note.house",
+      "plans": [
+        {
+          "id": "kkbox_monthly",
+          "name": "月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "tower_records_music",
+      "name": "Tower Records Music",
+      "category": "music",
+      "iconName": "music.quaver",
+      "plans": [
+        {
+          "id": "tower_records_music_standard",
+          "name": "スタンダード",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rakuten_music",
+      "name": "Rakuten Music",
+      "category": "music",
+      "iconName": "music.note.list",
+      "plans": [
+        {
+          "id": "rakuten_music_standard",
+          "name": "スタンダード",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "rakuten_music_card_mobile",
+          "name": "楽天カード/モバイル",
+          "amount": 780,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "rakuten_music_light",
+          "name": "ライト",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mora_qualitas",
+      "name": "mora qualitas",
+      "category": "music",
+      "iconName": "hifispeaker",
+      "plans": [
+        {
+          "id": "mora_qualitas_standard",
+          "name": "Standard",
+          "amount": 1958,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rec_music",
+      "name": "Rec Music",
+      "category": "music",
+      "iconName": "music.mic.circle",
+      "plans": [
+        {
+          "id": "rec_music_standard",
+          "name": "Standard",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "youtube_premium",
+      "name": "YouTube Premium",
+      "category": "entertainment",
+      "iconName": "play.rectangle.fill",
+      "plans": [
+        {
+          "id": "youtube_premium_individual_monthly",
+          "name": "個人月額",
+          "amount": 1480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_premium_individual_yearly",
+          "name": "個人年額",
+          "amount": 14800,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "youtube_premium_family",
+          "name": "ファミリー",
+          "amount": 2980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_premium_student",
+          "name": "学割",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "x_twitter",
+      "name": "X (Twitter)",
+      "category": "entertainment",
+      "iconName": "message",
+      "plans": [
+        {
+          "id": "x_twitter_basic_monthly",
+          "name": "Basic月額",
+          "amount": 368,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "x_twitter_basic_yearly",
+          "name": "Basic年額",
+          "amount": 3916,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "x_twitter_premium_monthly",
+          "name": "Premium月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "x_twitter_premium_yearly",
+          "name": "Premium年額",
+          "amount": 10280,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "x_twitter_premium_plus_monthly",
+          "name": "Premium+月額",
+          "amount": 1960,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "netflix",
+      "name": "Netflix",
+      "category": "entertainment",
+      "iconName": "film",
+      "plans": [
+        {
+          "id": "netflix_ads_standard",
+          "name": "広告つきスタンダード",
+          "amount": 890,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "netflix_standard",
+          "name": "スタンダード",
+          "amount": 1590,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "netflix_premium",
+          "name": "プレミアム",
+          "amount": 2290,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "disney_plus",
+      "name": "Disney+",
+      "category": "entertainment",
+      "iconName": "sparkles.tv",
+      "plans": [
+        {
+          "id": "disney_plus_standard_monthly",
+          "name": "スタンダード月額",
+          "amount": 990,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "disney_plus_standard_yearly",
+          "name": "スタンダード年額",
+          "amount": 9900,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "disney_plus_premium_monthly",
+          "name": "プレミアム月額",
+          "amount": 1320,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "disney_plus_premium_yearly",
+          "name": "プレミアム年額",
+          "amount": 13200,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "hulu",
+      "name": "Hulu",
+      "category": "entertainment",
+      "iconName": "play.circle",
+      "plans": [
+        {
+          "id": "hulu_monthly",
+          "name": "月額",
+          "amount": 1026,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "u_next",
+      "name": "U-NEXT",
+      "category": "entertainment",
+      "iconName": "play.tv",
+      "plans": [
+        {
+          "id": "u_next_monthly",
+          "name": "月額(1200pt付き)",
+          "amount": 2189,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "abema_premium",
+      "name": "ABEMA プレミアム",
+      "category": "entertainment",
+      "iconName": "tv.fill",
+      "plans": [
+        {
+          "id": "abema_premium_monthly",
+          "name": "月額",
+          "amount": 960,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "lemino_premium",
+      "name": "Lemino プレミアム",
+      "category": "entertainment",
+      "iconName": "play.rectangle.on.rectangle",
+      "plans": [
+        {
+          "id": "lemino_premium_monthly",
+          "name": "月額",
+          "amount": 990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "apple_tv_plus",
+      "name": "Apple TV+",
+      "category": "entertainment",
+      "iconName": "appletv",
+      "plans": [
+        {
+          "id": "apple_tv_plus_monthly",
+          "name": "月額",
+          "amount": 900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dmm_tv",
+      "name": "DMM TV (DMMプレミアム)",
+      "category": "entertainment",
+      "iconName": "play.rectangle",
+      "plans": [
+        {
+          "id": "dmm_tv_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "niconico_premium",
+      "name": "niconico プレミアム",
+      "category": "entertainment",
+      "iconName": "tv",
+      "plans": [
+        {
+          "id": "niconico_premium_monthly",
+          "name": "月額",
+          "amount": 790,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "niconico_premium_yearly",
+          "name": "年額",
+          "amount": 7900,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "wowow_ondemand",
+      "name": "WOWOW オンデマンド",
+      "category": "entertainment",
+      "iconName": "tv.circle",
+      "plans": [
+        {
+          "id": "wowow_ondemand_monthly",
+          "name": "月額",
+          "amount": 2530,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "d_anime_store",
+      "name": "dアニメストア",
+      "category": "entertainment",
+      "iconName": "play.circle.fill",
+      "plans": [
+        {
+          "id": "d_anime_store_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fod_premium",
+      "name": "FODプレミアム",
+      "category": "entertainment",
+      "iconName": "play.tv.fill",
+      "plans": [
+        {
+          "id": "fod_premium_monthly",
+          "name": "月額",
+          "amount": 976,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "telasa",
+      "name": "TELASA",
+      "category": "entertainment",
+      "iconName": "rectangle.inset.filled.and.person.filled",
+      "plans": [
+        {
+          "id": "telasa_unlimited",
+          "name": "見放題",
+          "amount": 618,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "bandai_channel",
+      "name": "バンダイチャンネル",
+      "category": "entertainment",
+      "iconName": "play",
+      "plans": [
+        {
+          "id": "bandai_channel_unlimited",
+          "name": "見放題会員",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "twitcasting_membership",
+      "name": "ツイキャス メンバーシップ",
+      "category": "entertainment",
+      "iconName": "person.2.wave.2",
+      "plans": [
+        {
+          "id": "twitcasting_membership_500",
+          "name": "月額支援500",
+          "amount": 500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "twitcasting_membership_1000",
+          "name": "月額支援1000",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "spoox",
+      "name": "SPOOX (スプークス)",
+      "category": "entertainment",
+      "iconName": "play.house",
+      "plans": [
+        {
+          "id": "spoox_value",
+          "name": "バリュープラン",
+          "amount": 990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mnet_smart_plus",
+      "name": "Mnet Smart+",
+      "category": "entertainment",
+      "iconName": "sparkles.tv.fill",
+      "plans": [
+        {
+          "id": "mnet_smart_plus_light",
+          "name": "ライト",
+          "amount": 990,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "mnet_smart_plus_basic",
+          "name": "ベーシック",
+          "amount": 1320,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "mnet_smart_plus_premium",
+          "name": "プレミアム",
+          "amount": 2530,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "prime_video_channel",
+      "name": "Prime Videoチャンネル",
+      "category": "entertainment",
+      "iconName": "arrow.down.right.and.arrow.up.left.rect",
+      "plans": [
+        {
+          "id": "prime_video_channel_anime",
+          "name": "アニメ枠目安",
+          "amount": 550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "prime_video_channel_movie",
+          "name": "映画枠目安",
+          "amount": 990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rakuten_tv",
+      "name": "Rakuten TV",
+      "category": "entertainment",
+      "iconName": "play.display",
+      "plans": [
+        {
+          "id": "rakuten_tv_monthly",
+          "name": "月額",
+          "amount": 2189,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "hikari_tv",
+      "name": "ひかりTV",
+      "category": "entertainment",
+      "iconName": "antenna.radiowaves.left.and.right",
+      "plans": [
+        {
+          "id": "hikari_tv_basic",
+          "name": "基本",
+          "amount": 1650,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "pococha",
+      "name": "Pococha",
+      "category": "entertainment",
+      "iconName": "person.wave.2",
+      "plans": [
+        {
+          "id": "pococha_vip",
+          "name": "VIP",
+          "amount": 2000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "showroom",
+      "name": "SHOWROOM",
+      "category": "entertainment",
+      "iconName": "video.badge.plus",
+      "plans": [
+        {
+          "id": "showroom_fanclub_monthly",
+          "name": "ファンクラブ月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "pixiv_premium",
+      "name": "Pixiv プレミアム",
+      "category": "entertainment",
+      "iconName": "paintpalette.fill",
+      "plans": [
+        {
+          "id": "pixiv_premium_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "comic_seymour",
+      "name": "コミックシーモア",
+      "category": "manga",
+      "iconName": "book.closed.fill",
+      "plans": [
+        {
+          "id": "comic_seymour_light",
+          "name": "読み放題ライト",
+          "amount": 780,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "comic_seymour_full",
+          "name": "読み放題フル",
+          "amount": 1480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "book_walker",
+      "name": "BOOK☆WALKER",
+      "category": "manga",
+      "iconName": "book",
+      "plans": [
+        {
+          "id": "book_walker_manga_magazine",
+          "name": "マンガ・雑誌読み放題",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "book_walker_bunko_ln",
+          "name": "文庫・ラノベ読み放題",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "shonen_jump_plus",
+      "name": "少年ジャンプ+",
+      "category": "manga",
+      "iconName": "character.book.closed.fill",
+      "plans": [
+        {
+          "id": "shonen_jump_plus_subscription",
+          "name": "定期購読(週刊少年ジャンプ)",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "comic_days",
+      "name": "コミックDAYS",
+      "category": "manga",
+      "iconName": "books.vertical",
+      "plans": [
+        {
+          "id": "comic_days_premium_6",
+          "name": "プレミアム(6誌)",
+          "amount": 720,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "comic_days_premium_17",
+          "name": "もっとプレミアム(17誌)",
+          "amount": 960,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "magapoke",
+      "name": "マガポケ",
+      "category": "manga",
+      "iconName": "book.pages",
+      "plans": [
+        {
+          "id": "magapoke_magazine_subscription",
+          "name": "週刊少年マガジン定期購読",
+          "amount": 840,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "sunday_webry",
+      "name": "サンデーうぇぶり",
+      "category": "manga",
+      "iconName": "doc.text.image",
+      "plans": [
+        {
+          "id": "sunday_webry_subscription",
+          "name": "週刊少年サンデー定期購読",
+          "amount": 720,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "manga_okoku",
+      "name": "まんが王国",
+      "category": "manga",
+      "iconName": "crown",
+      "plans": [
+        {
+          "id": "manga_okoku_1000",
+          "name": "月額1000",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "manga_okoku_2000",
+          "name": "月額2000",
+          "amount": 2200,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "manga_okoku_3000",
+          "name": "月額3000",
+          "amount": 3300,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ebookjapan",
+      "name": "ebookjapan",
+      "category": "manga",
+      "iconName": "bookmark",
+      "plans": [
+        {
+          "id": "ebookjapan_1000",
+          "name": "月額ポイント1000",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "ebookjapan_2000",
+          "name": "月額ポイント2000",
+          "amount": 2200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "booklive",
+      "name": "BookLive!",
+      "category": "manga",
+      "iconName": "bookmark.fill",
+      "plans": [
+        {
+          "id": "booklive_1000",
+          "name": "月額ポイント1000",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "booklive_2000",
+          "name": "月額ポイント2000",
+          "amount": 2200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "line_manga",
+      "name": "LINEマンガ",
+      "category": "manga",
+      "iconName": "message.and.waveform",
+      "plans": [
+        {
+          "id": "line_manga_monthly",
+          "name": "月額定額",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "piccoma",
+      "name": "ピッコマ",
+      "category": "manga",
+      "iconName": "grid",
+      "plans": [
+        {
+          "id": "piccoma_monthly",
+          "name": "月額定額",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dmm_books",
+      "name": "DMMブックス",
+      "category": "manga",
+      "iconName": "purchased.circle",
+      "plans": [
+        {
+          "id": "dmm_books_monthly",
+          "name": "月額コース",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "renta",
+      "name": "Renta!",
+      "category": "manga",
+      "iconName": "arrow.left.and.right.righttriangle.left.righttriangle.right",
+      "plans": [
+        {
+          "id": "renta_1000",
+          "name": "月額1000ポイント",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "renta_2000",
+          "name": "月額2000ポイント",
+          "amount": 2200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "manga_one",
+      "name": "マンガワン",
+      "category": "manga",
+      "iconName": "heart.text.square.fill",
+      "plans": [
+        {
+          "id": "manga_one_monthly",
+          "name": "月額ショップ定額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "manga_up",
+      "name": "マンガUP!",
+      "category": "manga",
+      "iconName": "arrow.up.circle",
+      "plans": [
+        {
+          "id": "manga_up_monthly",
+          "name": "月額定額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "yanjump",
+      "name": "ヤンジャン！",
+      "category": "manga",
+      "iconName": "flame",
+      "plans": [
+        {
+          "id": "yanjump_premium",
+          "name": "プレミアム",
+          "amount": 480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gangan_online",
+      "name": "ガンガンONLINE",
+      "category": "manga",
+      "iconName": "bolt.circle",
+      "plans": [
+        {
+          "id": "gangan_online_premium",
+          "name": "プレミアム",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "comikey",
+      "name": "comikey",
+      "category": "manga",
+      "iconName": "text.book.closed",
+      "plans": [
+        {
+          "id": "comikey_monthly",
+          "name": "月額",
+          "amount": 600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dazn",
+      "name": "DAZN",
+      "category": "sports",
+      "iconName": "sportscourt",
+      "plans": [
+        {
+          "id": "dazn_standard_monthly",
+          "name": "Standard月額",
+          "amount": 4200,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "dazn_standard_yearly_monthly",
+          "name": "Standard年間月々",
+          "amount": 3200,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "dazn_standard_yearly",
+          "name": "Standard年間一括",
+          "amount": 32000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "pa_league_tv",
+      "name": "パ・リーグTV",
+      "category": "sports",
+      "iconName": "sportscourt.fill",
+      "plans": [
+        {
+          "id": "pa_league_tv_general",
+          "name": "一般",
+          "amount": 1595,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "pa_league_tv_fanclub",
+          "name": "ファンクラブ",
+          "amount": 1045,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "sky_perfect_baseball",
+      "name": "スカパー! プロ野球セット",
+      "category": "sports",
+      "iconName": "baseball",
+      "plans": [
+        {
+          "id": "sky_perfect_baseball_monthly",
+          "name": "月額(基本料含む)",
+          "amount": 4483,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "j_sports_ondemand",
+      "name": "J SPORTS オンデマンド",
+      "category": "sports",
+      "iconName": "figure.run.square.stack",
+      "plans": [
+        {
+          "id": "j_sports_ondemand_total",
+          "name": "総合パック",
+          "amount": 2640,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "j_sports_ondemand_u25",
+          "name": "U25割",
+          "amount": 1320,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "j_sports_ondemand_baseball",
+          "name": "野球パック",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "j_sports_ondemand_rugby",
+          "name": "ラグビーパック",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "tora_tele",
+      "name": "虎テレ (阪神タイガース)",
+      "category": "sports",
+      "iconName": "pawprint",
+      "plans": [
+        {
+          "id": "tora_tele_monthly",
+          "name": "月額",
+          "amount": 660,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "hawks_tv",
+      "name": "ホークスTV",
+      "category": "sports",
+      "iconName": "bird",
+      "plans": [
+        {
+          "id": "hawks_tv_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "giants_tv",
+      "name": "GIANTS TV",
+      "category": "sports",
+      "iconName": "figure.baseball",
+      "plans": [
+        {
+          "id": "giants_tv_monthly",
+          "name": "月額",
+          "amount": 1320,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "basket_live",
+      "name": "バスケットLIVE",
+      "category": "sports",
+      "iconName": "basketball",
+      "plans": [
+        {
+          "id": "basket_live_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "basket_live_yearly",
+          "name": "年額",
+          "amount": 5500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "spotv_now",
+      "name": "SPOTV NOW",
+      "category": "sports",
+      "iconName": "figure.soccer",
+      "plans": [
+        {
+          "id": "spotv_now_monthly",
+          "name": "月額",
+          "amount": 3000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "spotv_now_yearly",
+          "name": "年間パス",
+          "amount": 27000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "njpw_world",
+      "name": "新日本プロレスワールド",
+      "category": "sports",
+      "iconName": "trophy",
+      "plans": [
+        {
+          "id": "njpw_world_monthly",
+          "name": "月額",
+          "amount": 1298,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "wrestle_universe",
+      "name": "WRESTLE UNIVERSE",
+      "category": "sports",
+      "iconName": "trophy.fill",
+      "plans": [
+        {
+          "id": "wrestle_universe_monthly",
+          "name": "月額",
+          "amount": 1280,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "t_league_tv",
+      "name": "T.LEAGUE TV (卓球)",
+      "category": "sports",
+      "iconName": "circle.grid.cross",
+      "plans": [
+        {
+          "id": "t_league_tv_monthly",
+          "name": "月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mlb_tv",
+      "name": "MLB.TV",
+      "category": "sports",
+      "iconName": "figure.baseball",
+      "plans": [
+        {
+          "id": "mlb_tv_monthly",
+          "name": "月額",
+          "amount": 2600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fifa_plus_premium",
+      "name": "FIFA+ Premium",
+      "category": "sports",
+      "iconName": "soccerball",
+      "plans": [
+        {
+          "id": "fifa_plus_premium_monthly",
+          "name": "月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "soccer_king_premium",
+      "name": "サッカーキング PREMIUM",
+      "category": "sports",
+      "iconName": "soccerball.inverse",
+      "plans": [
+        {
+          "id": "soccer_king_premium_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nintendo_switch_online",
+      "name": "Nintendo Switch Online",
+      "category": "game",
+      "iconName": "gamecontroller",
+      "plans": [
+        {
+          "id": "nintendo_switch_online_individual_monthly",
+          "name": "個人1ヶ月",
+          "amount": 306,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "nintendo_switch_online_individual_yearly",
+          "name": "個人12ヶ月",
+          "amount": 2400,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "nintendo_switch_online_family_yearly",
+          "name": "ファミリー12ヶ月",
+          "amount": 4500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "playstation_plus",
+      "name": "PlayStation Plus",
+      "category": "game",
+      "iconName": "gamecontroller.fill",
+      "plans": [
+        {
+          "id": "playstation_plus_essential",
+          "name": "エッセンシャル月額",
+          "amount": 850,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "playstation_plus_extra",
+          "name": "エクストラ月額",
+          "amount": 1300,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "playstation_plus_premium",
+          "name": "プレミアム月額",
+          "amount": 1550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "xbox_game_pass",
+      "name": "Xbox Game Pass",
+      "category": "game",
+      "iconName": "logo.xbox",
+      "plans": [
+        {
+          "id": "xbox_game_pass_core",
+          "name": "Core月額",
+          "amount": 842,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "xbox_game_pass_ultimate",
+          "name": "Ultimate月額",
+          "amount": 1210,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "apple_arcade",
+      "name": "Apple Arcade",
+      "category": "game",
+      "iconName": "arcade.stick",
+      "plans": [
+        {
+          "id": "apple_arcade_monthly",
+          "name": "月額",
+          "amount": 900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ea_play",
+      "name": "EA Play",
+      "category": "game",
+      "iconName": "star.square",
+      "plans": [
+        {
+          "id": "ea_play_monthly",
+          "name": "月額",
+          "amount": 600,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "ea_play_yearly",
+          "name": "年額",
+          "amount": 4180,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "ubisoft_plus",
+      "name": "Ubisoft+",
+      "category": "game",
+      "iconName": "sparkles",
+      "plans": [
+        {
+          "id": "ubisoft_plus_classics",
+          "name": "Classics月額",
+          "amount": 800,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "ubisoft_plus_premium",
+          "name": "Premium月額",
+          "amount": 2500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "geforce_now",
+      "name": "GeForce NOW",
+      "category": "game",
+      "iconName": "cpu.fill",
+      "plans": [
+        {
+          "id": "geforce_now_priority",
+          "name": "Priority月額",
+          "amount": 1790,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "geforce_now_ultimate",
+          "name": "Ultimate月額",
+          "amount": 3560,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "google_play_pass",
+      "name": "Google Play Pass",
+      "category": "game",
+      "iconName": "play.fill",
+      "plans": [
+        {
+          "id": "google_play_pass_monthly",
+          "name": "月額",
+          "amount": 600,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "google_play_pass_yearly",
+          "name": "年額",
+          "amount": 5400,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "pc_game_pass",
+      "name": "PC Game Pass",
+      "category": "game",
+      "iconName": "desktopcomputer",
+      "plans": [
+        {
+          "id": "pc_game_pass_monthly",
+          "name": "月額",
+          "amount": 990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ffxiv",
+      "name": "FINAL FANTASY XIV",
+      "category": "game",
+      "iconName": "sparkle",
+      "plans": [
+        {
+          "id": "ffxiv_standard",
+          "name": "スタンダード",
+          "amount": 1628,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "world_of_warcraft",
+      "name": "World of Warcraft",
+      "category": "game",
+      "iconName": "shield.checkered",
+      "plans": [
+        {
+          "id": "world_of_warcraft_monthly",
+          "name": "月額",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "roblox_premium",
+      "name": "Roblox Premium",
+      "category": "game",
+      "iconName": "cube",
+      "plans": [
+        {
+          "id": "roblox_premium_monthly",
+          "name": "月額",
+          "amount": 680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kodomo_challenge",
+      "name": "こどもちゃれんじ",
+      "category": "kids",
+      "iconName": "figure.2.and.child.holdinghands",
+      "plans": [
+        {
+          "id": "kodomo_challenge_monthly",
+          "name": "月々払い目安",
+          "amount": 2990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "smile_zemi",
+      "name": "スマイルゼミ",
+      "category": "kids",
+      "iconName": "ipad.and.arrow.forward",
+      "plans": [
+        {
+          "id": "smile_zemi_preschool",
+          "name": "幼児コース月額",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "smile_zemi_grade1",
+          "name": "小学1年生月額",
+          "amount": 3828,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "zkai_preschool",
+      "name": "Z会 幼児コース",
+      "category": "kids",
+      "iconName": "doc.text.fill",
+      "plans": [
+        {
+          "id": "zkai_preschool_3yr",
+          "name": "年少月々",
+          "amount": 2420,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "zkai_preschool_4yr",
+          "name": "年中月々",
+          "amount": 2890,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "zkai_preschool_5yr",
+          "name": "年長月々",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "challenge_touch",
+      "name": "チャレンジタッチ (進研ゼミ)",
+      "category": "kids",
+      "iconName": "laptopcomputer.and.arrow.outline.right",
+      "plans": [
+        {
+          "id": "challenge_touch_grade1",
+          "name": "小学1年生月々",
+          "amount": 4020,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "challenge_touch_grade6",
+          "name": "小学6年生月々",
+          "amount": 6980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "amazon_kids_plus",
+      "name": "Amazon Kids+",
+      "category": "kids",
+      "iconName": "face.smiling",
+      "plans": [
+        {
+          "id": "amazon_kids_plus_prime_monthly",
+          "name": "プライム会員月額",
+          "amount": 480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "amazon_kids_plus_general_monthly",
+          "name": "一般会員月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "amazon_kids_plus_prime_yearly",
+          "name": "プライム会員年額",
+          "amount": 4800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "youji_poppy",
+      "name": "幼児ポピー",
+      "category": "kids",
+      "iconName": "graduationcap.fill",
+      "plans": [
+        {
+          "id": "youji_poppy_monthly",
+          "name": "月々",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "risu_sansu",
+      "name": "RISU算数",
+      "category": "kids",
+      "iconName": "plus.minus.and.percent",
+      "plans": [
+        {
+          "id": "risu_sansu_basic",
+          "name": "基本料月額換算",
+          "amount": 2750,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "toysub",
+      "name": "トイサブ！ (知育玩具定期便)",
+      "category": "kids",
+      "iconName": "gift",
+      "plans": [
+        {
+          "id": "toysub_bimonthly",
+          "name": "隔月お届け月額換算",
+          "amount": 3674,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "cha_cha_cha",
+      "name": "Cha Cha Cha (おもちゃサブスク)",
+      "category": "kids",
+      "iconName": "gift.fill",
+      "plans": [
+        {
+          "id": "cha_cha_cha_basic",
+          "name": "基本",
+          "amount": 3630,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "cha_cha_cha_gakken",
+          "name": "学研ステイフル監修",
+          "amount": 4950,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "and_toybox",
+      "name": "And Toybox (おもちゃサブスク)",
+      "category": "kids",
+      "iconName": "shippingbox.fill",
+      "plans": [
+        {
+          "id": "and_toybox_standard",
+          "name": "スタンダード",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "and_toybox_premium",
+          "name": "プレミアム",
+          "amount": 3608,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ehon_navi_premium",
+      "name": "絵本ナビ プレミアム",
+      "category": "kids",
+      "iconName": "books.vertical.fill",
+      "plans": [
+        {
+          "id": "ehon_navi_premium_monthly",
+          "name": "月額",
+          "amount": 580,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "ehon_navi_premium_yearly",
+          "name": "年額",
+          "amount": 5800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "d_kids",
+      "name": "dキッズ",
+      "category": "kids",
+      "iconName": "face.smiling.fill",
+      "plans": [
+        {
+          "id": "d_kids_monthly",
+          "name": "月額",
+          "amount": 402,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mitene_premium",
+      "name": "みてね プレミアム",
+      "category": "kids",
+      "iconName": "photo.on.rectangle",
+      "plans": [
+        {
+          "id": "mitene_premium_monthly",
+          "name": "月額",
+          "amount": 480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "piyolog_premium",
+      "name": "ぴよログ プレミアム",
+      "category": "kids",
+      "iconName": "bird.fill",
+      "plans": [
+        {
+          "id": "piyolog_premium_monthly",
+          "name": "月額",
+          "amount": 400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "waocchi",
+      "name": "知育アプリ ワオっち！",
+      "category": "kids",
+      "iconName": "puzzlepiece",
+      "plans": [
+        {
+          "id": "waocchi_monthly",
+          "name": "月額",
+          "amount": 580,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "think_think",
+      "name": "シンクシンク",
+      "category": "kids",
+      "iconName": "brain.filled.head.profile",
+      "plans": [
+        {
+          "id": "think_think_premium",
+          "name": "プレミアム",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "todo_sansu",
+      "name": "トドさんすう",
+      "category": "kids",
+      "iconName": "number",
+      "plans": [
+        {
+          "id": "todo_sansu_monthly",
+          "name": "月額",
+          "amount": 1400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mocomoco_zemi",
+      "name": "モコモコゼミ",
+      "category": "kids",
+      "iconName": "hare",
+      "plans": [
+        {
+          "id": "mocomoco_zemi_monthly",
+          "name": "月額",
+          "amount": 2662,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "wonderbox",
+      "name": "WONDERBOX",
+      "category": "kids",
+      "iconName": "cube.box",
+      "plans": [
+        {
+          "id": "wonderbox_monthly",
+          "name": "月額",
+          "amount": 4200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kodomo_booster",
+      "name": "コドモブースター",
+      "category": "kids",
+      "iconName": "figure.and.child.holdinghands",
+      "plans": [
+        {
+          "id": "kodomo_booster_monthly",
+          "name": "月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "youtube_kids_family",
+      "name": "YouTube Kids（ファミリー）",
+      "category": "kids",
+      "iconName": "play.rectangle.fill",
+      "plans": [
+        {
+          "id": "youtube_kids_family_monthly",
+          "name": "月額",
+          "amount": 1550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gakken_zemi_kids",
+      "name": "学研ゼミ キッズクラス",
+      "category": "kids",
+      "iconName": "pencil.and.ruler",
+      "plans": [
+        {
+          "id": "gakken_zemi_kids_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kumon",
+      "name": "公文式（くもん）",
+      "category": "lessons",
+      "iconName": "character.textbox",
+      "plans": [
+        {
+          "id": "kumon_1subject",
+          "name": "1教科",
+          "amount": 7700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gakken_classroom",
+      "name": "学研教室",
+      "category": "lessons",
+      "iconName": "book.and.wrench",
+      "plans": [
+        {
+          "id": "gakken_classroom_math_japanese",
+          "name": "算数・国語",
+          "amount": 8800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ecc_junior",
+      "name": "ECCジュニア",
+      "category": "lessons",
+      "iconName": "globe",
+      "plans": [
+        {
+          "id": "ecc_junior_weekly",
+          "name": "週1レッスン",
+          "amount": 6600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "yamaha_music_school",
+      "name": "ヤマハ音楽教室",
+      "category": "lessons",
+      "iconName": "pianokeys",
+      "plans": [
+        {
+          "id": "yamaha_music_school_preschool",
+          "name": "幼児科",
+          "amount": 8030,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kawai_music_school",
+      "name": "カワイ音楽教室",
+      "category": "lessons",
+      "iconName": "pianokeys.inverse",
+      "plans": [
+        {
+          "id": "kawai_music_school_piano",
+          "name": "ピアノ",
+          "amount": 7700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "konami_swimming",
+      "name": "コナミスポーツ スイミング",
+      "category": "lessons",
+      "iconName": "figure.pool.swim",
+      "plans": [
+        {
+          "id": "konami_swimming_kids",
+          "name": "キッズ",
+          "amount": 8580,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "central_kids_swimming",
+      "name": "セントラルスポーツ キッズスイミング",
+      "category": "lessons",
+      "iconName": "figure.pool.swim",
+      "plans": [
+        {
+          "id": "central_kids_swimming_monthly",
+          "name": "月額",
+          "amount": 8250,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "renaissance_kids_swimming",
+      "name": "ルネサンス キッズスイミング",
+      "category": "lessons",
+      "iconName": "drop",
+      "plans": [
+        {
+          "id": "renaissance_kids_swimming_monthly",
+          "name": "月額",
+          "amount": 7920,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "konami_gymnastics",
+      "name": "コナミスポーツ 体操教室",
+      "category": "lessons",
+      "iconName": "figure.gymnastics",
+      "plans": [
+        {
+          "id": "konami_gymnastics_kids",
+          "name": "キッズ",
+          "amount": 8580,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "litalico_wonder",
+      "name": "LITALICO ワンダー",
+      "category": "lessons",
+      "iconName": "gearshape.2",
+      "plans": [
+        {
+          "id": "litalico_wonder_monthly",
+          "name": "月額",
+          "amount": 7425,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "tech_kids_school",
+      "name": "Tech Kids School",
+      "category": "lessons",
+      "iconName": "laptopcomputer",
+      "plans": [
+        {
+          "id": "tech_kids_school_monthly",
+          "name": "月額",
+          "amount": 23100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "qureo",
+      "name": "QUREOプログラミング教室",
+      "category": "lessons",
+      "iconName": "chevron.left.forwardslash.chevron.right",
+      "plans": [
+        {
+          "id": "qureo_monthly",
+          "name": "月額",
+          "amount": 9900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "risu_juku",
+      "name": "RISU塾",
+      "category": "lessons",
+      "iconName": "function",
+      "plans": [
+        {
+          "id": "risu_juku_monthly",
+          "name": "月額",
+          "amount": 10000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nichinoken",
+      "name": "日能研",
+      "category": "lessons",
+      "iconName": "building.columns",
+      "plans": [
+        {
+          "id": "nichinoken_grade4",
+          "name": "4年生月額",
+          "amount": 22880,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "sapix",
+      "name": "SAPIX",
+      "category": "lessons",
+      "iconName": "building.2",
+      "plans": [
+        {
+          "id": "sapix_grade4",
+          "name": "4年生月額",
+          "amount": 42900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "yotsuya_otsuka",
+      "name": "四谷大塚",
+      "category": "lessons",
+      "iconName": "building",
+      "plans": [
+        {
+          "id": "yotsuya_otsuka_grade4",
+          "name": "4年生月額",
+          "amount": 36300,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "waseda_academy",
+      "name": "早稲田アカデミー",
+      "category": "lessons",
+      "iconName": "building.fill",
+      "plans": [
+        {
+          "id": "waseda_academy_grade4",
+          "name": "4年生月額",
+          "amount": 27720,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "eiko_seminar",
+      "name": "栄光ゼミナール",
+      "category": "lessons",
+      "iconName": "star.leadinghalf.filled",
+      "plans": [
+        {
+          "id": "eiko_seminar_monthly",
+          "name": "月額",
+          "amount": 18700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "pixiv_fanbox",
+      "name": "pixivFANBOX",
+      "category": "fanclub",
+      "iconName": "star.circle.fill",
+      "plans": [
+        {
+          "id": "pixiv_fanbox_a",
+          "name": "支援A",
+          "amount": 100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "pixiv_fanbox_b",
+          "name": "支援B",
+          "amount": 500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "pixiv_fanbox_c",
+          "name": "支援C",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "pixiv_fanbox_d",
+          "name": "支援D",
+          "amount": 3000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fantia",
+      "name": "Fantia (ファンティア)",
+      "category": "fanclub",
+      "iconName": "heart.circle",
+      "plans": [
+        {
+          "id": "fantia_general",
+          "name": "一般",
+          "amount": 500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "fantia_limited",
+          "name": "限定",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "patreon",
+      "name": "Patreon",
+      "category": "fanclub",
+      "iconName": "heart.circle.fill",
+      "plans": [
+        {
+          "id": "patreon_tier1",
+          "name": "Tier1 $5",
+          "amount": 750,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "patreon_tier2",
+          "name": "Tier2 $10",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "twitch_subscription",
+      "name": "Twitch サブスク",
+      "category": "fanclub",
+      "iconName": "video.fill",
+      "plans": [
+        {
+          "id": "twitch_subscription_tier1",
+          "name": "ティア1",
+          "amount": 600,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "twitch_subscription_tier2",
+          "name": "ティア2",
+          "amount": 1200,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "twitch_subscription_tier3",
+          "name": "ティア3",
+          "amount": 2950,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "youtube_membership",
+      "name": "YouTube メンバーシップ",
+      "category": "fanclub",
+      "iconName": "person.crop.rectangle.stack",
+      "plans": [
+        {
+          "id": "youtube_membership_a",
+          "name": "枠A",
+          "amount": 490,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_membership_b",
+          "name": "枠B",
+          "amount": 990,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "youtube_membership_c",
+          "name": "枠C",
+          "amount": 2990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ci_en",
+      "name": "Ci-en (シエン)",
+      "category": "fanclub",
+      "iconName": "arrow.up.heart",
+      "plans": [
+        {
+          "id": "ci_en_monthly",
+          "name": "月額支援",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fanicon",
+      "name": "fanicon (ファニコン)",
+      "category": "fanclub",
+      "iconName": "person.3.sequence",
+      "plans": [
+        {
+          "id": "fanicon_normal",
+          "name": "通常",
+          "amount": 500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "fanicon_special",
+          "name": "特別",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "niconico_channel_plus",
+      "name": "ニコニコチャンネルプラス",
+      "category": "fanclub",
+      "iconName": "tv.and.mediabox",
+      "plans": [
+        {
+          "id": "niconico_channel_plus_monthly",
+          "name": "月額会員",
+          "amount": 550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "niconico_channel_plus_premium",
+          "name": "プレミアム会員",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "showroom_premium_live",
+      "name": "SHOWROOM プレミアムライブ",
+      "category": "fanclub",
+      "iconName": "video.badge.plus",
+      "plans": [
+        {
+          "id": "showroom_premium_live_monthly",
+          "name": "月額定期枠",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fants",
+      "name": "FANTS (ファンツ)",
+      "category": "fanclub",
+      "iconName": "person.crop.circle.badge.checkmark",
+      "plans": [
+        {
+          "id": "fants_salon",
+          "name": "サロン月額",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "study_sapuri",
+      "name": "スタディサプリ",
+      "category": "education",
+      "iconName": "graduationcap",
+      "plans": [
+        {
+          "id": "study_sapuri_basic",
+          "name": "高校・大学受験ベーシック",
+          "amount": 2178,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "study_sapuri_toeic",
+          "name": "TOEIC L&R TEST対策",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mikan",
+      "name": "英単語アプリmikan",
+      "category": "education",
+      "iconName": "character.book.closed",
+      "plans": [
+        {
+          "id": "mikan_pro_monthly",
+          "name": "PRO月額",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "mikan_pro_yearly",
+          "name": "PRO年額",
+          "amount": 7200,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "schoo",
+      "name": "Schoo (スクー)",
+      "category": "education",
+      "iconName": "video.square",
+      "plans": [
+        {
+          "id": "schoo_premium_monthly",
+          "name": "プレミアム月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "schoo_premium_yearly",
+          "name": "プレミアム年額",
+          "amount": 9800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "linkedin_learning",
+      "name": "LinkedIn Learning",
+      "category": "education",
+      "iconName": "briefcase.fill",
+      "plans": [
+        {
+          "id": "linkedin_learning_monthly",
+          "name": "月額",
+          "amount": 4800,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "linkedin_learning_yearly_monthly",
+          "name": "年額月換算",
+          "amount": 3200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "progate",
+      "name": "Progate",
+      "category": "education",
+      "iconName": "terminal.fill",
+      "plans": [
+        {
+          "id": "progate_plus",
+          "name": "プラスプラン",
+          "amount": 1490,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "n_prep_school",
+      "name": "N予備校",
+      "category": "education",
+      "iconName": "books.vertical.fill",
+      "plans": [
+        {
+          "id": "n_prep_school_monthly",
+          "name": "月額",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "duolingo",
+      "name": "Duolingo",
+      "category": "education",
+      "iconName": "character.book.closed.fill",
+      "plans": [
+        {
+          "id": "duolingo_super_monthly",
+          "name": "Super月額",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "duolingo_super_yearly",
+          "name": "Super年額",
+          "amount": 9900,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "udemy",
+      "name": "Udemy 個人向け定額",
+      "category": "education",
+      "iconName": "play.rectangle.fill",
+      "plans": [
+        {
+          "id": "udemy_monthly",
+          "name": "月額",
+          "amount": 2600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nativecamp",
+      "name": "NativeCamp",
+      "category": "education",
+      "iconName": "phone.bubble.left.fill",
+      "plans": [
+        {
+          "id": "nativecamp_premium",
+          "name": "プレミアム(レッスン無制限)",
+          "amount": 6480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dmm_eikaiwa",
+      "name": "DMM英会話",
+      "category": "education",
+      "iconName": "megaphone.fill",
+      "plans": [
+        {
+          "id": "dmm_eikaiwa_standard",
+          "name": "スタンダード毎日1回",
+          "amount": 7900,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "dmm_eikaiwa_plus_native",
+          "name": "プラスネイティブ毎日1回",
+          "amount": 19800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rarejob",
+      "name": "レアジョブ英会話",
+      "category": "education",
+      "iconName": "bubble.left.and.bubble.right.fill",
+      "plans": [
+        {
+          "id": "rarejob_daily_25min",
+          "name": "日常英会話毎日25分",
+          "amount": 7980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "abceed",
+      "name": "abceed (英語AIアプリ)",
+      "category": "education",
+      "iconName": "brain.head.profile.fill",
+      "plans": [
+        {
+          "id": "abceed_pro_monthly",
+          "name": "Pro月額",
+          "amount": 2700,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "abceed_pro_yearly",
+          "name": "Pro年額",
+          "amount": 16800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "globis_unlimited",
+      "name": "グロービス学び放題",
+      "category": "education",
+      "iconName": "bookmark.square.fill",
+      "plans": [
+        {
+          "id": "globis_unlimited_6month",
+          "name": "半年月換算",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "globis_unlimited_yearly",
+          "name": "年間月換算",
+          "amount": 1650,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "english_central",
+      "name": "EnglishCentral",
+      "category": "education",
+      "iconName": "globe",
+      "plans": [
+        {
+          "id": "english_central_premium",
+          "name": "プレミアム月額",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "santa_lr",
+      "name": "SANTA L&R (AI TOEIC)",
+      "category": "education",
+      "iconName": "doc.text.magnifyingglass",
+      "plans": [
+        {
+          "id": "santa_lr_monthly",
+          "name": "定期購入月々",
+          "amount": 2900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "shikaku_square",
+      "name": "資格スクエア",
+      "category": "education",
+      "iconName": "square.and.pencil",
+      "plans": [
+        {
+          "id": "shikaku_square_monthly",
+          "name": "月々定額目安",
+          "amount": 9800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "study_sapuri_english",
+      "name": "スタディサプリ ENGLISH",
+      "category": "education",
+      "iconName": "person.text.rectangle",
+      "plans": [
+        {
+          "id": "study_sapuri_english_personal_coach",
+          "name": "パーソナルコーチ",
+          "amount": 6234,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "atama_plus",
+      "name": "アタマプラス",
+      "category": "education",
+      "iconName": "brain",
+      "plans": [
+        {
+          "id": "atama_plus_monthly",
+          "name": "月額",
+          "amount": 2420,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "coursera_plus",
+      "name": "Coursera Plus",
+      "category": "education",
+      "iconName": "globe.americas",
+      "plans": [
+        {
+          "id": "coursera_plus_monthly",
+          "name": "月額",
+          "amount": 7400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "skillshare",
+      "name": "Skillshare",
+      "category": "education",
+      "iconName": "paintbrush",
+      "plans": [
+        {
+          "id": "skillshare_premium",
+          "name": "Premium",
+          "amount": 1600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "stanet",
+      "name": "スタネット（STAnet）",
+      "category": "education",
+      "iconName": "wifi",
+      "plans": [
+        {
+          "id": "stanet_monthly",
+          "name": "月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "cambly",
+      "name": "Cambly",
+      "category": "education",
+      "iconName": "bubble.left.fill",
+      "plans": [
+        {
+          "id": "cambly_monthly",
+          "name": "月額",
+          "amount": 3190,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "bizmates",
+      "name": "Bizmates",
+      "category": "education",
+      "iconName": "person.bust",
+      "plans": [
+        {
+          "id": "bizmates_daily_25min",
+          "name": "毎日25分",
+          "amount": 13200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "berlitz_flex",
+      "name": "ベルリッツ Flex",
+      "category": "education",
+      "iconName": "globe.europe.africa",
+      "plans": [
+        {
+          "id": "berlitz_flex_monthly",
+          "name": "月額",
+          "amount": 18150,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "notion",
+      "name": "Notion",
+      "category": "work",
+      "iconName": "note.text",
+      "plans": [
+        {
+          "id": "notion_plus_monthly",
+          "name": "Plus月額$12",
+          "amount": 1800,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "notion_plus_yearly",
+          "name": "Plus年額$10/月",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "notion_ai_addon",
+          "name": "Notion AIアドオン",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "canva",
+      "name": "Canva",
+      "category": "work",
+      "iconName": "paintpalette",
+      "plans": [
+        {
+          "id": "canva_pro_monthly",
+          "name": "Pro月額",
+          "amount": 1180,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "canva_pro_yearly",
+          "name": "Pro年額",
+          "amount": 12000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "aws",
+      "name": "AWS",
+      "category": "work",
+      "iconName": "server.rack",
+      "plans": [
+        {
+          "id": "aws_personal_dev",
+          "name": "個人開発検証目安",
+          "amount": 2000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "aws_personal_dev_heavy",
+          "name": "個人開発検証高負荷",
+          "amount": 5000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "n8n_cloud",
+      "name": "n8n Cloud",
+      "category": "work",
+      "iconName": "flowchart",
+      "plans": [
+        {
+          "id": "n8n_cloud_starter",
+          "name": "Starter",
+          "amount": 3200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "adobe_creative_cloud",
+      "name": "Adobe Creative Cloud",
+      "category": "work",
+      "iconName": "paintbrush.pointed",
+      "plans": [
+        {
+          "id": "adobe_creative_cloud_complete",
+          "name": "コンプリート",
+          "amount": 6480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "adobe_creative_cloud_student",
+          "name": "学生・教職員",
+          "amount": 2180,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "adobe_creative_cloud_photo",
+          "name": "フォトプラン",
+          "amount": 1080,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "microsoft_365",
+      "name": "Microsoft 365",
+      "category": "work",
+      "iconName": "doc.text",
+      "plans": [
+        {
+          "id": "microsoft_365_personal_monthly",
+          "name": "Personal月額",
+          "amount": 1490,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "microsoft_365_personal_yearly",
+          "name": "Personal年額",
+          "amount": 14900,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "category": "work",
+      "iconName": "square.filled.on.square.filled",
+      "plans": [
+        {
+          "id": "figma_professional_monthly",
+          "name": "Professional月額",
+          "amount": 2250,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "figma_professional_yearly",
+          "name": "Professional年額",
+          "amount": 22500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "asana",
+      "name": "Asana",
+      "category": "work",
+      "iconName": "checklist",
+      "plans": [
+        {
+          "id": "asana_starter",
+          "name": "Starter月々",
+          "amount": 1400,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "asana_advanced",
+          "name": "Advanced月々",
+          "amount": 3300,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "grammarly",
+      "name": "Grammarly",
+      "category": "work",
+      "iconName": "text.justify.left",
+      "plans": [
+        {
+          "id": "grammarly_premium",
+          "name": "Premium月額",
+          "amount": 4500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "loom",
+      "name": "Loom",
+      "category": "work",
+      "iconName": "video.badge.checkmark",
+      "plans": [
+        {
+          "id": "loom_business",
+          "name": "Business月額",
+          "amount": 1800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "miro",
+      "name": "Miro",
+      "category": "work",
+      "iconName": "rectangle.3.group",
+      "plans": [
+        {
+          "id": "miro_starter",
+          "name": "Starter月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "miro_business",
+          "name": "Business月額",
+          "amount": 3000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "category": "work",
+      "iconName": "bubble.left.and.bubble.right",
+      "plans": [
+        {
+          "id": "slack_pro_monthly",
+          "name": "Pro月額",
+          "amount": 1050,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "slack_pro_yearly",
+          "name": "Pro年額",
+          "amount": 12600,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "category": "work",
+      "iconName": "video",
+      "plans": [
+        {
+          "id": "zoom_pro_monthly",
+          "name": "Pro月額",
+          "amount": 2125,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "zoom_pro_yearly",
+          "name": "Pro年額",
+          "amount": 20100,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "trello",
+      "name": "Trello",
+      "category": "work",
+      "iconName": "sidebar.left",
+      "plans": [
+        {
+          "id": "trello_standard",
+          "name": "Standard月額",
+          "amount": 750,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "trello_premium",
+          "name": "Premium月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "evernote",
+      "name": "Evernote",
+      "category": "work",
+      "iconName": "paperclip",
+      "plans": [
+        {
+          "id": "evernote_personal",
+          "name": "Personal月額",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "evernote_professional",
+          "name": "Professional月額",
+          "amount": 1550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "deepl_pro",
+      "name": "DeepL Pro",
+      "category": "work",
+      "iconName": "character",
+      "plans": [
+        {
+          "id": "deepl_pro_starter",
+          "name": "Starter月額",
+          "amount": 1200,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "deepl_pro_advanced",
+          "name": "Advanced月額",
+          "amount": 3800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "category": "work",
+      "iconName": "keyboard",
+      "plans": [
+        {
+          "id": "github_copilot_monthly",
+          "name": "Copilot Individual月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "github_copilot_yearly",
+          "name": "Copilot Individual年額",
+          "amount": 15000,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "github_pro",
+          "name": "Pro月額",
+          "amount": 600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "jetbrains_toolbox",
+      "name": "JetBrains Toolbox",
+      "category": "work",
+      "iconName": "square.grid.3x3.fill",
+      "plans": [
+        {
+          "id": "jetbrains_toolbox_all",
+          "name": "All Products月額",
+          "amount": 4200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "sketch",
+      "name": "Sketch",
+      "category": "work",
+      "iconName": "diamond",
+      "plans": [
+        {
+          "id": "sketch_standard",
+          "name": "Standard月額",
+          "amount": 1350,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "todoist",
+      "name": "Todoist",
+      "category": "work",
+      "iconName": "checklist.checked",
+      "plans": [
+        {
+          "id": "todoist_pro_monthly",
+          "name": "Pro月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "todoist_pro_yearly",
+          "name": "Pro年額",
+          "amount": 5300,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "apple_developer_program",
+      "name": "Apple Developer Program",
+      "category": "work",
+      "iconName": "apple.terminal",
+      "plans": [
+        {
+          "id": "apple_developer_program_yearly",
+          "name": "年額",
+          "amount": 15800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "google_play_developer",
+      "name": "Google Play Developer",
+      "category": "work",
+      "iconName": "logo.playstation",
+      "plans": [
+        {
+          "id": "google_play_developer_registration",
+          "name": "登録料(一回)",
+          "amount": 3625,
+          "billingCycle": "oneTime"
+        }
+      ]
+    },
+    {
+      "id": "notion_ai_standalone",
+      "name": "Notion AI",
+      "category": "work",
+      "iconName": "sparkles.rectangle.stack.fill",
+      "plans": [
+        {
+          "id": "notion_ai_standalone_addon",
+          "name": "アドオン",
+          "amount": 1350,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "linear",
+      "name": "Linear",
+      "category": "work",
+      "iconName": "line.3.horizontal",
+      "plans": [
+        {
+          "id": "linear_standard",
+          "name": "Standard",
+          "amount": 1200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "vercel_pro",
+      "name": "Vercel Pro",
+      "category": "work",
+      "iconName": "arrow.triangle.branch",
+      "plans": [
+        {
+          "id": "vercel_pro_monthly",
+          "name": "月額",
+          "amount": 2800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "supabase_pro",
+      "name": "Supabase Pro",
+      "category": "work",
+      "iconName": "server.rack",
+      "plans": [
+        {
+          "id": "supabase_pro_monthly",
+          "name": "月額",
+          "amount": 3600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "railway_pro",
+      "name": "Railway Pro",
+      "category": "work",
+      "iconName": "train.side.front.car",
+      "plans": [
+        {
+          "id": "railway_pro_monthly",
+          "name": "月額",
+          "amount": 700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "heroku",
+      "name": "Heroku",
+      "category": "work",
+      "iconName": "cloud.bolt",
+      "plans": [
+        {
+          "id": "heroku_basic",
+          "name": "Basic",
+          "amount": 700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "category": "ai",
+      "iconName": "brain.head.profile",
+      "plans": [
+        {
+          "id": "chatgpt_plus",
+          "name": "Plus$20",
+          "amount": 3000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "chatgpt_team",
+          "name": "Team$30",
+          "amount": 4500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "chatgpt_pro",
+          "name": "Pro$200",
+          "amount": 30000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini (Google One AI)",
+      "category": "ai",
+      "iconName": "sparkles",
+      "plans": [
+        {
+          "id": "gemini_ai_plus",
+          "name": "AI Plus 200GB",
+          "amount": 1300,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "gemini_ai_premium",
+          "name": "AI Premium 2TB",
+          "amount": 2900,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "gemini_ai_ultra_5x",
+          "name": "AI Ultra 5x $100",
+          "amount": 15500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "gemini_ai_ultra_20x",
+          "name": "AI Ultra 20x $200",
+          "amount": 31000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "category": "ai",
+      "iconName": "cpu",
+      "plans": [
+        {
+          "id": "claude_pro",
+          "name": "Pro$20",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "claude_team",
+          "name": "Team$30",
+          "amount": 4650,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "claude_max_5x",
+          "name": "Max 5x$100",
+          "amount": 15500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "claude_max_20x",
+          "name": "Max 20x$200",
+          "amount": 31000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "category": "ai",
+      "iconName": "magnifyingglass.circle",
+      "plans": [
+        {
+          "id": "perplexity_pro_monthly",
+          "name": "Pro月額$20",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "perplexity_pro_yearly",
+          "name": "Pro年額$200",
+          "amount": 31000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "midjourney",
+      "name": "Midjourney",
+      "category": "ai",
+      "iconName": "photo.on.rectangle.angled",
+      "plans": [
+        {
+          "id": "midjourney_basic",
+          "name": "Basic$10",
+          "amount": 1550,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "midjourney_standard",
+          "name": "Standard$30",
+          "amount": 4650,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "copilot_pro",
+      "name": "Copilot Pro",
+      "category": "ai",
+      "iconName": "sparkles.rectangle.stack",
+      "plans": [
+        {
+          "id": "copilot_pro_monthly",
+          "name": "Pro月額",
+          "amount": 3200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "cursor_pro",
+      "name": "Cursor Pro",
+      "category": "ai",
+      "iconName": "terminal.fill",
+      "plans": [
+        {
+          "id": "cursor_pro_monthly",
+          "name": "Pro$20",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "runway_gen2",
+      "name": "Runway Gen-2",
+      "category": "ai",
+      "iconName": "video.fill",
+      "plans": [
+        {
+          "id": "runway_gen2_standard",
+          "name": "Standard$15",
+          "amount": 2320,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "v0_vercel",
+      "name": "v0 by Vercel",
+      "category": "ai",
+      "iconName": "shippingbox",
+      "plans": [
+        {
+          "id": "v0_vercel_premium",
+          "name": "Premium$20",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "poe_pro",
+      "name": "Poe Pro",
+      "category": "ai",
+      "iconName": "message.fill",
+      "plans": [
+        {
+          "id": "poe_pro_monthly",
+          "name": "Pro$20",
+          "amount": 3100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dify_premium",
+      "name": "Dify Premium",
+      "category": "ai",
+      "iconName": "gearshape",
+      "plans": [
+        {
+          "id": "dify_premium_monthly",
+          "name": "月額",
+          "amount": 8400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "jasper_ai",
+      "name": "Jasper AI",
+      "category": "ai",
+      "iconName": "wand.and.stars",
+      "plans": [
+        {
+          "id": "jasper_ai_creator",
+          "name": "Creator",
+          "amount": 5600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "otter_ai_pro",
+      "name": "Otter.ai Pro",
+      "category": "ai",
+      "iconName": "mic.fill",
+      "plans": [
+        {
+          "id": "otter_ai_pro_monthly",
+          "name": "月額",
+          "amount": 1600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gamma_pro",
+      "name": "Gamma Pro",
+      "category": "ai",
+      "iconName": "rectangle.stack",
+      "plans": [
+        {
+          "id": "gamma_pro_monthly",
+          "name": "月額",
+          "amount": 1200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "windsurf_pro",
+      "name": "Windsurf Pro",
+      "category": "ai",
+      "iconName": "wind",
+      "plans": [
+        {
+          "id": "windsurf_pro_monthly",
+          "name": "Pro$15",
+          "amount": 2320,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kindle_unlimited",
+      "name": "Kindle Unlimited",
+      "category": "news",
+      "iconName": "book",
+      "plans": [
+        {
+          "id": "kindle_unlimited_monthly",
+          "name": "月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nikkei_digital",
+      "name": "日経電子版",
+      "category": "news",
+      "iconName": "newspaper",
+      "plans": [
+        {
+          "id": "nikkei_digital_monthly",
+          "name": "月額",
+          "amount": 4277,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rakuten_magazine",
+      "name": "楽天マガジン",
+      "category": "news",
+      "iconName": "magazine",
+      "plans": [
+        {
+          "id": "rakuten_magazine_monthly",
+          "name": "月額",
+          "amount": 418,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "rakuten_magazine_yearly",
+          "name": "年額",
+          "amount": 3960,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "amazon_audible",
+      "name": "Amazon Audible",
+      "category": "news",
+      "iconName": "headphones",
+      "plans": [
+        {
+          "id": "amazon_audible_monthly",
+          "name": "月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "flier",
+      "name": "flier (フライヤー)",
+      "category": "news",
+      "iconName": "books.vertical.fill",
+      "plans": [
+        {
+          "id": "flier_gold",
+          "name": "ゴールド月額",
+          "amount": 2200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "asahi_digital",
+      "name": "朝日新聞デジタル",
+      "category": "news",
+      "iconName": "doc.text.fill",
+      "plans": [
+        {
+          "id": "asahi_digital_simple",
+          "name": "シンプルコース",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "asahi_digital_double",
+          "name": "ダブルコース",
+          "amount": 4900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "audiobook_jp",
+      "name": "audiobook.jp",
+      "category": "news",
+      "iconName": "headphones.circle",
+      "plans": [
+        {
+          "id": "audiobook_jp_unlimited_monthly",
+          "name": "聴き放題月額",
+          "amount": 1330,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "audiobook_jp_unlimited_yearly",
+          "name": "聴き放題年額",
+          "amount": 9900,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "d_magazine",
+      "name": "dマガジン",
+      "category": "news",
+      "iconName": "magazine.fill",
+      "plans": [
+        {
+          "id": "d_magazine_monthly",
+          "name": "月額",
+          "amount": 440,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mainichi_digital",
+      "name": "毎日新聞デジタル",
+      "category": "news",
+      "iconName": "doc.text.image.fill",
+      "plans": [
+        {
+          "id": "mainichi_digital_standard",
+          "name": "スタンダード",
+          "amount": 1078,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "sankei_digital",
+      "name": "産経電子版",
+      "category": "news",
+      "iconName": "doc.plaintext",
+      "plans": [
+        {
+          "id": "sankei_digital_monthly",
+          "name": "月額",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "gendai_business_premium",
+      "name": "現代ビジネス プレミアム",
+      "category": "news",
+      "iconName": "newspaper.fill",
+      "plans": [
+        {
+          "id": "gendai_business_premium_monthly",
+          "name": "月額会員",
+          "amount": 880,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "toyo_keizai_premium",
+      "name": "東洋経済オンライン プレミアム",
+      "category": "news",
+      "iconName": "doc.richtext.fill",
+      "plans": [
+        {
+          "id": "toyo_keizai_premium_monthly",
+          "name": "月額",
+          "amount": 2000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "president_online_premium",
+      "name": "プレジデントオンライン プレミアム",
+      "category": "news",
+      "iconName": "chart.bar.doc.horizontal.fill",
+      "plans": [
+        {
+          "id": "president_online_premium_monthly",
+          "name": "月額",
+          "amount": 880,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "newspicks",
+      "name": "NewsPicks",
+      "category": "news",
+      "iconName": "newspaper",
+      "plans": [
+        {
+          "id": "newspicks_premium_monthly",
+          "name": "プレミアム月額",
+          "amount": 1700,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "newspicks_premium_yearly",
+          "name": "プレミアム年額",
+          "amount": 17000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "nikkei_business",
+      "name": "日経ビジネス電子版",
+      "category": "news",
+      "iconName": "chart.line.uptrend.xyaxis",
+      "plans": [
+        {
+          "id": "nikkei_business_monthly",
+          "name": "月額",
+          "amount": 2500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "nikkei_business_yearly",
+          "name": "年額",
+          "amount": 25000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "yomiuri_online",
+      "name": "読売新聞オンライン",
+      "category": "news",
+      "iconName": "doc.text.below.ecg",
+      "plans": [
+        {
+          "id": "yomiuri_online_premium",
+          "name": "プレミアム",
+          "amount": 4400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "hokkaido_shimbun_digital",
+      "name": "北海道新聞デジタル",
+      "category": "news",
+      "iconName": "snow",
+      "plans": [
+        {
+          "id": "hokkaido_shimbun_digital_monthly",
+          "name": "月額",
+          "amount": 3800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "note_premium",
+      "name": "note プレミアム",
+      "category": "news",
+      "iconName": "pencil.circle",
+      "plans": [
+        {
+          "id": "note_premium_monthly",
+          "name": "月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "icloud_plus",
+      "name": "iCloud+",
+      "category": "cloud",
+      "iconName": "cloud",
+      "plans": [
+        {
+          "id": "icloud_plus_50gb",
+          "name": "50GB",
+          "amount": 130,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "icloud_plus_200gb",
+          "name": "200GB",
+          "amount": 450,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "icloud_plus_2tb",
+          "name": "2TB",
+          "amount": 1300,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "google_one",
+      "name": "Google One",
+      "category": "cloud",
+      "iconName": "externaldrive",
+      "plans": [
+        {
+          "id": "google_one_basic_monthly",
+          "name": "ベーシック100GB",
+          "amount": 250,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "google_one_standard",
+          "name": "スタンダード200GB",
+          "amount": 380,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "google_one_premium",
+          "name": "プレミアム2TB",
+          "amount": 1300,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "google_one_basic_yearly",
+          "name": "ベーシック100GB年額",
+          "amount": 2500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "dropbox",
+      "name": "Dropbox",
+      "category": "cloud",
+      "iconName": "shippingbox",
+      "plans": [
+        {
+          "id": "dropbox_plus_monthly",
+          "name": "Plus月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "dropbox_plus_yearly",
+          "name": "Plus年額",
+          "amount": 14400,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "onedrive",
+      "name": "OneDrive",
+      "category": "cloud",
+      "iconName": "cloud.fill",
+      "plans": [
+        {
+          "id": "onedrive_basic_monthly",
+          "name": "M365 Basic 100GB",
+          "amount": 260,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "onedrive_basic_yearly",
+          "name": "M365 Basic年額",
+          "amount": 2440,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "box",
+      "name": "Box",
+      "category": "cloud",
+      "iconName": "archivebox",
+      "plans": [
+        {
+          "id": "box_personal_pro",
+          "name": "Personal Pro 100GB",
+          "amount": 1200,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "backblaze",
+      "name": "Backblaze",
+      "category": "cloud",
+      "iconName": "externaldrive.badge.icloud",
+      "plans": [
+        {
+          "id": "backblaze_personal_monthly",
+          "name": "個人バックアップ月額$9",
+          "amount": 1350,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "backblaze_personal_yearly",
+          "name": "個人バックアップ年額",
+          "amount": 14850,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "pcloud",
+      "name": "pCloud",
+      "category": "cloud",
+      "iconName": "lock.icloud",
+      "plans": [
+        {
+          "id": "pcloud_premium_500gb",
+          "name": "Premium 500GB $4.99",
+          "amount": 780,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mega",
+      "name": "MEGA",
+      "category": "cloud",
+      "iconName": "icloud.circle",
+      "plans": [
+        {
+          "id": "mega_pro_i",
+          "name": "Pro I 2TB",
+          "amount": 1560,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "terabox",
+      "name": "TeraBox",
+      "category": "cloud",
+      "iconName": "icloud.and.arrow.up",
+      "plans": [
+        {
+          "id": "terabox_premium",
+          "name": "プレミアム2TB",
+          "amount": 380,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "idrive",
+      "name": "IDrive",
+      "category": "cloud",
+      "iconName": "externaldrive.connected.to.line.below",
+      "plans": [
+        {
+          "id": "idrive_personal_yearly",
+          "name": "Personal年額目安",
+          "amount": 11000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "wasabi",
+      "name": "Wasabi",
+      "category": "cloud",
+      "iconName": "externaldrive.fill",
+      "plans": [
+        {
+          "id": "wasabi_1tb",
+          "name": "1TB",
+          "amount": 900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "synology_c2",
+      "name": "Synology C2",
+      "category": "cloud",
+      "iconName": "server.rack",
+      "plans": [
+        {
+          "id": "synology_c2_personal",
+          "name": "Personal",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "1password",
+      "name": "1Password",
+      "category": "security",
+      "iconName": "key",
+      "plans": [
+        {
+          "id": "1password_individual",
+          "name": "個人月額",
+          "amount": 450,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "1password_family",
+          "name": "ファミリー月額",
+          "amount": 750,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "norton_360",
+      "name": "Norton 360",
+      "category": "security",
+      "iconName": "shield",
+      "plans": [
+        {
+          "id": "norton_360_deluxe_monthly",
+          "name": "デラックス月額換算",
+          "amount": 600,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "norton_360_deluxe_yearly",
+          "name": "デラックス年額",
+          "amount": 7200,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "nordvpn",
+      "name": "NordVPN",
+      "category": "security",
+      "iconName": "lock.shield",
+      "plans": [
+        {
+          "id": "nordvpn_standard_monthly",
+          "name": "スタンダード月々",
+          "amount": 1970,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "nordvpn_standard_yearly",
+          "name": "スタンダード1年月換算",
+          "amount": 680,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mcafee",
+      "name": "McAfee リブセーフ",
+      "category": "security",
+      "iconName": "shield.fill",
+      "plans": [
+        {
+          "id": "mcafee_yearly_monthly",
+          "name": "年額月換算",
+          "amount": 800,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "mcafee_yearly",
+          "name": "年額一括",
+          "amount": 9600,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "expressvpn",
+      "name": "ExpressVPN",
+      "category": "security",
+      "iconName": "lock.rectangle",
+      "plans": [
+        {
+          "id": "expressvpn_monthly",
+          "name": "1ヶ月$12.95",
+          "amount": 1950,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "expressvpn_yearly",
+          "name": "12ヶ月$8.32/月",
+          "amount": 1250,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "bitwarden",
+      "name": "Bitwarden",
+      "category": "security",
+      "iconName": "key.fill",
+      "plans": [
+        {
+          "id": "bitwarden_premium_yearly",
+          "name": "プレミアム年額$10",
+          "amount": 1500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "surfshark",
+      "name": "Surfshark VPN",
+      "category": "security",
+      "iconName": "checkmark.shield",
+      "plans": [
+        {
+          "id": "surfshark_monthly",
+          "name": "月々",
+          "amount": 1750,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "surfshark_yearly",
+          "name": "12ヶ月月換算",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "virus_buster",
+      "name": "ウイルスバスター クラウド",
+      "category": "security",
+      "iconName": "shield.lefthalf.filled",
+      "plans": [
+        {
+          "id": "virus_buster_monthly",
+          "name": "月額会員",
+          "amount": 518,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "virus_buster_yearly",
+          "name": "1年版一括",
+          "amount": 5720,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "eset_security",
+      "name": "ESET セキュリティ",
+      "category": "security",
+      "iconName": "shield.checkered",
+      "plans": [
+        {
+          "id": "eset_security_monthly",
+          "name": "月額",
+          "amount": 550,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mullvad_vpn",
+      "name": "Mullvad VPN",
+      "category": "security",
+      "iconName": "network.badge.shield.half.filled",
+      "plans": [
+        {
+          "id": "mullvad_vpn_monthly",
+          "name": "月額",
+          "amount": 750,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "protonvpn_plus",
+      "name": "ProtonVPN Plus",
+      "category": "security",
+      "iconName": "lock.trianglebadge.exclamationmark",
+      "plans": [
+        {
+          "id": "protonvpn_plus_monthly",
+          "name": "月額",
+          "amount": 1400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "anytime_fitness",
+      "name": "エニタイムフィットネス",
+      "category": "healthcare",
+      "iconName": "figure.run",
+      "plans": [
+        {
+          "id": "anytime_fitness_monthly",
+          "name": "月額(店舗により異なる)",
+          "amount": 7480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "chocozap",
+      "name": "chocoZAP",
+      "category": "healthcare",
+      "iconName": "figure.walk",
+      "plans": [
+        {
+          "id": "chocozap_monthly",
+          "name": "月額",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "joyfit24",
+      "name": "JOYFIT24",
+      "category": "healthcare",
+      "iconName": "figure.run.circle",
+      "plans": [
+        {
+          "id": "joyfit24_national",
+          "name": "ナショナル会員月額",
+          "amount": 7678,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "apple_fitness_plus",
+      "name": "Apple Fitness+",
+      "category": "healthcare",
+      "iconName": "appletv.fill",
+      "plans": [
+        {
+          "id": "apple_fitness_plus_monthly",
+          "name": "月額",
+          "amount": 980,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "apple_fitness_plus_yearly",
+          "name": "年額",
+          "amount": 4800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "lean_body",
+      "name": "LEAN BODY",
+      "category": "healthcare",
+      "iconName": "figure.mind.and.body",
+      "plans": [
+        {
+          "id": "lean_body_monthly",
+          "name": "月額",
+          "amount": 1480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "lean_body_yearly_monthly",
+          "name": "年額月換算",
+          "amount": 980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "finc_premium",
+      "name": "FiNC プレミアム",
+      "category": "healthcare",
+      "iconName": "heart.text.square",
+      "plans": [
+        {
+          "id": "finc_premium_monthly",
+          "name": "月額",
+          "amount": 960,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "golds_gym",
+      "name": "ゴールドジム",
+      "category": "healthcare",
+      "iconName": "figure.strengthtraining.traditional",
+      "plans": [
+        {
+          "id": "golds_gym_regular",
+          "name": "レギュラー月額",
+          "amount": 11000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "golds_gym_master",
+          "name": "マスター月額",
+          "amount": 14300,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "curves",
+      "name": "カーブス",
+      "category": "healthcare",
+      "iconName": "figure.dance",
+      "plans": [
+        {
+          "id": "curves_monthly",
+          "name": "月額",
+          "amount": 6820,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "curves_yearly_monthly",
+          "name": "年割月々",
+          "amount": 5720,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "fit_place24",
+      "name": "FIT PLACE24",
+      "category": "healthcare",
+      "iconName": "dumbbell",
+      "plans": [
+        {
+          "id": "fit_place24_premium",
+          "name": "プレミアム会員月額",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "asken_premium",
+      "name": "あすけん プレミアム",
+      "category": "healthcare",
+      "iconName": "fork.knife.circle",
+      "plans": [
+        {
+          "id": "asken_premium_monthly",
+          "name": "月額",
+          "amount": 480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "asken_premium_halfyear",
+          "name": "半年",
+          "amount": 1900,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "asken_premium_yearly",
+          "name": "年間",
+          "amount": 3600,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "calm",
+      "name": "Calm",
+      "category": "healthcare",
+      "iconName": "wind",
+      "plans": [
+        {
+          "id": "calm_monthly",
+          "name": "月額",
+          "amount": 970,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "calm_yearly",
+          "name": "年額",
+          "amount": 6500,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "headspace",
+      "name": "Headspace",
+      "category": "healthcare",
+      "iconName": "brain",
+      "plans": [
+        {
+          "id": "headspace_monthly",
+          "name": "月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "headspace_yearly",
+          "name": "年額",
+          "amount": 10000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "lunaluna",
+      "name": "ルナルナ",
+      "category": "healthcare",
+      "iconName": "heart.text.square",
+      "plans": [
+        {
+          "id": "lunaluna_premium",
+          "name": "プレミアム",
+          "amount": 400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nike_training_club",
+      "name": "Nike Training Club Premium",
+      "category": "healthcare",
+      "iconName": "figure.cross.training",
+      "plans": [
+        {
+          "id": "nike_training_club_monthly",
+          "name": "月額",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "strava_premium",
+      "name": "Strava Premium",
+      "category": "healthcare",
+      "iconName": "bicycle",
+      "plans": [
+        {
+          "id": "strava_premium_monthly",
+          "name": "月額",
+          "amount": 900,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "noom",
+      "name": "Noom",
+      "category": "healthcare",
+      "iconName": "scalemass",
+      "plans": [
+        {
+          "id": "noom_monthly",
+          "name": "月額",
+          "amount": 4733,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "awarefy",
+      "name": "Awarefy (メンタルヘルス)",
+      "category": "healthcare",
+      "iconName": "brain.head.profile",
+      "plans": [
+        {
+          "id": "awarefy_monthly",
+          "name": "月額",
+          "amount": 1600,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "oura_ring",
+      "name": "Oura Ring メンバーシップ",
+      "category": "healthcare",
+      "iconName": "ring.circle",
+      "plans": [
+        {
+          "id": "oura_ring_monthly",
+          "name": "月額",
+          "amount": 800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dreambeer",
+      "name": "DREAMBEER",
+      "category": "food",
+      "iconName": "mug.fill",
+      "plans": [
+        {
+          "id": "dreambeer_monthly",
+          "name": "クラフトビール定期購入パック目安",
+          "amount": 10000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "water_server",
+      "name": "ウォーターサーバー",
+      "category": "food",
+      "iconName": "drop.fill",
+      "plans": [
+        {
+          "id": "water_server_standard",
+          "name": "標準プラン(お水2本目安)",
+          "amount": 4000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "uber_eats_one",
+      "name": "Uber Eats One",
+      "category": "food",
+      "iconName": "cart.fill",
+      "plans": [
+        {
+          "id": "uber_eats_one_monthly",
+          "name": "月額",
+          "amount": 498,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "uber_eats_one_yearly",
+          "name": "年額",
+          "amount": 3998,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "oisix",
+      "name": "Oisix",
+      "category": "food",
+      "iconName": "carrot",
+      "plans": [
+        {
+          "id": "oisix_monthly",
+          "name": "定期宅配月換算",
+          "amount": 20000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "radish_boya",
+      "name": "らでぃっしゅぼーや",
+      "category": "food",
+      "iconName": "leaf",
+      "plans": [
+        {
+          "id": "radish_boya_monthly",
+          "name": "定期宅配月換算",
+          "amount": 15000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nosh",
+      "name": "nosh",
+      "category": "food",
+      "iconName": "bag",
+      "plans": [
+        {
+          "id": "nosh_10meal",
+          "name": "10食定期便1回分目安",
+          "amount": 5990,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "wellness_dining",
+      "name": "ウェルネスダイニング",
+      "category": "food",
+      "iconName": "bag.fill",
+      "plans": [
+        {
+          "id": "wellness_dining_7meal",
+          "name": "制限食弁当7食定期",
+          "amount": 4968,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "yoshikei",
+      "name": "ヨシケイ",
+      "category": "food",
+      "iconName": "cart.badge.plus",
+      "plans": [
+        {
+          "id": "yoshikei_monthly",
+          "name": "夕食ネット月換算",
+          "amount": 25000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "base_food",
+      "name": "Base Food",
+      "category": "food",
+      "iconName": "birthday.cake",
+      "plans": [
+        {
+          "id": "base_food_monthly",
+          "name": "継続コース月額分",
+          "amount": 4000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "mitsuboshi_farm",
+      "name": "三ツ星ファーム",
+      "category": "food",
+      "iconName": "fork.knife",
+      "plans": [
+        {
+          "id": "mitsuboshi_farm_7meal",
+          "name": "7食コース定期便",
+          "amount": 5897,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "snaq_me",
+      "name": "snaq.me",
+      "category": "food",
+      "iconName": "cup.and.saucer",
+      "plans": [
+        {
+          "id": "snaq_me_monthly",
+          "name": "おやつ定期便1回目安",
+          "amount": 2180,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "blue_bottle_subscription",
+      "name": "ブルーボトルコーヒー定期便",
+      "category": "food",
+      "iconName": "cup.and.saucer.fill",
+      "plans": [
+        {
+          "id": "blue_bottle_subscription_monthly",
+          "name": "定期便目安",
+          "amount": 3000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "green_spoon",
+      "name": "GREEN SPOON",
+      "category": "food",
+      "iconName": "leaf.fill",
+      "plans": [
+        {
+          "id": "green_spoon_monthly",
+          "name": "月額",
+          "amount": 5292,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "post_coffee",
+      "name": "PostCoffee",
+      "category": "food",
+      "iconName": "mug",
+      "plans": [
+        {
+          "id": "post_coffee_monthly",
+          "name": "月額",
+          "amount": 1980,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "muscle_deli",
+      "name": "Muscle Deli",
+      "category": "food",
+      "iconName": "figure.strengthtraining.functional",
+      "plans": [
+        {
+          "id": "muscle_deli_monthly",
+          "name": "月額",
+          "amount": 5724,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "pal_system",
+      "name": "パルシステム",
+      "category": "food",
+      "iconName": "basket",
+      "plans": [
+        {
+          "id": "pal_system_monthly",
+          "name": "月額目安",
+          "amount": 2000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "coop_deli",
+      "name": "コープデリ",
+      "category": "food",
+      "iconName": "basket.fill",
+      "plans": [
+        {
+          "id": "coop_deli_monthly",
+          "name": "月額目安",
+          "amount": 1500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "moneyforward_me",
+      "name": "マネーフォワード ME",
+      "category": "financial",
+      "iconName": "yensign.circle",
+      "plans": [
+        {
+          "id": "moneyforward_me_premium_monthly",
+          "name": "プレミアム月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "moneyforward_me_premium_yearly",
+          "name": "プレミアム年額",
+          "amount": 5300,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "zaim",
+      "name": "Zaim",
+      "category": "financial",
+      "iconName": "yensign.square",
+      "plans": [
+        {
+          "id": "zaim_premium_monthly",
+          "name": "プレミアム月額",
+          "amount": 480,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "zaim_premium_yearly",
+          "name": "プレミアム年額",
+          "amount": 4800,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "freee",
+      "name": "freee",
+      "category": "financial",
+      "iconName": "doc.text",
+      "plans": [
+        {
+          "id": "freee_starter_monthly",
+          "name": "個人向けスターター月額",
+          "amount": 1180,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "freee_starter_yearly",
+          "name": "個人向けスターター年額",
+          "amount": 11760,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "yayoi_online",
+      "name": "弥生会計 オンライン",
+      "category": "financial",
+      "iconName": "square.grid.3x1.below.line.grid.1x2",
+      "plans": [
+        {
+          "id": "yayoi_online_self",
+          "name": "セルフプラン月換算",
+          "amount": 2000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "moneytree",
+      "name": "Moneytree",
+      "category": "financial",
+      "iconName": "tree",
+      "plans": [
+        {
+          "id": "moneytree_grow",
+          "name": "Grow月額",
+          "amount": 360,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "moneytree_work",
+          "name": "Work月額",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "okane_no_compass",
+      "name": "おかねのコンパス",
+      "category": "financial",
+      "iconName": "safari",
+      "plans": [
+        {
+          "id": "okane_no_compass_premium",
+          "name": "プレミアム月額",
+          "amount": 360,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "buffett_code",
+      "name": "バフェット・コード",
+      "category": "financial",
+      "iconName": "chart.bar.xaxis",
+      "plans": [
+        {
+          "id": "buffett_code_pro",
+          "name": "プロプラン月額",
+          "amount": 5000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "tradingview",
+      "name": "TradingView",
+      "category": "financial",
+      "iconName": "chart.xyaxis.line",
+      "plans": [
+        {
+          "id": "tradingview_essential",
+          "name": "Essential$14.95",
+          "amount": 2320,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "tradingview_plus",
+          "name": "Plus$29.95",
+          "amount": 4640,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "tradingview_premium",
+          "name": "Premium$59.95",
+          "amount": 9280,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "moneyforward_cloud_kakutei",
+      "name": "Money Forward クラウド確定申告",
+      "category": "financial",
+      "iconName": "doc.text.below.ecg",
+      "plans": [
+        {
+          "id": "moneyforward_cloud_kakutei_personal",
+          "name": "パーソナル",
+          "amount": 1280,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kaikei_freee_starter",
+      "name": "会計freee スターター",
+      "category": "financial",
+      "iconName": "doc.richtext",
+      "plans": [
+        {
+          "id": "kaikei_freee_starter_monthly",
+          "name": "月額",
+          "amount": 1480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "smarthr",
+      "name": "SmartHR",
+      "category": "financial",
+      "iconName": "person.text.rectangle",
+      "plans": [
+        {
+          "id": "smarthr_small_business",
+          "name": "スモールビジネス",
+          "amount": 0,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "wealthnavi",
+      "name": "WealthNavi",
+      "category": "financial",
+      "iconName": "chart.line.uptrend.xyaxis",
+      "plans": [
+        {
+          "id": "wealthnavi_fee_monthly",
+          "name": "手数料月換算目安",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "theo",
+      "name": "THEO",
+      "category": "financial",
+      "iconName": "chart.bar.fill",
+      "plans": [
+        {
+          "id": "theo_fee_monthly",
+          "name": "手数料月換算目安",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "amazon_prime",
+      "name": "Amazon Prime",
+      "category": "lifestyle",
+      "iconName": "cart",
+      "plans": [
+        {
+          "id": "amazon_prime_monthly",
+          "name": "月間",
+          "amount": 600,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "amazon_prime_yearly",
+          "name": "年間",
+          "amount": 5900,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "amazon_prime_student_monthly",
+          "name": "Student月間",
+          "amount": 300,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "amazon_prime_student_yearly",
+          "name": "Student年間",
+          "amount": 2950,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "cookpad",
+      "name": "Cookpad",
+      "category": "lifestyle",
+      "iconName": "fork.knife",
+      "plans": [
+        {
+          "id": "cookpad_premium",
+          "name": "プレミアム",
+          "amount": 400,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "uber_one",
+      "name": "Uber One",
+      "category": "lifestyle",
+      "iconName": "car.fill",
+      "plans": [
+        {
+          "id": "uber_one_monthly",
+          "name": "月額",
+          "amount": 498,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "uber_one_yearly",
+          "name": "年額",
+          "amount": 3998,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "mechakari",
+      "name": "メチャカリ",
+      "category": "lifestyle",
+      "iconName": "tshirt",
+      "plans": [
+        {
+          "id": "mechakari_light",
+          "name": "ライト",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "mechakari_basic",
+          "name": "ベーシック",
+          "amount": 6380,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "aircloset",
+      "name": "airCloset",
+      "category": "lifestyle",
+      "iconName": "tshirt.fill",
+      "plans": [
+        {
+          "id": "aircloset_light",
+          "name": "ライト",
+          "amount": 7800,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "aircloset_regular",
+          "name": "レギュラー",
+          "amount": 10800,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "taskaji",
+      "name": "タスカジ",
+      "category": "lifestyle",
+      "iconName": "house",
+      "plans": [
+        {
+          "id": "taskaji_spot",
+          "name": "家事代行スポット",
+          "amount": 7000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "laxus",
+      "name": "Laxus",
+      "category": "lifestyle",
+      "iconName": "handbag",
+      "plans": [
+        {
+          "id": "laxus_monthly",
+          "name": "定額レンタル",
+          "amount": 7480,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "summary_pocket",
+      "name": "サマリーポケット",
+      "category": "lifestyle",
+      "iconName": "shippingbox.circle",
+      "plans": [
+        {
+          "id": "summary_pocket_economy",
+          "name": "エコノミー1箱",
+          "amount": 330,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "summary_pocket_standard",
+          "name": "スタンダード1箱",
+          "amount": 440,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "flower",
+      "name": "FLOWER",
+      "category": "lifestyle",
+      "iconName": "flower.earring",
+      "plans": [
+        {
+          "id": "flower_post",
+          "name": "ポストに届くプラン",
+          "amount": 880,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "bloombox",
+      "name": "BLOOMBOX",
+      "category": "lifestyle",
+      "iconName": "heart.text.square.fill",
+      "plans": [
+        {
+          "id": "bloombox_monthly",
+          "name": "月々会員",
+          "amount": 1650,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "rakuten_mobile",
+      "name": "楽天モバイル",
+      "category": "lifestyle",
+      "iconName": "antenna.radiowaves.left.and.right",
+      "plans": [
+        {
+          "id": "rakuten_mobile_saikyo",
+          "name": "Rakuten最強プラン",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ahamo",
+      "name": "ahamo",
+      "category": "lifestyle",
+      "iconName": "iphone",
+      "plans": [
+        {
+          "id": "ahamo_20gb",
+          "name": "20GB",
+          "amount": 2970,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "povo",
+      "name": "povo",
+      "category": "lifestyle",
+      "iconName": "simcard",
+      "plans": [
+        {
+          "id": "povo_topping",
+          "name": "トッピング",
+          "amount": 2700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "linemo",
+      "name": "LINEMO",
+      "category": "lifestyle",
+      "iconName": "phone.fill",
+      "plans": [
+        {
+          "id": "linemo_smartphone",
+          "name": "スマホプラン",
+          "amount": 2728,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "uq_mobile",
+      "name": "UQ mobile",
+      "category": "lifestyle",
+      "iconName": "phone.circle",
+      "plans": [
+        {
+          "id": "uq_mobile_komikomi",
+          "name": "コミコミプラン",
+          "amount": 3278,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "ymobile",
+      "name": "Y!mobile",
+      "category": "lifestyle",
+      "iconName": "phone.badge.checkmark",
+      "plans": [
+        {
+          "id": "ymobile_simple2_m",
+          "name": "シンプル2 M",
+          "amount": 2915,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "nhk_reception_fee",
+      "name": "NHK受信料",
+      "category": "lifestyle",
+      "iconName": "tv.and.hifispeaker.fill",
+      "plans": [
+        {
+          "id": "nhk_reception_fee_terrestrial",
+          "name": "地上契約月額",
+          "amount": 1100,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "times_car_share",
+      "name": "カーシェア タイムズカー",
+      "category": "lifestyle",
+      "iconName": "car",
+      "plans": [
+        {
+          "id": "times_car_share_monthly",
+          "name": "月額",
+          "amount": 880,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "kinto",
+      "name": "KINTO",
+      "category": "lifestyle",
+      "iconName": "car.circle",
+      "plans": [
+        {
+          "id": "kinto_monthly",
+          "name": "月額",
+          "amount": 14740,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "hello_storage",
+      "name": "トランクルーム ハローストレージ",
+      "category": "lifestyle",
+      "iconName": "lock.square.stack",
+      "plans": [
+        {
+          "id": "hello_storage_monthly",
+          "name": "月額",
+          "amount": 5000,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "generic_monthly",
+      "name": "汎用月額プラン",
+      "category": "other",
+      "iconName": "ellipsis.circle",
+      "plans": [
+        {
+          "id": "generic_monthly_1000",
+          "name": "月額1000円",
+          "amount": 1000,
+          "billingCycle": "monthly"
+        },
+        {
+          "id": "generic_monthly_500",
+          "name": "月額500円",
+          "amount": 500,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "generic_yearly",
+      "name": "汎用年額プラン",
+      "category": "other",
+      "iconName": "ellipsis.circle.fill",
+      "plans": [
+        {
+          "id": "generic_yearly_10000",
+          "name": "年額10000円",
+          "amount": 10000,
+          "billingCycle": "yearly"
+        },
+        {
+          "id": "generic_yearly_5000",
+          "name": "年額5000円",
+          "amount": 5000,
+          "billingCycle": "yearly"
+        }
+      ]
+    },
+    {
+      "id": "custom_plan",
+      "name": "カスタムプラン",
+      "category": "other",
+      "iconName": "pencil",
+      "plans": [
+        {
+          "id": "custom_plan_custom",
+          "name": "カスタム",
+          "amount": 0,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "jra_pat",
+      "name": "JRA PAT",
+      "category": "other",
+      "iconName": "hare.fill",
+      "plans": [
+        {
+          "id": "jra_pat_monthly",
+          "name": "月額",
+          "amount": 0,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "dazn_for_docomo",
+      "name": "DAZN for docomo",
+      "category": "other",
+      "iconName": "sportscourt",
+      "plans": [
+        {
+          "id": "dazn_for_docomo_monthly",
+          "name": "月額",
+          "amount": 3700,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "au_smart_pass_premium",
+      "name": "au スマートパスプレミアム",
+      "category": "other",
+      "iconName": "star.fill",
+      "plans": [
+        {
+          "id": "au_smart_pass_premium_monthly",
+          "name": "月額",
+          "amount": 548,
+          "billingCycle": "monthly"
+        }
+      ]
+    },
+    {
+      "id": "softbank_merihari",
+      "name": "ソフトバンク メリハリ無制限+",
+      "category": "other",
+      "iconName": "antenna.radiowaves.left.and.right.circle",
+      "plans": [
+        {
+          "id": "softbank_merihari_monthly",
+          "name": "月額",
+          "amount": 7425,
+          "billingCycle": "monthly"
+        }
+      ]
+    }
+  ]
+}

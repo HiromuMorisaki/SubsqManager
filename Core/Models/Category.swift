@@ -28,6 +28,7 @@ enum Category: String, Codable, CaseIterable, Identifiable {
     case food          = "food"
     case financial     = "financial"
     case lifestyle     = "lifestyle"
+    case lessons       = "lessons"
     case other         = "other"
 
     var id: String { rawValue }
@@ -52,6 +53,7 @@ enum Category: String, Codable, CaseIterable, Identifiable {
         case .food:          return "フード・宅配"
         case .financial:     return "ファイナンス"
         case .lifestyle:     return "ライフスタイル"
+        case .lessons:       return "習い事・教室"
         case .other:         return "その他"
         }
     }
@@ -76,6 +78,7 @@ enum Category: String, Codable, CaseIterable, Identifiable {
         case .food:          return "fork.knife.circle"
         case .financial:     return "yensign.circle"
         case .lifestyle:     return "cart"
+        case .lessons:       return "figure.run"
         case .other:         return "ellipsis.circle"
         }
     }
@@ -100,6 +103,7 @@ enum Category: String, Codable, CaseIterable, Identifiable {
         case .food:          return .red
         case .financial:     return .green
         case .lifestyle:     return .orange
+        case .lessons:       return .indigo
         case .other:         return .gray
         }
     }

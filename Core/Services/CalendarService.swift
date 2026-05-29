@@ -76,57 +76,84 @@ enum CalendarService {
         if subscription.isActive {
             let amountText = CurrencyHelper.formatted(amount: subscription.ownShareAmount)
             let eventTitle = "🔔 コテサク: \(subscription.name) 請求日 (\(amountText))"
-            let eventDate = subscription.nextPaymentDate
 
-            // カレンダー上の既存の重複イベント（「コテサク」「請求日」とサブスク名を含むもの）を事前に削除する
-            removeDuplicateEvents(titleKeyword: "請求日", subName: subscription.name, on: eventDate, store: store)
+            guard let targetCalendar = getDestinationCalendar(in: store) else {
+                print("通常請求日カレンダー同期エラー: 書き込み可能なカレンダーが見つかりません。")
+                return
+            }
 
-            do {
-                // 新規イベントの作成
-                let newEvent = EKEvent(eventStore: store)
-                guard let targetCalendar = getDestinationCalendar(in: store) else {
-                    print("通常請求日カレンダー同期エラー: 書き込み可能なカレンダーが見つかりません。")
-                    return
+            // カレンダー連携の期間計算 (1年後まで個別イベントを作成)
+            let calendar = Calendar.current
+            let limitDate = calendar.date(byAdding: .year, value: 1, to: Date()) ?? Date().addingTimeInterval(365 * 86400)
+            
+            // 同期対象の日付リストを算出
+            var paymentDates: [Date] = []
+            
+            let eventStartDate = (subscription.isTrial && subscription.trialEndDate != nil) ? subscription.trialEndDate! : subscription.startDate
+            var currentDate = calendar.startOfDay(for: eventStartDate)
+            
+            // 本日以降1年後までの支払日をループ処理
+            let todayStart = calendar.startOfDay(for: Date())
+            
+            while currentDate <= limitDate {
+                if currentDate >= todayStart {
+                    paymentDates.append(currentDate)
                 }
-                newEvent.calendar = targetCalendar
-                newEvent.title = eventTitle
-                newEvent.isAllDay = true
                 
-                // 開始日を本来のサブスク開始日にして繰り返しを表現する
-                // ただし、無料トライアル中の場合は無料トライアル終了日から請求予定を開始する
-                let eventStartDate = (subscription.isTrial && subscription.trialEndDate != nil) ? subscription.trialEndDate! : subscription.startDate
-                newEvent.startDate = Calendar.current.startOfDay(for: eventStartDate)
-                newEvent.endDate = Calendar.current.startOfDay(for: eventStartDate).addingTimeInterval(86400 - 1)
-                newEvent.notes = makeNotes(for: subscription, isTrial: false)
-                newEvent.url = URL(string: "kotesaku://")
-                // サイクルに応じた繰り返し設定を追加（プレミアム自動同期機能）
-                if subscription.billingCycle != .oneTime {
-                    let frequency: EKRecurrenceFrequency
-                    switch subscription.billingCycle {
-                    case .weekly:
-                        frequency = .weekly
-                    case .monthly:
-                        frequency = .monthly
-                    case .yearly:
-                        frequency = .yearly
-                    case .oneTime:
-                        frequency = .monthly // ダミー値（到達不能）
-                    }
-                    
-                    let rule = EKRecurrenceRule(
-                        recurrenceWith: frequency,
-                        interval: 1,
-                        end: nil // 期限なしで自動的に繰り返す
-                    )
-                    newEvent.addRecurrenceRule(rule)
+                // 次の日付に進む
+                let nextDate: Date?
+                switch subscription.billingCycle {
+                case .weekly:
+                    nextDate = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)
+                case .monthly:
+                    nextDate = calendar.date(byAdding: .month, value: 1, to: currentDate)
+                case .yearly:
+                    nextDate = calendar.date(byAdding: .year, value: 1, to: currentDate)
+                case .oneTime:
+                    nextDate = nil
                 }
+                
+                if let next = nextDate, subscription.billingCycle != .oneTime {
+                    currentDate = next
+                } else {
+                    break
+                }
+            }
 
-                let span: EKSpan = (subscription.billingCycle == .oneTime) ? .thisEvent : .futureEvents
-                try store.save(newEvent, span: span, commit: true)
-                subscription.calendarEventIdentifier = newEvent.eventIdentifier
-                try? subscription.modelContext?.save() // SwiftDataコンテキストの即時保存
-            } catch {
-                print("通常請求日カレンダー同期エラー: \(error)")
+            // 各日付に対して個別のイベントとしてカレンダーへ登録
+            var lastEventIdentifier: String? = nil
+            var createdAny = false
+            
+            for payDate in paymentDates {
+                do {
+                    let newEvent = EKEvent(eventStore: store)
+                    newEvent.calendar = targetCalendar
+                    newEvent.title = eventTitle
+                    newEvent.isAllDay = true
+                    newEvent.startDate = payDate
+                    newEvent.endDate = payDate.addingTimeInterval(86400 - 1)
+                    newEvent.notes = makeNotes(for: subscription, isTrial: false)
+                    newEvent.url = URL(string: "kotesaku://")
+                    
+                    try store.save(newEvent, span: .thisEvent, commit: false)
+                    lastEventIdentifier = newEvent.eventIdentifier
+                    createdAny = true
+                } catch {
+                    print("通常請求日カレンダー（個別登録）同期エラー: \(error)")
+                }
+            }
+
+            // すべてのイベントをまとめてコミット
+            if createdAny {
+                do {
+                    try store.commit()
+                    if let identifier = lastEventIdentifier {
+                        subscription.calendarEventIdentifier = identifier
+                        try? subscription.modelContext?.save() // SwiftDataコンテキストの即時保存
+                    }
+                } catch {
+                    print("カレンダー個別予定登録のコミット失敗: \(error)")
+                }
             }
         } else {
             // 非アクティブなサブスクは通常請求日イベントを削除
@@ -576,6 +603,136 @@ enum CalendarService {
         notesText += "➔ コテサクアプリで今すぐ見直す: kotesaku://"
         
         return notesText
+    }
+
+    // MARK: - 月1サブスク見直しカレンダー連携
+
+    /// 月1コテサク見直し予定をカレンダーに同期（登録）する。
+    /// 本日から1年後までの毎月指定日に個別のイベントを生成します。
+    /// - Parameter day: 毎月の見直し日（1〜31）
+    static func syncMonthlyReviewEvents(day: Int) async {
+        // カレンダー自動連携および見直し予定の追加設定がOFFの場合はスキップ
+        guard UserDefaults.standard.bool(forKey: "calendarSyncEnabled") else { return }
+        guard UserDefaults.standard.bool(forKey: "monthlyReviewCalendarEnabled") else { return }
+        guard isAuthorized else { return }
+
+        let store = eventStore
+
+        // 過去3ヶ月〜未来12ヶ月の範囲から同じタイトルの見直し予定を一掃（自己修復・重複防止）
+        cleanMonthlyReviewEventsGlobally(store: store)
+
+        guard let targetCalendar = getDestinationCalendar(in: store) else {
+            print("月1見直しカレンダー同期エラー: 書き込み可能なカレンダーが見つかりません。")
+            return
+        }
+
+        let calendar = Calendar.current
+        let today = Date()
+        let limitDate = calendar.date(byAdding: .year, value: 1, to: today) ?? today.addingTimeInterval(365 * 86400)
+        let todayStart = calendar.startOfDay(for: today)
+        
+        var targetDates: [Date] = []
+
+        // 1年後まで毎月の支払日（見直し日）を算出
+        for i in 0..<12 {
+            if let targetMonthDate = calendar.date(byAdding: .month, value: i, to: today) {
+                var targetComp = calendar.dateComponents([.year, .month], from: targetMonthDate)
+                
+                // その月の日数に合わせて日にちを自動クランプ（例: 2月31日 ➡ 2月28日/29日）
+                var targetDay = day
+                if let monthRange = calendar.range(of: .day, in: .month, for: targetMonthDate) {
+                    let maxDays = monthRange.count
+                    if targetDay > maxDays {
+                        targetDay = maxDays
+                    }
+                }
+                
+                targetComp.day = targetDay
+                if let finalDate = calendar.date(from: targetComp) {
+                    let targetDayStart = calendar.startOfDay(for: finalDate)
+                    if targetDayStart >= todayStart && targetDayStart <= limitDate {
+                        targetDates.append(targetDayStart)
+                    }
+                }
+            }
+        }
+
+        var createdAny = false
+        for targetDate in targetDates {
+            do {
+                let newEvent = EKEvent(eventStore: store)
+                newEvent.calendar = targetCalendar
+                newEvent.title = "🔍 月1コテサク見直し"
+                newEvent.isAllDay = true
+                newEvent.startDate = targetDate
+                newEvent.endDate = targetDate.addingTimeInterval(86400 - 1)
+                newEvent.notes = "コテサクアプリを開いて、今月のサブスクリプションの利用頻度や満足度を診断しましょう。\n\n➔ アプリを開く: kotesaku://"
+                newEvent.url = URL(string: "kotesaku://")
+                
+                try store.save(newEvent, span: .thisEvent, commit: false)
+                createdAny = true
+            } catch {
+                print("月1見直しカレンダー登録エラー: \(error)")
+            }
+        }
+
+        if createdAny {
+            do {
+                try store.commit()
+            } catch {
+                print("月1見直しカレンダー登録のコミット失敗: \(error)")
+            }
+        }
+    }
+
+    /// カレンダー上のすべての「月1コテサク見直し」予定を削除する
+    static func removeMonthlyReviewEvents() async {
+        guard isAuthorized else { return }
+        cleanMonthlyReviewEventsGlobally(store: eventStore)
+    }
+
+    /// 過去3ヶ月〜未来12ヶ月の範囲から「月1コテサク見直し」予定を完全に削除する（自己修復・徹底クリーンアップ用）
+    private static func cleanMonthlyReviewEventsGlobally(store: EKEventStore) {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        guard let startDate = calendar.date(byAdding: .month, value: -3, to: today),
+              let endDate = calendar.date(byAdding: .month, value: 12, to: today) else {
+            return
+        }
+        
+        let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
+        let existingEvents = store.events(matching: predicate)
+        
+        var deletedIdentifiers = Set<String>()
+        var deletedAny = false
+        for event in existingEvents {
+            let title = event.title ?? ""
+            if title == "🔍 月1コテサク見直し" {
+                let identifier = event.eventIdentifier ?? ""
+                if !identifier.isEmpty {
+                    if deletedIdentifiers.contains(identifier) {
+                        continue
+                    }
+                    deletedIdentifiers.insert(identifier)
+                }
+                
+                do {
+                    try store.remove(event, span: .futureEvents, commit: false)
+                    deletedAny = true
+                } catch {
+                    print("月1見直しカレンダー削除失敗「\(title)」: \(error)")
+                }
+            }
+        }
+        
+        if deletedAny {
+            do {
+                try store.commit()
+            } catch {
+                print("月1見直しクリーンアップのコミット失敗: \(error)")
+            }
+        }
     }
 }
 

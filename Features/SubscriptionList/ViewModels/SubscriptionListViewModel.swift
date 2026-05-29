@@ -179,6 +179,7 @@ final class SubscriptionListViewModel {
         }
 
         modelContext.delete(subscription)
+        WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
         
         return history
     }

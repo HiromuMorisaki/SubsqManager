@@ -84,14 +84,10 @@ struct BulkImportPreviewSheet: View {
                 // MARK: - フッター（一括登録ボタン ＆ 10件制限連動）
                 VStack(spacing: 12) {
                     let selectedCount = selectedItemIds.count
-                    let activeCount = (try? modelContext.fetchCount(FetchDescriptor<Subscription>(filter: #Predicate<Subscription> { $0.isActive == true }))) ?? 0
+                    let activeCount = (try? modelContext.fetchCount(FetchDescriptor<Subscription>(predicate: #Predicate<Subscription> { $0.isActive == true }))) ?? 0
                     let totalCountAfterImport = activeCount + selectedCount
                     let isLimitExceeded = !ProManager.shared.isProUnlocked && totalCountAfterImport > 10
-                    
-                    // インライン即時バリデーションの判定
-                    let hasInvalidSelectedAmount = items.contains { item in
-                        selectedItemIds.contains(item.id) && item.amount <= 0
-                    }
+                    let isButtonDisabled = selectedCount == 0
                     
                     if isLimitExceeded {
                         // 10件制限に引っかかる場合の説明
@@ -124,12 +120,14 @@ struct BulkImportPreviewSheet: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(isLimitExceeded ? Color.orange : Color.accentColor)
+                        .background(isButtonDisabled 
+                                    ? Color.gray 
+                                    : (isLimitExceeded ? Color.orange : Color.accentColor))
                         .foregroundColor(.white)
                         .cornerRadius(12)
-                        .shadow(color: (isLimitExceeded ? Color.orange : Color.accentColor).opacity(0.3), radius: 8, y: 4)
+                        .shadow(color: (isButtonDisabled ? Color.gray : (isLimitExceeded ? Color.orange : Color.accentColor)).opacity(0.3), radius: 8, y: 4)
                     }
-                    .disabled(selectedCount == 0 || hasInvalidSelectedAmount) // 金額不備がある場合はボタンを無効化
+                    .disabled(isButtonDisabled)
                     .padding(.horizontal)
                     .padding(.bottom, 24)
                 }
@@ -369,6 +367,29 @@ struct BulkImportPreviewSheet: View {
                     }
                     .gridCellColumns(2)
                 }
+                
+                // 満足度★評価行
+                GridRow {
+                    Text("満足度")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    HStack(spacing: 6) {
+                        ForEach(1...5, id: \.self) { star in
+                            Image(systemName: star <= item.wrappedValue.satisfaction ? "star.fill" : "star")
+                                .font(.body)
+                                .foregroundColor(star <= item.wrappedValue.satisfaction ? .yellow : .gray.opacity(0.3))
+                                .onTapGesture {
+                                    if isSelected {
+                                        withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                                            item.wrappedValue.satisfaction = star
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                    .gridCellColumns(2)
+                }
             }
             .disabled(!isSelected) // 非選択時は編集不可にする
             
@@ -394,7 +415,6 @@ struct BulkImportPreviewSheet: View {
                 .stroke(cardBorderColor, lineWidth: 1.5)
         )
         .opacity(cardOpacity)
-    }
     }
     
     // MARK: - インポートの実行処理
@@ -426,21 +446,21 @@ struct BulkImportPreviewSheet: View {
                 // 有効期限判定 (解約済みの場合)
                 let endDate: Date? = item.isCancelled ? item.nextPaymentDate : nil
                 
-                // 現在日時が終了日を過ぎていれば isActive = false (解約済みかつ終了済)
-                // 有効期限がまだ未来なら、終了するまでは isActive = true
-                let isActive = item.isCancelled ? (item.nextPaymentDate >= Date()) : true
+                // ユーザーの要望に基づき、解約済みの場合は即座に非アクティブ（isActive = false）にして合計金額に換算しないようにする
+                let isActive = !item.isCancelled
                 
                 let subscription = Subscription(
                     name: item.name.trimmingCharacters(in: .whitespaces),
                     amount: item.amount,
                     billingCycle: item.billingCycle,
-                    category: .other, // 一括インポーター時は一旦その他とし、後から変更可能に
+                    category: item.category, // ★ プリセットから取得したカテゴリを設定！
                     startDate: calculatedStartDate, // 計算された開始日を設定
                     iconName: item.iconName,
                     notes: item.isCancelled ? "Apple ID 一括インポート (解約済み)" : "Apple ID 一括インポート",
                     isActive: isActive, // アクティブ状態を設定
                     trialEndDate: item.hasTrial ? item.trialEndDate : nil,
                     endDate: endDate, // 解約済みの場合は終了日を設定
+                    satisfaction: item.satisfaction, // 満足度★評価をバインドして保存
                     isNotificationEnabled: !item.isCancelled // 解約済みの場合は通知をデフォルトOFFにする
                 )
                 

@@ -105,6 +105,7 @@ final class ReviewWizardViewModel {
         
         do {
             try modelContext.save()
+            WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
         } catch {
             print("Failed to save cancellations in ReviewWizard: \(error)")
         }

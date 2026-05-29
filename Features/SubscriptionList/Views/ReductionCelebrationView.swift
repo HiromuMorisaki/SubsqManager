@@ -232,6 +232,11 @@ struct ReductionCelebrationView: View {
             generator.prepare()
             generator.impactOccurred()
             #endif
+            
+            // ASO対策: 削減お祝いアニメーションが表示された瞬間、2.0秒遅延でレビューを自動要求（Aha! Moment 2）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                ReviewRequestService.shared.requestReviewIfSavingsAchieved()
+            }
         }
     }
 

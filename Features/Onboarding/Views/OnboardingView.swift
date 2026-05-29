@@ -19,8 +19,8 @@ struct OnboardingView: View {
 
     private let pages: [PageContent] = [
         PageContent(
-            title: "コテサクへようこそ！",
-            description: "気がつけば増えているサブスク。\n使っていないサービスにお金を払い続けていませんか？\nコテサクがあなたの無駄な出費をゼロにします。",
+            title: "お得のつもりが“払い損”に？",
+            description: "「初月無料だから」と登録し、解約を忘れて引き落とされ続けていませんか？\nコテサクなら、忘れていたサブスクや不要な課金を可視化し、無駄な出費を完全にゼロにします。",
             systemImage: "sparkles",
             color: .blue
         ),

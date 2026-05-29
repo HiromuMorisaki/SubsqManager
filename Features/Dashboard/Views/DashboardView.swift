@@ -44,6 +44,48 @@ struct DashboardView: View {
     @AppStorage("appTheme") private var appThemeRawValue = AppTheme.neonGreen.rawValue
     private var currentTheme: AppTheme { AppTheme(rawValue: appThemeRawValue) ?? .neonGreen }
 
+    // 月1見直しリマインダー連携用
+    @AppStorage("monthlyReviewNotificationEnabled") private var monthlyReviewNotificationEnabled = false
+    @AppStorage("monthlyReviewDay") private var monthlyReviewDay = 25
+    @AppStorage("monthlyReviewHour") private var monthlyReviewHour = 9
+    @AppStorage("monthlyReviewMinute") private var monthlyReviewMinute = 0
+    @AppStorage("monthlyReviewCalendarEnabled") private var monthlyReviewCalendarEnabled = false
+    @AppStorage("calendarSyncEnabled") private var calendarSyncEnabled = false
+
+    /// 人気のサブスクを1タップで直接登録・保存する
+    private func addPresetDirectly(name: String, amount: Decimal, category: Category, iconName: String) {
+        // Haptic Feedback
+        #if os(iOS)
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+        #endif
+
+        let newSub = Subscription(
+            name: name,
+            amount: amount,
+            billingCycle: .monthly,
+            category: category,
+            startDate: Date(),
+            iconName: iconName
+        )
+        newSub.satisfaction = 4
+        newSub.usageFrequency = .daily
+        newSub.paymentMethod = .creditCard
+        
+        modelContext.insert(newSub)
+        try? modelContext.save()
+
+        // 共有 AppGroup ウィジェットデータの同期
+        WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
+
+        // カレンダー同期（自動同期が有効なら）
+        if calendarSyncEnabled {
+            Task {
+                await CalendarService.syncAllSubscriptions(subscriptions: subscriptions)
+            }
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -62,6 +104,12 @@ struct DashboardView: View {
                         .padding(.horizontal)
                         
                         let filteredSubs = viewModel.filteredSubscriptions(subscriptions)
+                        
+                        // 月1コテサク見直しデーが未登録の場合のみ、美しきインラインバナーを表示して動機付けを強力にする
+                        if !monthlyReviewNotificationEnabled {
+                            monthlyReviewNudgeBanner
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                         
                         reducedSummaryCard
                         
@@ -145,6 +193,127 @@ struct DashboardView: View {
         }
     }
     
+    // MARK: - インライン月1コテサク見直し登録バナー (未登録ユーザー向け)
+    
+    private var monthlyReviewNudgeBanner: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                // 美しい光彩を放つテーマカラーのアイコン
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LinearGradient(colors: currentTheme.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 44, height: 44)
+                        .shadow(color: currentTheme.color.opacity(0.4), radius: 6, x: 0, y: 3)
+                    
+                    Image(systemName: "sparkles")
+                        .font(.title3)
+                        .foregroundColor(.white)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text("月1回のコテサク見直しを始めませんか？")
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                        
+                        Text("節約効果 💡")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(LinearGradient(colors: currentTheme.gradientColors, startPoint: .leading, endPoint: .trailing))
+                            .cornerRadius(6)
+                            .lineLimit(1)
+                    }
+                    
+                    Text("給料日前後の「毎月25日」に見直し診断を行うだけで、年間平均3〜5万円の無駄な“払い損”を防止できます。忘れがちなサブスク管理を完全に自動化しましょう。")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineSpacing(4)
+                }
+            }
+            
+            HStack(spacing: 12) {
+                Button {
+                    // 1タップ登録処理 (Haptic Feedback)
+                    #if os(iOS)
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.success)
+                    #endif
+                    
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                        monthlyReviewDay = 25
+                        monthlyReviewNotificationEnabled = true
+                        monthlyReviewCalendarEnabled = true
+                    }
+                    
+                    Task {
+                        let authorized = await NotificationService.requestAuthorization()
+                        if authorized {
+                            await NotificationService.scheduleMonthlyReviewReminder(day: 25, hour: 9, minute: 0)
+                            
+                            if calendarSyncEnabled {
+                                let calAuthorized = await CalendarService.requestAuthorization()
+                                if calAuthorized {
+                                    await CalendarService.syncMonthlyReviewEvents(day: 25)
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "bell.badge.fill")
+                        Text("給料日の25日にリマインドを設定 (1タップ)")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 9)
+                    .padding(.horizontal, 14)
+                    .background(
+                        LinearGradient(colors: [Color.purple, Color.blue], startPoint: .leading, endPoint: .trailing)
+                    )
+                    .cornerRadius(10)
+                    .shadow(color: Color.purple.opacity(0.3), radius: 5, x: 0, y: 3)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Button {
+                    // 設定画面へ遷移する通知を投稿
+                    NotificationCenter.default.post(name: NSNotification.Name("SwitchToSettingsTab"), object: nil)
+                } label: {
+                    Text("別の日を設定")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 9)
+                        .padding(.horizontal, 14)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(10)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(.secondarySystemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.purple.opacity(0.3), Color.clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .padding(.horizontal)
+    }
+    
     // MARK: - 空状態（Empty State）
     
     private var emptyStateView: some View {
@@ -182,6 +351,67 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
+                
+                // 1タップ人気サブスク即時登録セクション
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("【人気】よく使うサービスを1タップで追加")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 20)
+                    
+                    let popularPresets = [
+                        ("Netflix", Decimal(990), Category.entertainment, "tv"),
+                        ("Spotify", Decimal(980), Category.music, "music.note"),
+                        ("Amazon Prime", Decimal(600), Category.lifestyle, "creditcard"),
+                        ("YouTube Premium", Decimal(1280), Category.entertainment, "film"),
+                        ("iCloud+", Decimal(130), Category.cloud, "cloud"),
+                        ("Apple Music", Decimal(1080), Category.music, "music.note")
+                    ]
+                    
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        ForEach(popularPresets, id: \.0) { preset in
+                            Button {
+                                addPresetDirectly(
+                                    name: preset.0,
+                                    amount: preset.1,
+                                    category: preset.2,
+                                    iconName: preset.3
+                                )
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: preset.3)
+                                        .font(.subheadline)
+                                        .foregroundColor(currentTheme.color)
+                                        .frame(width: 24, height: 24)
+                                        .background(currentTheme.color.opacity(0.1))
+                                        .cornerRadius(6)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(preset.0)
+                                            .font(.system(size: 12, weight: .bold))
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        Text(CurrencyHelper.formatted(amount: preset.1) + "/月")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "plus.circle.fill")
+                                        .foregroundColor(currentTheme.color)
+                                        .font(.subheadline)
+                                }
+                                .padding(10)
+                                .background(Color(.secondarySystemGroupedBackground))
+                                .cornerRadius(12)
+                                .shadow(color: Color.black.opacity(0.04), radius: 3, x: 0, y: 1)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+                .padding(.top, 4)
                 
                 // 迷ったときのアドバイスセクション
                 VStack(alignment: .leading, spacing: 16) {
@@ -550,7 +780,11 @@ struct DashboardView: View {
 
     /// コスパ診断警告セクション
     private func costPerformanceDiagnosisSection(issues: [DashboardViewModel.CostPerformanceIssue]) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let criticalCount = issues.filter { $0.type == .critical }.count
+        let warningCount = issues.filter { $0.type == .warning }.count
+        let excellenceCount = issues.filter { $0.type == .excellence }.count
+        
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Label("スマートコスパ診断", systemImage: "sparkles")
                     .font(.headline)
@@ -558,110 +792,45 @@ struct DashboardView: View {
                 
                 Spacer()
                 
-                Text("\(issues.count)件の警告")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.red.opacity(0.1))
-                    .foregroundStyle(.red)
-                    .clipShape(Capsule())
+                HStack(spacing: 6) {
+                    if criticalCount > 0 {
+                        Text("要注意: \(criticalCount)件")
+                            .font(.system(size: 9, weight: .bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(Color.red.opacity(0.1))
+                            .foregroundStyle(.red)
+                            .clipShape(Capsule())
+                    }
+                    if warningCount > 0 {
+                        Text("要検討: \(warningCount)件")
+                            .font(.system(size: 9, weight: .bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(Color.orange.opacity(0.1))
+                            .foregroundStyle(.orange)
+                            .clipShape(Capsule())
+                    }
+                    if excellenceCount > 0 {
+                        Text("優秀: \(excellenceCount)件")
+                            .font(.system(size: 9, weight: .bold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(Color.green.opacity(0.1))
+                            .foregroundStyle(.green)
+                            .clipShape(Capsule())
+                    }
+                }
             }
             .padding(.horizontal, 4)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(issues) { issue in
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack(alignment: .top) {
-                                // カテゴリアイコン
-                                Image(systemName: issue.subscription.iconName)
-                                    .font(.body)
-                                    .padding(8)
-                                    .background(issue.subscription.category.color.opacity(0.2))
-                                    .foregroundStyle(issue.subscription.category.color)
-                                    .clipShape(Circle())
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(issue.subscription.name)
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .lineLimit(1)
-                                    
-                                    Text(CurrencyHelper.formatted(amount: issue.subscription.monthlyAmount) + "/月")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                // 警告ステータス
-                                Text(issue.isCritical ? "解約推奨" : "要検討")
-                                    .font(.system(size: 9, weight: .bold))
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(issue.isCritical ? Color.red.opacity(0.15) : Color.orange.opacity(0.15))
-                                    .foregroundStyle(issue.isCritical ? Color.red : Color.orange)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                            }
-                            
-                            // 満足度と利用頻度
-                            HStack {
-                                HStack(spacing: 3) {
-                                    Image(systemName: "star.fill")
-                                        .foregroundStyle(.yellow)
-                                        .font(.caption2)
-                                    Text("\(issue.subscription.satisfaction)")
-                                }
-                                .font(.caption2)
-                                .fontWeight(.bold)
-                                
-                                Spacer()
-                                
-                                Text("月利用: \(issue.subscription.monthlyUsageCount)回")
-                                    .font(.caption2)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.horizontal, 2)
-                            
-                            Divider()
-                                .background(Color.primary.opacity(0.15))
-                            
-                            // アドバイス
-                            Text(issue.advice)
-                                .font(.system(size: 11))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(3)
-                                .frame(height: 48, alignment: .topLeading)
-                                .multilineTextAlignment(.leading)
-                            
-                            // ショートカットアクション
-                            HStack(spacing: 8) {
-                                Button {
-                                    selectedSubscriptionForEdit = issue.subscription
-                                } label: {
-                                    Text("見直す・編集")
-                                        .font(.caption2)
-                                        .fontWeight(.bold)
-                                        .padding(.vertical, 6)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.accentColor.opacity(0.1))
-                                        .foregroundStyle(Color.accentColor)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                        .padding()
-                        .frame(width: 240)
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(issue.isCritical ? Color.red.opacity(0.25) : Color.orange.opacity(0.25), lineWidth: 1.5)
+                        CostPerformanceCardView(
+                            issue: issue,
+                            selectedSubscriptionForEdit: $selectedSubscriptionForEdit
                         )
-                        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
                     }
                 }
                 .padding(.vertical, 4)
@@ -672,6 +841,141 @@ struct DashboardView: View {
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+    }
+}
+
+/// スマートコスパ診断の各サブスクリプションカードUI
+struct CostPerformanceCardView: View {
+    let issue: DashboardViewModel.CostPerformanceIssue
+    @Binding var selectedSubscriptionForEdit: Subscription?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                // カテゴリアイコン
+                Image(systemName: issue.subscription.iconName)
+                    .font(.body)
+                    .padding(8)
+                    .background(issue.subscription.category.color.opacity(0.2))
+                    .foregroundStyle(issue.subscription.category.color)
+                    .clipShape(Circle())
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(issue.subscription.name)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                    
+                    Text(CurrencyHelper.formatted(amount: issue.subscription.monthlyAmount) + "/月")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                // 警告・優秀ステータスバッジ
+                statusBadge
+            }
+            
+            // 満足度と利用頻度
+            HStack {
+                HStack(spacing: 3) {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.yellow)
+                        .font(.caption2)
+                    Text("\(issue.subscription.satisfaction)")
+                }
+                .font(.caption2)
+                .fontWeight(.bold)
+                
+                Spacer()
+                
+                Text("月利用: \(issue.subscription.monthlyUsageCount)回")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 2)
+            
+            Divider()
+                .background(Color.primary.opacity(0.15))
+            
+            // アドバイス
+            Text(issue.advice)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .lineLimit(3)
+                .frame(height: 48, alignment: .topLeading)
+                .multilineTextAlignment(.leading)
+            
+            // ショートカットアクション
+            HStack(spacing: 8) {
+                Button {
+                    selectedSubscriptionForEdit = issue.subscription
+                } label: {
+                    Text(issue.type == .excellence ? "詳細・編集" : "見直す・編集")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity)
+                        .background(issue.type == .excellence ? Color.green.opacity(0.1) : Color.accentColor.opacity(0.1))
+                        .foregroundStyle(issue.type == .excellence ? Color.green : Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding()
+        .frame(width: 240)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(strokeColor, lineWidth: 1.5)
+        )
+        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
+    }
+    
+    // MARK: - プライベートヘルパー
+    
+    private var statusBadge: some View {
+        let badgeText: String
+        let badgeBgColor: Color
+        let badgeFgColor: Color
+        
+        switch issue.type {
+        case .critical:
+            badgeText = "解約推奨"
+            badgeBgColor = Color.red.opacity(0.15)
+            badgeFgColor = Color.red
+        case .warning:
+            badgeText = "要検討"
+            badgeBgColor = Color.orange.opacity(0.15)
+            badgeFgColor = Color.orange
+        case .excellence:
+            badgeText = "コスパ優秀"
+            badgeBgColor = Color.green.opacity(0.15)
+            badgeFgColor = Color.green
+        }
+        
+        return Text(badgeText)
+            .font(.system(size: 9, weight: .bold))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(badgeBgColor)
+            .foregroundStyle(badgeFgColor)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+    
+    private var strokeColor: Color {
+        switch issue.type {
+        case .critical:
+            return Color.red.opacity(0.25)
+        case .warning:
+            return Color.orange.opacity(0.25)
+        case .excellence:
+            return Color.green.opacity(0.25)
+        }
     }
 }
 

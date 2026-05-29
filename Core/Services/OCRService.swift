@@ -23,6 +23,7 @@ struct ParsedBulkItem: Identifiable, Hashable {
     var billingCycle: BillingCycle
     var nextPaymentDate: Date
     var iconName: String
+    var category: Category
     
     /// 金額が自動検知できずにプリセットから推測した、または ¥0 になった場合のフラグ
     var isAmountEstimated: Bool
@@ -36,26 +37,33 @@ struct ParsedBulkItem: Identifiable, Hashable {
     /// 無料トライアル終了日
     var trialEndDate: Date
     
+    /// 満足度（1〜5段階、デフォルト3）
+    var satisfaction: Int
+    
     init(
         name: String,
         amount: Decimal,
         billingCycle: BillingCycle,
         nextPaymentDate: Date,
         iconName: String,
+        category: Category = .other,
         isAmountEstimated: Bool,
         isCancelled: Bool,
         hasTrial: Bool = false,
-        trialEndDate: Date = Date().addingTimeInterval(86400 * 14)
+        trialEndDate: Date = Date().addingTimeInterval(86400 * 14),
+        satisfaction: Int = 3
     ) {
         self.name = name
         self.amount = amount
         self.billingCycle = billingCycle
         self.nextPaymentDate = nextPaymentDate
         self.iconName = iconName
+        self.category = category
         self.isAmountEstimated = isAmountEstimated
         self.isCancelled = isCancelled
         self.hasTrial = hasTrial
         self.trialEndDate = trialEndDate
+        self.satisfaction = satisfaction
     }
 }
 
@@ -329,7 +337,8 @@ final class OCRService {
             "Google Play", "メニュー", "詳細", "Manage", "Subscription", "決済", "明細", "履歴", "合計", "利用明細",
             "クレジットカード", "請求", "お支払い", "支払い", "次回支払い", "次回の支払い", "次回のお支払い", "お支払方法",
             "登録中", "プラン", "料金", "金額", "価格", "設定", "ホーム", "一覧", "次へ", "戻る", "確認", "購入", "購入履歴",
-            "閉じる", "購入手続き", "決済日", "支払日", "決済方法", "ステータス", "ご利用明細", "領収書", "メール", "配信"
+            "閉じる", "購入手続き", "決済日", "支払日", "決済方法", "ステータス", "ご利用明細", "領収書", "メール", "配信",
+            "並べ替え", "並び替え", "オプション", "表示", "すべて"
         ]
         if blacklist.contains(where: { trimmed.localizedCaseInsensitiveCompare($0) == .orderedSame || trimmed.contains($0) }) {
             return false
@@ -522,6 +531,7 @@ final class OCRService {
         }
         
         let icon = matchedPreset?.iconName ?? "creditcard"
+        let category = matchedPreset?.category ?? .other
         
         // すでに解約済みかどうかの判定（キーワード拡張）
         let cancelKeywords = ["有効期限", "有効期間", "終了日", "期限切れ", "キャンセル済み", "Expires", "Cancelled"]
@@ -533,6 +543,7 @@ final class OCRService {
             billingCycle: cycle,
             nextPaymentDate: paymentDate,
             iconName: icon,
+            category: category,
             isAmountEstimated: isAmountEstimated,
             isCancelled: isCancelled
         )

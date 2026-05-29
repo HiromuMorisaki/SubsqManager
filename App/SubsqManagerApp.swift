@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @main
 struct SubsqManagerApp: App {
@@ -31,8 +32,17 @@ struct SubsqManagerApp: App {
                 .accentColor(currentTheme.color)
                 .task {
                     // アプリ初回起動時に通知許可ダイアログを表示する。
-                    // .task はViewの表示時に一度だけ非同期処理を実行する修飾子。
                     await NotificationService.requestAuthorization()
+                    
+                    // ウィジェット用にテーマ情報を共有AppGroupコンテナに書き込む
+                    let sharedDefaults = UserDefaults(suiteName: "group.com.h-morisaki.SubsqManager")
+                    sharedDefaults?.set(appThemeRawValue, forKey: "appTheme")
+                }
+                .onChange(of: appThemeRawValue) { oldValue, newValue in
+                    let sharedDefaults = UserDefaults(suiteName: "group.com.h-morisaki.SubsqManager")
+                    sharedDefaults?.set(newValue, forKey: "appTheme")
+                    // ウィジェットの再描画を要求
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
         }
         .modelContainer(sharedModelContainer)

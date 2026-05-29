@@ -13,5 +13,6 @@ struct SubsqManagerWidgetBundle: WidgetBundle {
     var body: some Widget {
         SubsqMonthlyWidget()
         SubsqUpcomingWidget()
+        SubsqSavingsWidget()
     }
 }

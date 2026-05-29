@@ -193,6 +193,7 @@ struct PastSubscriptionsView: View {
         withAnimation {
             modelContext.delete(history)
             try? modelContext.save()
+            WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
         }
     }
     
@@ -202,6 +203,7 @@ struct PastSubscriptionsView: View {
                 modelContext.delete(history)
             }
             try? modelContext.save()
+            WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
         }
     }
     
@@ -243,6 +245,7 @@ struct PastSubscriptionsView: View {
         withAnimation {
             modelContext.delete(history)
             try? modelContext.save()
+            WidgetDataShareHelper.updateSharedSavingsAmount(using: modelContext)
             // Haptic Feedback
             #if os(iOS)
             let generator = UINotificationFeedbackGenerator()
